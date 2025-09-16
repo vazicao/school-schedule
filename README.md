@@ -1,3 +1,24 @@
+# School Schedule App
+
+A modern school schedule application with automatic shift detection and PDF export functionality.
+
+## Features
+
+- 📅 **Automatic shift detection** based on calendar week
+- 🌤️ **Real weather integration** using OpenWeatherMap
+- 📄 **PDF export** for weekly schedules
+- 📱 **Responsive design** with Apple Calendar-style events
+- 🇷🇸 **Serbian localization** for days and subjects
+- 🎨 **Subject icons** for easy identification
+
+## Tech Stack
+
+- Next.js 15
+- TypeScript
+- CSS Modules with design tokens
+- React-PDF for PDF generation
+- OpenWeatherMap API
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
