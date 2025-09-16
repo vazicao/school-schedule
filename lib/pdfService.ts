@@ -1,5 +1,5 @@
 import { pdf } from '@react-pdf/renderer';
-import { createElement } from 'react';
+import React from 'react';
 import { type ShiftType } from './shiftDetection';
 import { type WeeklyWeather } from './weatherService';
 
@@ -14,15 +14,15 @@ export const generateWeeklySchedulePDF = async (
     // Dynamic import to avoid SSR issues
     const { default: WeeklySchedulePDF } = await import('../components/WeeklySchedulePDF');
 
-    const pdfDocument = createElement(WeeklySchedulePDF, {
-      shift,
-      week,
-      year,
-      weather,
-      weekDates,
-    });
-
-    const blob = await pdf(pdfDocument).toBlob();
+    const blob = await pdf(
+      <WeeklySchedulePDF
+        shift={shift}
+        week={week}
+        year={year}
+        weather={weather}
+        weekDates={weekDates}
+      />
+    ).toBlob();
 
     return blob;
   } catch (error) {
