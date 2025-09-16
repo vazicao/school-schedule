@@ -80,8 +80,6 @@ export function isSchoolDay(date: Date): boolean {
  * Get the next shift change date
  */
 export function getNextShiftChange(date: Date = new Date()): Date {
-  const currentWeek = getWeekNumber(date);
-
   // Find the Monday of next week
   const nextMonday = new Date(date);
   const daysUntilNextMonday = ((7 - date.getDay()) % 7) + 1;

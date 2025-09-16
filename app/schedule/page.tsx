@@ -3,8 +3,8 @@
 import { useState, useEffect } from 'react';
 import styles from './schedule.module.css';
 import { schedules, getCurrentDay, type Day } from '../../lib/scheduleData';
-import { getWeeklyWeather, type WeeklyWeather, type WeatherData } from '../../lib/weatherService';
-import { getShiftInfo, type ShiftType } from '../../lib/shiftDetection';
+import { getWeeklyWeather, type WeeklyWeather } from '../../lib/weatherService';
+import { getShiftInfo } from '../../lib/shiftDetection';
 import { downloadWeeklySchedulePDF } from '../../lib/pdfService';
 
 const daycareActivities = {

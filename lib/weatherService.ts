@@ -98,7 +98,7 @@ export async function getWeeklyWeather(): Promise<WeeklyWeather> {
     const weeklyData: WeeklyWeather = {};
     const dayNames = ['Nedelja', 'Ponedeljak', 'Utorak', 'Sreda', 'Četvrtak', 'Petak', 'Subota'];
 
-    data.list.forEach((forecast: any) => {
+    data.list.forEach((forecast: { dt: number; weather: { icon: string; description: string }[]; main: { temp_max: number; temp_min: number } }) => {
       const date = new Date(forecast.dt * 1000);
       const dayName = dayNames[date.getDay()];
 
