@@ -6,6 +6,7 @@ import { schedules, getCurrentDay, type Day } from '../../lib/scheduleData';
 import { getWeeklyWeather, type WeeklyWeather } from '../../lib/weatherService';
 import { getShiftInfo } from '../../lib/shiftDetection';
 import { downloadWeeklySchedulePDF } from '../../lib/pdfService';
+import { getCurrentSchool, getCurrentClass } from '../../lib/schoolConfig';
 
 const daycareActivities = {
   morning: [
@@ -63,6 +64,10 @@ export default function Schedule() {
 
   // Get current shift info
   const shiftInfo = getShiftInfo();
+
+  // Get school and class info
+  const school = getCurrentSchool();
+  const classInfo = getCurrentClass();
 
   // Helper function to get dates for each day of the current week
   const getWeekDates = () => {
@@ -123,7 +128,13 @@ export default function Schedule() {
 
   return (
     <div className={styles.container}>
-      <h1>Raspored časova</h1>
+      <div className={styles.header}>
+        <div className={styles.schoolInfo}>
+          <h1 className={styles.schoolName}>{school.name}</h1>
+          <p className={styles.className}>Razred {classInfo.name}</p>
+        </div>
+        <h2 className={styles.pageTitle}>Raspored časova</h2>
+      </div>
 
       <div className={styles.shiftIndicator}>
         <div className={styles.currentShift}>

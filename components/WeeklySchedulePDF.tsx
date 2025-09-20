@@ -2,6 +2,7 @@ import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
 import { schedules, type Day } from '../lib/scheduleData';
 import { type ShiftType } from '../lib/shiftDetection';
 import { type WeeklyWeather } from '../lib/weatherService';
+import { getCurrentSchool, getCurrentClass } from '../lib/schoolConfig';
 
 // PDF styles
 const styles = StyleSheet.create({
@@ -15,14 +16,25 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: 'center',
   },
+  schoolName: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 4,
+    color: '#0070f3',
+  },
+  className: {
+    fontSize: 14,
+    color: '#666666',
+    marginBottom: 8,
+  },
   title: {
-    fontSize: 24,
+    fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 8,
     color: '#333333',
   },
   subtitle: {
-    fontSize: 14,
+    fontSize: 12,
     color: '#666666',
     marginBottom: 4,
   },
@@ -134,6 +146,10 @@ const WeeklySchedulePDF: React.FC<WeeklySchedulePDFProps> = ({
   const days: Day[] = ['Ponedeljak', 'Utorak', 'Sreda', 'Četvrtak', 'Petak'];
   const shiftName = shift === 'morning' ? 'Jutarnja smena' : 'Popodnevna smena';
 
+  // Get school and class info
+  const school = getCurrentSchool();
+  const classInfo = getCurrentClass();
+
   const getEventsForDay = (day: Day, dayShift: ShiftType) => {
     const classEvents = schedules[dayShift][day].map(lesson => ({
       time: lesson.time,
@@ -161,6 +177,8 @@ const WeeklySchedulePDF: React.FC<WeeklySchedulePDFProps> = ({
     <Document>
       <Page size="A4" orientation="landscape" style={styles.page}>
         <View style={styles.header}>
+          <Text style={styles.schoolName}>{school.name}</Text>
+          <Text style={styles.className}>Razred {classInfo.name}</Text>
           <Text style={styles.title}>Raspored časova</Text>
           <Text style={styles.shiftInfo}>{shiftName}</Text>
           <Text style={styles.subtitle}>Nedelja {week}, {year}</Text>

@@ -4,6 +4,38 @@
   padding: var(--spacing-lg);
 }
 
+.header {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+  padding-bottom: var(--spacing-lg);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.schoolInfo {
+  margin-bottom: var(--spacing-md);
+}
+
+.schoolName {
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-primary);
+  margin-bottom: var(--spacing-xs);
+}
+
+.className {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: 0;
+}
+
+.pageTitle {
+  font-size: var(--font-size-2xl);
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-semibold);
+  margin-bottom: 0;
+}
+
 .shiftIndicator {
   display: flex;
   justify-content: space-between;
@@ -229,6 +261,23 @@
 @media (max-width: 600px) {
   .container {
     padding: var(--spacing-md);
+  }
+
+  .header {
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-md);
+  }
+
+  .schoolName {
+    font-size: var(--font-size-2xl);
+  }
+
+  .className {
+    font-size: var(--font-size-base);
+  }
+
+  .pageTitle {
+    font-size: var(--font-size-xl);
   }
 
   .shiftIndicator {
