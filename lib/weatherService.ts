@@ -1,3 +1,5 @@
+import { getDay, format } from 'date-fns';
+
 export type WeatherData = {
   icon: string;
   high: number;
@@ -71,7 +73,7 @@ export async function getCurrentWeather(): Promise<WeatherData> {
   }
 }
 
-export async function getWeeklyWeather(): Promise<WeeklyWeather> {
+export async function getWeeklyWeather(weekDates?: Date[]): Promise<WeeklyWeather> {
   if (!OPENWEATHER_API_KEY) {
     console.warn('OpenWeather API key not found, using fallback weather');
     return {
@@ -80,6 +82,8 @@ export async function getWeeklyWeather(): Promise<WeeklyWeather> {
       'Sreda': fallbackWeather,
       'Četvrtak': fallbackWeather,
       'Petak': fallbackWeather,
+      'Subota': fallbackWeather,
+      'Nedelja': fallbackWeather,
     };
   }
 
@@ -97,13 +101,37 @@ export async function getWeeklyWeather(): Promise<WeeklyWeather> {
     // Group forecast data by day
     const weeklyData: WeeklyWeather = {};
     const dayNames = ['Nedelja', 'Ponedeljak', 'Utorak', 'Sreda', 'Četvrtak', 'Petak', 'Subota'];
+    const serbianDayNames = ['Ponedeljak', 'Utorak', 'Sreda', 'Četvrtak', 'Petak', 'Subota', 'Nedelja'];
+
+    // Create a map of target dates if specific week dates are provided
+    const targetDatesMap = new Map<string, string>();
+    if (weekDates && weekDates.length >= 5) {
+      weekDates.forEach((date, index) => {
+        if (index < serbianDayNames.length) {
+          const dateStr = format(date, 'yyyy-MM-dd');
+          targetDatesMap.set(dateStr, serbianDayNames[index]);
+        }
+      });
+    }
 
     data.list.forEach((forecast: { dt: number; weather: { icon: string; description: string }[]; main: { temp_max: number; temp_min: number } }) => {
       const date = new Date(forecast.dt * 1000);
-      const dayName = dayNames[date.getDay()];
+      const dateStr = format(date, 'yyyy-MM-dd');
 
-      // Only process weekdays (Ponedeljak through Petak)
-      if (['Ponedeljak', 'Utorak', 'Sreda', 'Četvrtak', 'Petak'].includes(dayName)) {
+      let dayName: string;
+
+      if (weekDates && targetDatesMap.has(dateStr)) {
+        // Use specific date mapping if provided
+        dayName = targetDatesMap.get(dateStr)!;
+      } else {
+        // Use current week logic
+        dayName = dayNames[getDay(date)];
+        if (!serbianDayNames.includes(dayName)) {
+          return; // Skip non-weekdays
+        }
+      }
+
+      if (serbianDayNames.includes(dayName)) {
         if (!weeklyData[dayName]) {
           weeklyData[dayName] = {
             icon: weatherIconMap[forecast.weather[0].icon] || '☀️',
@@ -120,7 +148,7 @@ export async function getWeeklyWeather(): Promise<WeeklyWeather> {
     });
 
     // Fill in any missing days with fallback
-    ['Ponedeljak', 'Utorak', 'Sreda', 'Četvrtak', 'Petak'].forEach(day => {
+    ['Ponedeljak', 'Utorak', 'Sreda', 'Četvrtak', 'Petak', 'Subota', 'Nedelja'].forEach(day => {
       if (!weeklyData[day]) {
         weeklyData[day] = fallbackWeather;
       }
@@ -135,6 +163,8 @@ export async function getWeeklyWeather(): Promise<WeeklyWeather> {
       'Sreda': fallbackWeather,
       'Četvrtak': fallbackWeather,
       'Petak': fallbackWeather,
+      'Subota': fallbackWeather,
+      'Nedelja': fallbackWeather,
     };
   }
 }

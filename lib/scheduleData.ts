@@ -3,7 +3,9 @@ export type Day =
   | "Utorak"
   | "Sreda"
   | "Četvrtak"
-  | "Petak";
+  | "Petak"
+  | "Subota"
+  | "Nedelja";
 
 export type TimeSlot = {
   time: string;
@@ -57,6 +59,8 @@ export const afternoonSchedule: WeekSchedule = {
     { time: '3. čas', subject: 'Srpski jezik' },
     { time: '4. čas (17:30)', subject: 'Građansko vaspitanje / Verska nastava' },
   ],
+  Subota: [],
+  Nedelja: [],
 };
 
 // Morning schedule (placeholder - to be replaced with actual data)
@@ -96,6 +100,8 @@ export const morningSchedule: WeekSchedule = {
     { time: '4. čas (10:30)', subject: 'Matematika' },
     { time: '5. čas (11:20)', subject: 'Srpski jezik' },
   ],
+  Subota: [],
+  Nedelja: [],
 };
 
 // Combined schedules
@@ -104,15 +110,19 @@ export const schedules: ShiftSchedules = {
   afternoon: afternoonSchedule,
 };
 
+import { getDay } from 'date-fns';
+
 // Helper function to get current day
 export const getCurrentDay = (): Day => {
-  const today = new Date().getDay();
+  const today = getDay(new Date());
   const dayMap: Record<number, Day> = {
+    0: 'Nedelja',
     1: 'Ponedeljak',
     2: 'Utorak',
     3: 'Sreda',
     4: 'Četvrtak',
     5: 'Petak',
+    6: 'Subota',
   };
   return dayMap[today] || 'Ponedeljak';
 };

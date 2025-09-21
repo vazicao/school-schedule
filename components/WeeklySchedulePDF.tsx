@@ -3,6 +3,8 @@ import { schedules, type Day } from '../lib/scheduleData';
 import { type ShiftType } from '../lib/shiftDetection';
 import { type WeeklyWeather } from '../lib/weatherService';
 import { getCurrentSchool, getCurrentClass } from '../lib/schoolConfig';
+import { format } from 'date-fns';
+import { sr } from 'date-fns/locale';
 
 // PDF styles
 const styles = StyleSheet.create({
@@ -195,7 +197,7 @@ const WeeklySchedulePDF: React.FC<WeeklySchedulePDFProps> = ({
                 <View style={styles.dayHeader}>
                   <Text style={styles.dayName}>{day}</Text>
                   <Text style={styles.dayDate}>
-                    {date.getDate()}.{date.getMonth() + 1}.
+                    {format(date, 'd.M.', { locale: sr })}
                   </Text>
                   {dayWeather && (
                     <Text style={styles.weather}>
@@ -225,7 +227,7 @@ const WeeklySchedulePDF: React.FC<WeeklySchedulePDFProps> = ({
         </View>
 
         <View style={styles.footer}>
-          <Text>Generisano {new Date().toLocaleDateString('sr-RS')}</Text>
+          <Text>Generisano {format(new Date(), 'dd.MM.yyyy', { locale: sr })}</Text>
         </View>
       </Page>
     </Document>

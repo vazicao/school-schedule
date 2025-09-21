@@ -1,3 +1,5 @@
+import { getISOWeek, getISOWeekYear, startOfISOWeek, addWeeks, getDay } from 'date-fns';
+
 export type ShiftType = 'morning' | 'afternoon';
 
 // Week 38 of September 2025 is afternoon shift (reference point)
@@ -9,20 +11,10 @@ const REFERENCE_SHIFT: ShiftType = 'afternoon';
  * Get ISO week number for a given date
  */
 function getWeekNumber(date: Date): { week: number; year: number } {
-  // Create a copy of the date to avoid modifying the original
-  const tempDate = new Date(date.getTime());
-
-  // Set to Thursday of the week (ISO week date)
-  tempDate.setDate(tempDate.getDate() + 4 - (tempDate.getDay() || 7));
-
-  // Get the year of the Thursday
-  const year = tempDate.getFullYear();
-
-  // Calculate the week number
-  const yearStart = new Date(year, 0, 1);
-  const week = Math.ceil(((tempDate.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
-
-  return { week, year };
+  return {
+    week: getISOWeek(date),
+    year: getISOWeekYear(date)
+  };
 }
 
 /**
@@ -72,7 +64,7 @@ export function getShiftInfo(date: Date = new Date()): {
  * Check if a specific date falls on a school day (Mon-Fri)
  */
 export function isSchoolDay(date: Date): boolean {
-  const day = date.getDay();
+  const day = getDay(date);
   return day >= 1 && day <= 5; // Monday = 1, Friday = 5
 }
 
@@ -81,9 +73,6 @@ export function isSchoolDay(date: Date): boolean {
  */
 export function getNextShiftChange(date: Date = new Date()): Date {
   // Find the Monday of next week
-  const nextMonday = new Date(date);
-  const daysUntilNextMonday = ((7 - date.getDay()) % 7) + 1;
-  nextMonday.setDate(date.getDate() + daysUntilNextMonday);
-
-  return nextMonday;
+  const monday = startOfISOWeek(date);
+  return addWeeks(monday, 1);
 }
