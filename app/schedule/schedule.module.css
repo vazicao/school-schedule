@@ -163,74 +163,119 @@
 .dayButtons {
   display: flex;
   justify-content: center;
-  gap: var(--spacing-sm);
+  gap: var(--spacing-xs);
   margin-bottom: var(--spacing-xl);
   flex-wrap: wrap;
 }
 
-.dayButtons button {
+.dayButton {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: var(--spacing-xs);
-  padding: var(--spacing-sm) var(--spacing-md);
-  min-width: 80px;
+  padding: var(--spacing-sm);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  min-width: 50px;
+}
+
+.dayButton:hover {
+  background: var(--color-background-muted);
 }
 
 .dayName {
-  font-weight: var(--font-weight-semibold);
-  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-text-secondary);
+  margin-bottom: 2px;
+}
+
+.dayDateWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
 }
 
 .dayDate {
-  font-size: var(--font-size-xs);
-  color: var(--color-text-secondary);
-  font-family: var(--font-geist-mono);
-}
-
-.dayButtons button.active {
-  background: var(--color-primary);
-  color: white;
-  border-color: var(--color-primary);
-}
-
-.dayButtons button.active .dayDate {
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.dayButtons button.today {
-  border-color: var(--color-warning);
-  background: var(--color-warning);
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
   color: var(--color-text-primary);
+  font-family: var(--font-geist-sans);
+  line-height: 1;
+  position: relative;
+  z-index: 2;
 }
 
-.dayButtons button.today.active {
+/* Active state - circular background */
+.dayButton.active .dayDateWrapper {
   background: var(--color-primary);
-  border-color: var(--color-primary);
+  border-radius: 50%;
+}
+
+.dayButton.active .dayDate {
   color: white;
+}
+
+.dayButton.active .dayName {
+  color: var(--color-primary);
+  font-weight: var(--font-weight-semibold);
+}
+
+/* Today indicator - dot below */
+.dayButton.today .dayDateWrapper::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  background: var(--color-warning);
+  border-radius: 50%;
+  z-index: 1;
+}
+
+/* Today + Active state */
+.dayButton.today.active .dayDateWrapper {
+  background: var(--color-primary);
   box-shadow: 0 0 0 2px var(--color-warning);
 }
 
-.dayButtons button.weekend {
-  background: var(--color-background-muted);
-  border-color: var(--color-border-light);
+.dayButton.today.active .dayDateWrapper::after {
+  display: none;
+}
+
+/* Weekend styling */
+.dayButton.weekend {
+  opacity: 0.6;
+}
+
+.dayButton.weekend .dayName {
+  color: var(--color-text-tertiary);
+}
+
+.dayButton.weekend .dayDate {
   color: var(--color-text-secondary);
 }
 
-.dayButtons button.weekend:hover {
-  background: var(--color-background-secondary);
-  border-color: var(--color-border);
+.dayButton.weekend.active .dayDateWrapper {
+  background: var(--color-text-secondary);
 }
 
-.dayButtons button.weekend.active {
-  background: var(--color-text-secondary);
-  border-color: var(--color-text-secondary);
+.dayButton.weekend.active .dayDate {
   color: white;
 }
 
-.dayButtons button.weekend.today {
-  border-color: var(--color-warning);
-  background: var(--color-warning);
-  color: var(--color-text-primary);
+.dayButton.weekend.active .dayName {
+  color: var(--color-text-secondary);
 }
 
 
@@ -315,9 +360,18 @@
     gap: var(--spacing-xs);
   }
 
-  .dayButtons button {
-    min-width: 70px;
-    padding: var(--spacing-xs) var(--spacing-sm);
+  .dayButton {
+    min-width: 45px;
+    padding: var(--spacing-xs);
+  }
+
+  .dayDateWrapper {
+    width: 28px;
+    height: 28px;
+  }
+
+  .dayDate {
+    font-size: var(--font-size-base);
   }
 
   .summaryBlock {

@@ -249,13 +249,15 @@ export default function Schedule() {
           return (
             <button
               key={day}
-              className={`${isSelected ? styles.active : ''} ${isToday ? styles.today : ''} ${isWeekend ? styles.weekend : ''}`}
+              className={`${styles.dayButton} ${isSelected ? styles.active : ''} ${isToday ? styles.today : ''} ${isWeekend ? styles.weekend : ''}`}
               onClick={() => setSelectedDay(day)}
             >
-              <span className={styles.dayName}>{day.slice(0, 3)}</span>
-              <span className={styles.dayDate}>
-                {format(date, 'd', { locale: sr })}.
-              </span>
+              <span className={styles.dayName}>{day.charAt(0)}</span>
+              <div className={styles.dayDateWrapper}>
+                <span className={styles.dayDate}>
+                  {format(date, 'd', { locale: sr })}
+                </span>
+              </div>
             </button>
           );
         })}
