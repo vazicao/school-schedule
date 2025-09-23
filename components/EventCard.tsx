@@ -64,7 +64,7 @@ const EventCard: React.FC<EventCardProps> = ({
 
   const { classType: displayClassType } = type === 'class'
     ? parseTimeString(time)
-    : { classType: classType, time };
+    : { classType: classType || '' };
 
   const eventClassName = `${styles.event} ${
     type === 'class' ? styles.classEvent :
