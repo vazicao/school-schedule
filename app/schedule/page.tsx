@@ -1,36 +1,42 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import styles from './schedule.module.css';
-import { schedules, getCurrentDay, getSubjectInfo, type Day, type ClassPeriod } from '../../lib/scheduleData';
-import { getWeeklyWeather, type WeeklyWeather } from '../../lib/weatherService';
-import { getShiftInfo } from '../../lib/shiftDetection';
-import { downloadWeeklySchedulePDF } from '../../lib/pdfService';
+import { useState, useEffect } from "react";
+import styles from "./schedule.module.css";
+import {
+  schedules,
+  getCurrentDay,
+  getSubjectInfo,
+  type Day,
+  type ClassPeriod,
+} from "../../lib/scheduleData";
+import { getWeeklyWeather, type WeeklyWeather } from "../../lib/weatherService";
+import { getShiftInfo } from "../../lib/shiftDetection";
+import { downloadWeeklySchedulePDF } from "../../lib/pdfService";
 import {
   getCurrentWeekInfo,
   getNextWeek,
   getPreviousWeek,
   getWeekInfo,
   getWeekDates,
-  type WeekInfo
-} from '../../lib/weekNavigation';
-import { format, isSameDay } from 'date-fns';
-import { sr } from 'date-fns/locale';
-import ScheduleHeader from '../../components/ScheduleHeader';
-import EventCard from '../../components/EventCard';
-import EventModal, { EventDetails } from '../../components/EventModal';
-import { getEventDetails } from '../../lib/eventDetailsService';
-import { getExamsForWeek, type Exam } from '../../lib/examData';
+  type WeekInfo,
+} from "../../lib/weekNavigation";
+import { format, isSameDay } from "date-fns";
+import { sr } from "date-fns/locale";
+import ScheduleHeader from "../../components/ScheduleHeader";
+import EventCard from "../../components/EventCard";
+import EventModal, { EventDetails } from "../../components/EventModal";
+import { getEventDetails } from "../../lib/eventDetailsService";
+import { getExamsForWeek, type Exam } from "../../lib/examData";
 
 const daycareActivities = {
   morning: [
-    { time: '07:00', activity: 'Početak rada' },
-    { time: '08:30-10:30', activity: 'Rad na domaćim zadacima' },
-    { time: '12:00', activity: 'Ručak' },
+    { time: "07:00", activity: "Početak rada" },
+    { time: "08:30-10:30", activity: "Rad na domaćim zadacima" },
+    { time: "12:00", activity: "Ručak" },
   ],
   afternoon: [
-    { time: '12:30', activity: 'Ručak' },
-    { time: '13:00-14:30', activity: 'Rad na domaćim zadacima' },
+    { time: "12:30", activity: "Ručak" },
+    { time: "13:00-14:30", activity: "Rad na domaćim zadacima" },
   ],
 };
 
@@ -44,44 +50,46 @@ const getSubjectIcon = (subject: string): string => {
 
   // For daycare activities and other non-subject items
   const iconMap: Record<string, string> = {
-    'Početak rada': '🌅',
-    'Rad na domaćim zadacima': '📖',
-    'Ručak': '🍽️',
-    'Exam': '📝',
+    "Početak rada": "🌅",
+    "Rad na domaćim zadacima": "📖",
+    Ručak: "🍽️",
+    Exam: "📝",
   };
 
-  return iconMap[subject] || '📋';
+  return iconMap[subject] || "📋";
 };
 
 // Helper function to extract time from time string
 const extractTime = (timeString: string): string => {
   // Extract time from formats like "1. čas (08:00)" or "Pretčas (13:10)" or just "08:00"
-  if (!timeString) return '';
+  if (!timeString) return "";
   const match = timeString.match(/\((\d{2}:\d{2})\)/);
   return match ? match[1] : timeString;
 };
 
 // Helper function to calculate time range for a section
-const calculateSectionTimeRange = (events: Array<ClassPeriod | {time: string}>): string => {
-  if (events.length === 0) return '';
+const calculateSectionTimeRange = (
+  events: Array<ClassPeriod | { time: string }>,
+): string => {
+  if (events.length === 0) return "";
 
   const times: string[] = [];
 
   // Handle both new ClassPeriod format and legacy format
-  events.forEach(event => {
-    if ('startTime' in event && 'endTime' in event) {
+  events.forEach((event) => {
+    if ("startTime" in event && "endTime" in event) {
       // New ClassPeriod format
       times.push(event.startTime, event.endTime);
-    } else if ('time' in event && event.time) {
+    } else if ("time" in event && event.time) {
       // Legacy format
       const time = extractTime(event.time);
-      if (time && time !== '—') {
+      if (time && time !== "—") {
         times.push(time);
       }
     }
   });
 
-  if (times.length === 0) return '';
+  if (times.length === 0) return "";
 
   const sortedTimes = times.sort();
   const startTime = sortedTimes[0];
@@ -91,22 +99,30 @@ const calculateSectionTimeRange = (events: Array<ClassPeriod | {time: string}>):
   return `${startTime} - ${endTime}`;
 };
 
-
 export default function Schedule() {
-  const [selectedWeek, setSelectedWeek] = useState<WeekInfo>(getCurrentWeekInfo());
+  const [selectedWeek, setSelectedWeek] =
+    useState<WeekInfo>(getCurrentWeekInfo());
   const [selectedDay, setSelectedDay] = useState<Day>(getCurrentDay());
   const [weather, setWeather] = useState<WeeklyWeather>({});
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [showDaycare, setShowDaycare] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
-  const [selectedEventDetails, setSelectedEventDetails] = useState<EventDetails | null>(null);
+  const [selectedEventDetails, setSelectedEventDetails] =
+    useState<EventDetails | null>(null);
   const [weekExams, setWeekExams] = useState<Exam[]>([]);
 
-  const days: Day[] = ['Ponedeljak', 'Utorak', 'Sreda', 'Четврtak', 'Petak', 'Subota', 'Nedelja'];
+  const days: Day[] = [
+    "Ponedeljak",
+    "Utorak",
+    "Sreda",
+    "Četvrtak",
+    "Petak",
+    "Subota",
+    "Nedelja",
+  ];
 
   // Get shift info for the selected week
   const shiftInfo = getShiftInfo(selectedWeek.startDate);
-
 
   // Get dates for the selected week (including weekends)
   const weekDates = getWeekDates(selectedWeek.year, selectedWeek.week, true);
@@ -114,13 +130,17 @@ export default function Schedule() {
 
   // Fetch weather data when selected week changes
   useEffect(() => {
-    const currentWeekDates = getWeekDates(selectedWeek.year, selectedWeek.week, true);
+    const currentWeekDates = getWeekDates(
+      selectedWeek.year,
+      selectedWeek.week,
+      true,
+    );
     const fetchWeather = async () => {
       try {
         const weatherData = await getWeeklyWeather(currentWeekDates);
         setWeather(weatherData);
       } catch (error) {
-        console.error('Failed to fetch weather:', error);
+        console.error("Failed to fetch weather:", error);
       }
     };
 
@@ -133,10 +153,12 @@ export default function Schedule() {
     setWeekExams(examsForWeek);
   }, [selectedWeek.week]);
 
-
   // Week navigation handlers
   const handlePreviousWeek = () => {
-    const { year, week } = getPreviousWeek(selectedWeek.year, selectedWeek.week);
+    const { year, week } = getPreviousWeek(
+      selectedWeek.year,
+      selectedWeek.week,
+    );
     setSelectedWeek(getWeekInfo(year, week));
   };
 
@@ -149,7 +171,11 @@ export default function Schedule() {
     setSelectedWeek(getCurrentWeekInfo());
   };
 
-  const handleEventClick = (title: string, time: string, classType?: string) => {
+  const handleEventClick = (
+    title: string,
+    time: string,
+    classType?: string,
+  ) => {
     const details = getEventDetails(title, time, classType);
     if (details) {
       setSelectedEventDetails(details);
@@ -170,10 +196,10 @@ export default function Schedule() {
         selectedWeek.week,
         selectedWeek.year,
         weather,
-        weekDates
+        weekDates,
       );
     } catch (error) {
-      console.error('Failed to generate PDF:', error);
+      console.error("Failed to generate PDF:", error);
       // You could add a toast notification here
     } finally {
       setIsGeneratingPDF(false);
@@ -193,24 +219,23 @@ export default function Schedule() {
         onGoToCurrentWeek={handleGoToCurrentWeek}
       />
 
-
       <nav className={styles.dayButtons}>
         {days.map((day, index) => {
           const date = weekDates[index];
           const isToday = isSameDay(date, today);
           const isSelected = selectedDay === day;
-          const isWeekend = day === 'Subota' || day === 'Nedelja';
+          const isWeekend = day === "Subota" || day === "Nedelja";
 
           return (
             <button
               key={day}
-              className={`${styles.dayButton} ${isSelected ? styles.active : ''} ${isToday ? styles.today : ''} ${isWeekend ? styles.weekend : ''}`}
+              className={`${styles.dayButton} ${isSelected ? styles.active : ""} ${isToday ? styles.today : ""} ${isWeekend ? styles.weekend : ""}`}
               onClick={() => setSelectedDay(day)}
             >
               <span className={styles.dayName}>{day.charAt(0)}</span>
               <div className={styles.dayDateWrapper}>
                 <span className={styles.dayDate}>
-                  {format(date, 'd', { locale: sr })}
+                  {format(date, "d", { locale: sr })}
                 </span>
               </div>
             </button>
@@ -218,14 +243,17 @@ export default function Schedule() {
         })}
       </nav>
 
-
       {/* Exams section */}
       {weekExams.length > 0 && (
         <div className={styles.examsContainer}>
           <div className={styles.sectionHeader}>
             <h3 className={styles.sectionTitle}>Kontrolni zadaci</h3>
             <h3 className={styles.sectionTimeRange}>
-              {calculateSectionTimeRange(weekExams.map(exam => ({ time: exam.confirmedDate || `Nedelja ${exam.isoWeek}` })))}
+              {calculateSectionTimeRange(
+                weekExams.map((exam) => ({
+                  time: exam.confirmedDate || `Nedelja ${exam.isoWeek}`,
+                })),
+              )}
             </h3>
           </div>
           <div className={styles.eventsList}>
@@ -237,16 +265,21 @@ export default function Schedule() {
                 title={exam.subject}
                 time={exam.confirmedDate || `Nedelja ${exam.isoWeek}`}
                 subtitle={exam.topic}
-                onClick={() => handleEventClick(exam.subject, exam.confirmedDate || `Nedelja ${exam.isoWeek}`, 'exam')}
+                onClick={() =>
+                  handleEventClick(
+                    exam.subject,
+                    exam.confirmedDate || `Nedelja ${exam.isoWeek}`,
+                    "exam",
+                  )
+                }
               />
             ))}
           </div>
         </div>
       )}
 
-
       <div className={styles.eventsContainer}>
-        {selectedDay === 'Subota' || selectedDay === 'Nedelja' ? (
+        {selectedDay === "Subota" || selectedDay === "Nedelja" ? (
           /* Weekend display */
           <>
             <div className={styles.sectionHeader}>
@@ -260,11 +293,11 @@ export default function Schedule() {
                 title="Nema nastave"
                 time="☀️"
                 subtitle="Mogućnost dodavanja rođendana ili posebnih aktivnosti"
-                onClick={() => handleEventClick('Nema nastave', '☀️')}
+                onClick={() => handleEventClick("Nema nastave", "☀️")}
               />
             </div>
           </>
-        ) : shiftInfo.shift === 'afternoon' ? (
+        ) : shiftInfo.shift === "afternoon" ? (
           <>
             {/* Daycare activities first for afternoon shift */}
             {showDaycare && (
@@ -272,7 +305,9 @@ export default function Schedule() {
                 <div className={styles.sectionHeader}>
                   <h3 className={styles.sectionTitle}>Produženi boravak</h3>
                   <h3 className={styles.sectionTimeRange}>
-                    {calculateSectionTimeRange(daycareActivities[shiftInfo.shift])}
+                    {calculateSectionTimeRange(
+                      daycareActivities[shiftInfo.shift],
+                    )}
                   </h3>
                 </div>
                 <div className={styles.eventsList}>
@@ -284,7 +319,9 @@ export default function Schedule() {
                       title={activity.activity}
                       time={activity.time}
                       shift={shiftInfo.shift}
-                      onClick={() => handleEventClick(activity.activity, activity.time)}
+                      onClick={() =>
+                        handleEventClick(activity.activity, activity.time)
+                      }
                     />
                   ))}
                 </div>
@@ -294,7 +331,9 @@ export default function Schedule() {
             <div className={styles.sectionHeader}>
               <h3 className={styles.sectionTitle}>{shiftInfo.shiftName}</h3>
               <h3 className={styles.sectionTimeRange}>
-                {calculateSectionTimeRange(schedules[shiftInfo.shift][selectedDay])}
+                {calculateSectionTimeRange(
+                  schedules[shiftInfo.shift][selectedDay],
+                )}
               </h3>
             </div>
             <div className={styles.eventsList}>
@@ -321,7 +360,9 @@ export default function Schedule() {
             <div className={styles.sectionHeader}>
               <h3 className={styles.sectionTitle}>{shiftInfo.shiftName}</h3>
               <h3 className={styles.sectionTimeRange}>
-                {calculateSectionTimeRange(schedules[shiftInfo.shift][selectedDay])}
+                {calculateSectionTimeRange(
+                  schedules[shiftInfo.shift][selectedDay],
+                )}
               </h3>
             </div>
             <div className={styles.eventsList}>
@@ -347,7 +388,9 @@ export default function Schedule() {
                 <div className={styles.sectionHeader}>
                   <h3 className={styles.sectionTitle}>Produženi boravak</h3>
                   <h3 className={styles.sectionTimeRange}>
-                    {calculateSectionTimeRange(daycareActivities[shiftInfo.shift])}
+                    {calculateSectionTimeRange(
+                      daycareActivities[shiftInfo.shift],
+                    )}
                   </h3>
                 </div>
                 <div className={styles.eventsList}>
@@ -359,7 +402,9 @@ export default function Schedule() {
                       title={activity.activity}
                       time={activity.time}
                       shift={shiftInfo.shift}
-                      onClick={() => handleEventClick(activity.activity, activity.time)}
+                      onClick={() =>
+                        handleEventClick(activity.activity, activity.time)
+                      }
                     />
                   ))}
                 </div>
