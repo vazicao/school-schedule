@@ -6,7 +6,7 @@ import { schedules, getCurrentDay, getSubjectInfo, type Day, type ClassPeriod } 
 import { getWeeklyWeather, type WeeklyWeather } from '../../lib/weatherService';
 import { getShiftInfo } from '../../lib/shiftDetection';
 import { downloadWeeklySchedulePDF } from '../../lib/pdfService';
-import { getCurrentSchool, getCurrentClass } from '../../lib/schoolConfig';
+import { getCurrentClass } from '../../lib/schoolConfig';
 import {
   getCurrentWeekInfo,
   getNextWeek,
@@ -102,13 +102,11 @@ export default function Schedule() {
   const [selectedEventDetails, setSelectedEventDetails] = useState<EventDetails | null>(null);
   const [weekExams, setWeekExams] = useState<Exam[]>([]);
 
-  const days: Day[] = ['Ponedeljak', 'Utorak', 'Sreda', 'Četvrtak', 'Petak', 'Subota', 'Nedelja'];
+  const days: Day[] = ['Ponedeljak', 'Utorak', 'Sreda', 'Четврtak', 'Petak', 'Subota', 'Nedelja'];
 
   // Get shift info for the selected week
   const shiftInfo = getShiftInfo(selectedWeek.startDate);
 
-  // Get class info
-  const classInfo = getCurrentClass();
 
   // Get dates for the selected week (including weekends)
   const weekDates = getWeekDates(selectedWeek.year, selectedWeek.week, true);

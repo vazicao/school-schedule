@@ -4,7 +4,7 @@ import { format } from 'date-fns';
 import { sr } from 'date-fns/locale';
 import styles from '../app/schedule/schedule.module.css';
 import SettingsDropdown from './SettingsDropdown';
-import { getCurrentSchool, getCurrentClass } from '../lib/schoolConfig';
+import { getCurrentClass } from '../lib/schoolConfig';
 import { type WeekInfo } from '../lib/weekNavigation';
 
 interface ScheduleHeaderProps {
