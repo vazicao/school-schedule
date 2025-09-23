@@ -75,21 +75,3 @@
 
 .weekendEvent {
 }
-
-/* Mobile styles */
-@media (max-width: 600px) {
-  .event {
-    padding: var(--spacing-sm);
-    gap: var(--spacing-sm);
-  }
-
-  .iconContainer {
-    width: 32px;
-    height: 32px;
-    padding: 4px;
-  }
-
-  .eventIcon {
-    font-size: 20px;
-  }
-}
