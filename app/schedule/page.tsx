@@ -57,6 +57,7 @@ const getSubjectIcon = (subject: string): string => {
 // Helper function to extract time from time string
 const extractTime = (timeString: string): string => {
   // Extract time from formats like "1. čas (08:00)" or "Pretčas (13:10)" or just "08:00"
+  if (!timeString) return '';
   const match = timeString.match(/\((\d{2}:\d{2})\)/);
   return match ? match[1] : timeString;
 };
@@ -72,7 +73,7 @@ const calculateSectionTimeRange = (events: Array<ClassPeriod | {time: string}>):
     if ('startTime' in event && 'endTime' in event) {
       // New ClassPeriod format
       times.push(event.startTime, event.endTime);
-    } else if ('time' in event) {
+    } else if ('time' in event && event.time) {
       // Legacy format
       const time = extractTime(event.time);
       if (time && time !== '—') {

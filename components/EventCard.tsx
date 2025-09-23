@@ -39,6 +39,13 @@ const EventCard: React.FC<EventCardProps> = ({
     let parsedClassType = '';
     let actualTime = '';
 
+    if (!timeStr) {
+      return {
+        classType: classType || '',
+        time: '—'
+      };
+    }
+
     // First check for format with parentheses: "1. čas (14:00)"
     const withParenthesesMatch = timeStr.match(/^(.*?)\s*\(([^)]+)\)$/);
     if (withParenthesesMatch) {
