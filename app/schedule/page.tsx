@@ -65,7 +65,7 @@ const extractTime = (timeString: string): string => {
 const calculateSectionTimeRange = (events: Array<ClassPeriod | {time: string}>): string => {
   if (events.length === 0) return '';
 
-  let times: string[] = [];
+  const times: string[] = [];
 
   // Handle both new ClassPeriod format and legacy format
   events.forEach(event => {
@@ -107,8 +107,7 @@ export default function Schedule() {
   // Get shift info for the selected week
   const shiftInfo = getShiftInfo(selectedWeek.startDate);
 
-  // Get school and class info
-  const school = getCurrentSchool();
+  // Get class info
   const classInfo = getCurrentClass();
 
   // Get dates for the selected week (including weekends)
@@ -136,7 +135,6 @@ export default function Schedule() {
     setWeekExams(examsForWeek);
   }, [selectedWeek.week]);
 
-  const currentWeather = weather[selectedDay];
 
   // Week navigation handlers
   const handlePreviousWeek = () => {

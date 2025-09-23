@@ -62,7 +62,7 @@ const EventCard: React.FC<EventCardProps> = ({
     };
   };
 
-  const { classType: displayClassType, time: displayTime } = type === 'class'
+  const { classType: displayClassType } = type === 'class'
     ? parseTimeString(time)
     : { classType: classType, time };
 

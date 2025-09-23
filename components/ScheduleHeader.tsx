@@ -28,7 +28,6 @@ export default function ScheduleHeader({
   onNextWeek,
   onGoToCurrentWeek,
 }: ScheduleHeaderProps) {
-  const school = getCurrentSchool();
   const classInfo = getCurrentClass();
 
   return (
