@@ -10,12 +10,13 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Display Classes - Using Merriweather Bold */
+/* Display Classes - Using Merriweather Variable Font */
 .display1 {
   font-family: var(--font-family-heading);
   font-size: 24px;
   line-height: 32px;
   font-weight: var(--font-weight-bold);
+  font-optical-sizing: auto;
   color: var(--color-text-primary);
   text-transform: capitalize;
 }
@@ -25,6 +26,7 @@ body {
   font-size: 16px;
   line-height: 24px;
   font-weight: var(--font-weight-bold);
+  font-optical-sizing: auto;
 }
 
 /* Headings */
@@ -83,9 +85,9 @@ button {
 /* Typography utility classes */
 .font-heading {
   font-family: var(--font-family-heading);
+  font-optical-sizing: auto;
 }
 
 .font-body {
   font-family: var(--font-family-body);
 }
-
