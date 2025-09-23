@@ -50,7 +50,7 @@ export function getShiftInfo(date: Date = new Date()): {
   const { week, year } = getWeekNumber(date);
   const shift = getCurrentShift(date);
 
-  const shiftName = shift === 'morning' ? 'Jutarnja smena' : 'Popodnevna smena';
+  const shiftName = shift === 'morning' ? 'Јутарња смена' : 'Поподневна смена';
 
   return {
     shift,

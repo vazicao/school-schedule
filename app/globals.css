@@ -4,7 +4,7 @@
 @import './styles/buttons.css';
 
 :root {
-  --background: var(--color-background);
+  --background: var(--color-surface-primary);
   --foreground: var(--color-text-primary);
 }
 

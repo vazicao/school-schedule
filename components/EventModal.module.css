@@ -89,7 +89,7 @@
 }
 
 .timeDisplay {
-  font-family: var(--font-geist-mono);
+  font-family: var(--font-family-body);
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-bold);
   color: var(--color-primary);
@@ -177,7 +177,7 @@
 }
 
 .examDate {
-  font-family: var(--font-geist-mono);
+  font-family: var(--font-family-body);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-bold);
   color: var(--color-text-primary);

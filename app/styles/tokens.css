@@ -5,17 +5,14 @@
   --color-primary-hover: #0056b3;
   --color-primary-light: #f0f8ff;
 
-  --color-text-primary: #333333;
-  --color-text-secondary: #666666;
-  --color-text-muted: #999999;
+  --color-text-primary: #002E22;
+  --color-text-secondary: #76847E;
+  --color-text-light: #FCFBF9;
 
-  --color-background: #ffffff;
-  --color-background-secondary: #f9f9f9;
-  --color-background-muted: #f5f5f5;
+  --color-surface-primary: #FCFBF9;
+  --color-surface-secondary: #F8F4F0;
 
-  --color-border: #eeeeee;
-  --color-border-light: #f0f0f0;
-  --color-border-dark: #dddddd;
+  --color-border: #F0EDE9;
 
   --color-success: #28a745;
   --color-warning: #ffc107;
@@ -65,4 +62,8 @@
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
+
+  /* Font families */
+  --font-family-heading: "Merriweather", "Times New Roman", serif;
+  --font-family-body: "Open Sans", "Helvetica Neue", Arial, sans-serif;
 }

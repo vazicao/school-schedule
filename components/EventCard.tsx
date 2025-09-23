@@ -1,6 +1,8 @@
 'use client';
 
 import styles from './EventCard.module.css';
+import { getClassTimes, getDaycareTimeRange } from '../lib/timeMapping';
+import type { ShiftType } from '../lib/shiftDetection';
 
 export type EventType = 'class' | 'daycare' | 'weekend' | 'exam';
 
@@ -11,6 +13,10 @@ export interface EventCardProps {
   time: string;
   subtitle?: string;
   classType?: string;
+  startTime?: string;
+  endTime?: string;
+  color?: string;
+  shift?: ShiftType;
   onClick?: () => void;
 }
 
@@ -21,6 +27,10 @@ const EventCard: React.FC<EventCardProps> = ({
   time,
   subtitle,
   classType,
+  startTime,
+  endTime,
+  color,
+  shift,
   onClick,
 }) => {
   // Parse time string to extract class period and actual time
@@ -76,21 +86,64 @@ const EventCard: React.FC<EventCardProps> = ({
         }
       } : undefined}
     >
+      <div
+        className={styles.iconContainer}
+        style={{ backgroundColor: color }}
+      >
+        <span className={styles.eventIcon}>{icon}</span>
+      </div>
+
       <div className={styles.eventContent}>
-        <div className={styles.eventHeader}>
-          <span className={styles.eventIcon}>{icon}</span>
-          <div className={styles.eventDetails}>
-            {displayClassType && (
-              <div className={styles.classType}>{displayClassType}</div>
-            )}
-            <div className={styles.eventTitle}>{title}</div>
-          </div>
-        </div>
+        {displayClassType && (
+          <h3 className={styles.classType}>{displayClassType}</h3>
+        )}
+        <h2 className={styles.eventTitle}>{title}</h2>
         {subtitle && (
           <div className={styles.eventSubtitle}>{subtitle}</div>
         )}
       </div>
-      <div className={styles.eventTime}>{displayTime}</div>
+
+      <div className={styles.timeContainer}>
+        {(() => {
+          // Use provided start/end times if available, otherwise calculate
+          let displayStartTime = startTime || '—';
+          let displayEndTime = endTime || '';
+
+          if (!startTime && !endTime) {
+            // Fallback to old calculation logic
+            if (type === 'class' && shift) {
+              const classTimes = getClassTimes(time, shift);
+              if (classTimes) {
+                displayStartTime = classTimes.startTime;
+                displayEndTime = classTimes.endTime;
+              }
+            } else if (type === 'daycare' && shift) {
+              const daycareRange = getDaycareTimeRange(shift);
+              const timeMatch = time.match(/(\d{2}:\d{2})/);
+              if (timeMatch) {
+                displayStartTime = timeMatch[1];
+                displayEndTime = '';
+              } else {
+                displayStartTime = daycareRange.startTime;
+                displayEndTime = daycareRange.endTime;
+              }
+            } else {
+              const timeMatch = time.match(/(\d{2}:\d{2})/);
+              if (timeMatch) {
+                displayStartTime = timeMatch[1];
+                displayEndTime = '';
+              }
+            }
+          }
+
+          return (
+            <>
+              <h3 className={styles.startTime}>{displayStartTime}</h3>
+              {displayEndTime && <h3 className={styles.endTime}>{displayEndTime}</h3>}
+            </>
+          );
+        })()}
+      </div>
     </div>
   );
 };

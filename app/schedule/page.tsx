@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import styles from './schedule.module.css';
-import { schedules, getCurrentDay, type Day, type TimeSlot } from '../../lib/scheduleData';
+import { schedules, getCurrentDay, getSubjectInfo, type Day, type ClassPeriod } from '../../lib/scheduleData';
 import { getWeeklyWeather, type WeeklyWeather } from '../../lib/weatherService';
 import { getShiftInfo } from '../../lib/shiftDetection';
 import { downloadWeeklySchedulePDF } from '../../lib/pdfService';
@@ -17,7 +17,7 @@ import {
 } from '../../lib/weekNavigation';
 import { format, isSameDay } from 'date-fns';
 import { sr } from 'date-fns/locale';
-import SettingsDropdown from '../../components/SettingsDropdown';
+import ScheduleHeader from '../../components/ScheduleHeader';
 import EventCard from '../../components/EventCard';
 import EventModal, { EventDetails } from '../../components/EventModal';
 import { getEventDetails } from '../../lib/eventDetailsService';
@@ -37,65 +37,60 @@ const daycareActivities = {
 
 // Icon mapping for subjects and activities
 const getSubjectIcon = (subject: string): string => {
+  // For regular subjects, use the subject info
+  const subjectInfo = getSubjectInfo(subject);
+  if (subjectInfo.name === subject) {
+    return subjectInfo.icon;
+  }
+
+  // For daycare activities and other non-subject items
   const iconMap: Record<string, string> = {
-    // Core subjects
-    'Matematika': '🔢',
-    'Srpski jezik': '📝',
-    'Engleski jezik': '🇬🇧',
-
-    // Arts and culture
-    'Likovna kultura': '🎨',
-    'Muzička kultura': '🎵',
-
-    // Physical education
-    'Fizičko i zdravstveno vaspitanje (sala)': '🏃‍♂️',
-    'Fizičko i zdravstveno vaspitanje': '🏃‍♂️',
-
-    // Science and technology
-    'Svet oko nas': '🌍',
-    'Digitalni svet': '💻',
-
-    // Other subjects
-    'ČOS': '👥',
-    'Građansko vaspitanje / Verska nastava': '🤝',
-    'Dopunska nastava': '📚',
-
-    // Daycare activities
     'Početak rada': '🌅',
     'Rad na domaćim zadacima': '📖',
     'Ručak': '🍽️',
-
-    // Exam indicator
     'Exam': '📝',
   };
 
   return iconMap[subject] || '📋';
 };
 
-// Helper functions for schedule summary
+// Helper function to extract time from time string
 const extractTime = (timeString: string): string => {
-  // Extract time from formats like "1. čas (08:00)" or "Pretčas (13:10)"
+  // Extract time from formats like "1. čas (08:00)" or "Pretčas (13:10)" or just "08:00"
   const match = timeString.match(/\((\d{2}:\d{2})\)/);
   return match ? match[1] : timeString;
 };
 
-const getScheduleSummary = (schedule: TimeSlot[]) => {
-  if (schedule.length === 0) {
-    return { startTime: '', endTime: '', classCount: 0 };
-  }
+// Helper function to calculate time range for a section
+const calculateSectionTimeRange = (events: Array<ClassPeriod | {time: string}>): string => {
+  if (events.length === 0) return '';
 
-  const firstClass = schedule[0];
-  const lastClass = schedule[schedule.length - 1];
+  let times: string[] = [];
 
-  const startTime = extractTime(firstClass.time);
-  const endTime = extractTime(lastClass.time);
+  // Handle both new ClassPeriod format and legacy format
+  events.forEach(event => {
+    if ('startTime' in event && 'endTime' in event) {
+      // New ClassPeriod format
+      times.push(event.startTime, event.endTime);
+    } else if ('time' in event) {
+      // Legacy format
+      const time = extractTime(event.time);
+      if (time && time !== '—') {
+        times.push(time);
+      }
+    }
+  });
 
-  return {
-    startTime,
-    endTime,
-    classCount: schedule.length
-  };
+  if (times.length === 0) return '';
+
+  const sortedTimes = times.sort();
+  const startTime = sortedTimes[0];
+  const endTime = sortedTimes[sortedTimes.length - 1];
+
+  if (startTime === endTime) return startTime;
+  return `${startTime} - ${endTime}`;
 };
+
 
 export default function Schedule() {
   const [selectedWeek, setSelectedWeek] = useState<WeekInfo>(getCurrentWeekInfo());
@@ -191,52 +186,16 @@ export default function Schedule() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
-        <div className={styles.schoolInfo}>
-          <h1 className={styles.schoolName}>{school.name}</h1>
-          <p className={styles.className}>Razred {classInfo.name}</p>
-        </div>
-        <SettingsDropdown
-          showDaycare={showDaycare}
-          onToggleDaycare={setShowDaycare}
-          onDownloadPDF={handleDownloadPDF}
-          isGeneratingPDF={isGeneratingPDF}
-        />
-      </div>
-
-      <div className={styles.shiftIndicator}>
-        <div className={styles.currentShift}>
-          <span className={styles.weekInfo}>
-            {format(selectedWeek.startDate, 'MMMM', { locale: sr })} W{selectedWeek.week}
-            {selectedWeek.isCurrentWeek && ' (trenutna nedelja)'}
-          </span>
-        </div>
-        <div className={styles.weekNavigation}>
-          {!selectedWeek.isCurrentWeek && (
-            <button
-              onClick={handleGoToCurrentWeek}
-              className={styles.currentWeekButton}
-              aria-label="Idi na trenutnu nedelju"
-            >
-              📅 Danas
-            </button>
-          )}
-          <button
-            onClick={handlePreviousWeek}
-            className={styles.weekNavButton}
-            aria-label="Prethodna nedelja"
-          >
-            ←
-          </button>
-          <button
-            onClick={handleNextWeek}
-            className={styles.weekNavButton}
-            aria-label="Sledeća nedelja"
-          >
-            →
-          </button>
-        </div>
-      </div>
+      <ScheduleHeader
+        selectedWeek={selectedWeek}
+        showDaycare={showDaycare}
+        onToggleDaycare={setShowDaycare}
+        onDownloadPDF={handleDownloadPDF}
+        isGeneratingPDF={isGeneratingPDF}
+        onPreviousWeek={handlePreviousWeek}
+        onNextWeek={handleNextWeek}
+        onGoToCurrentWeek={handleGoToCurrentWeek}
+      />
 
 
       <nav className={styles.dayButtons}>
@@ -267,7 +226,12 @@ export default function Schedule() {
       {/* Exams section */}
       {weekExams.length > 0 && (
         <div className={styles.examsContainer}>
-          <div className={styles.sectionHeader}>Kontrolni zadaci</div>
+          <div className={styles.sectionHeader}>
+            <h3 className={styles.sectionTitle}>Kontrolni zadaci</h3>
+            <h3 className={styles.sectionTimeRange}>
+              {calculateSectionTimeRange(weekExams.map(exam => ({ time: exam.confirmedDate || `Nedelja ${exam.isoWeek}` })))}
+            </h3>
+          </div>
           <div className={styles.eventsList}>
             {weekExams.map((exam, index) => (
               <EventCard
@@ -284,69 +248,15 @@ export default function Schedule() {
         </div>
       )}
 
-      {/* Summary block for weekdays */}
-      {selectedDay !== 'Subota' && selectedDay !== 'Nedelja' && (
-        <div className={styles.summaryBlock}>
-          {(() => {
-            const daySchedule = schedules[shiftInfo.shift][selectedDay];
-            const summary = getScheduleSummary(daySchedule);
-
-            if (summary.classCount === 0) {
-              return (
-                <div className={styles.summaryContent}>
-                  <div className={`${styles.summaryItem} ${styles.summaryShift}`}>
-                    <span className={styles.summaryIcon}>🌅</span>
-                    <span>{shiftInfo.shiftName}</span>
-                  </div>
-                  <div className={styles.summaryItem}>
-                    <span className={styles.summaryIcon}>📅</span>
-                    <span>Nema nastave danas</span>
-                  </div>
-                  {currentWeather && (
-                    <div className={styles.summaryItem}>
-                      <span className={styles.summaryIcon}>{currentWeather.icon}</span>
-                      <span>Vreme: {currentWeather.high}°/{currentWeather.low}°</span>
-                    </div>
-                  )}
-                </div>
-              );
-            }
-
-            return (
-              <div className={styles.summaryContent}>
-                <div className={`${styles.summaryItem} ${styles.summaryShift}`}>
-                  <span className={styles.summaryIcon}>🌅</span>
-                  <span>{shiftInfo.shiftName}</span>
-                </div>
-                <div className={styles.summaryItem}>
-                  <span className={styles.summaryIcon}>🕐</span>
-                  <span>Nastava počinje u {summary.startTime}</span>
-                </div>
-                <div className={styles.summaryItem}>
-                  <span className={styles.summaryIcon}>🕕</span>
-                  <span>Deca se uzimaju u {summary.endTime}</span>
-                </div>
-                <div className={styles.summaryItem}>
-                  <span className={styles.summaryIcon}>📚</span>
-                  <span>{summary.classCount} {summary.classCount === 1 ? 'čas' : summary.classCount < 5 ? 'časa' : 'časova'}</span>
-                </div>
-                {currentWeather && (
-                  <div className={styles.summaryItem}>
-                    <span className={styles.summaryIcon}>{currentWeather.icon}</span>
-                    <span>Vreme: {currentWeather.high}°/{currentWeather.low}°</span>
-                  </div>
-                )}
-              </div>
-            );
-          })()}
-        </div>
-      )}
 
       <div className={styles.eventsContainer}>
         {selectedDay === 'Subota' || selectedDay === 'Nedelja' ? (
           /* Weekend display */
           <>
-            <div className={styles.sectionHeader}>Vikend</div>
+            <div className={styles.sectionHeader}>
+              <h3 className={styles.sectionTitle}>Vikend</h3>
+              <h3 className={styles.sectionTimeRange}></h3>
+            </div>
             <div className={styles.eventsList}>
               <EventCard
                 type="weekend"
@@ -363,7 +273,12 @@ export default function Schedule() {
             {/* Daycare activities first for afternoon shift */}
             {showDaycare && (
               <>
-                <div className={styles.sectionHeader}>Produženi boravak</div>
+                <div className={styles.sectionHeader}>
+                  <h3 className={styles.sectionTitle}>Produženi boravak</h3>
+                  <h3 className={styles.sectionTimeRange}>
+                    {calculateSectionTimeRange(daycareActivities[shiftInfo.shift])}
+                  </h3>
+                </div>
                 <div className={styles.eventsList}>
                   {daycareActivities[shiftInfo.shift].map((activity, index) => (
                     <EventCard
@@ -372,6 +287,7 @@ export default function Schedule() {
                       icon={getSubjectIcon(activity.activity)}
                       title={activity.activity}
                       time={activity.time}
+                      shift={shiftInfo.shift}
                       onClick={() => handleEventClick(activity.activity, activity.time)}
                     />
                   ))}
@@ -379,7 +295,12 @@ export default function Schedule() {
               </>
             )}
             {/* Classes second for afternoon shift */}
-            <div className={styles.sectionHeader}>Nastava</div>
+            <div className={styles.sectionHeader}>
+              <h3 className={styles.sectionTitle}>{shiftInfo.shiftName}</h3>
+              <h3 className={styles.sectionTimeRange}>
+                {calculateSectionTimeRange(schedules[shiftInfo.shift][selectedDay])}
+              </h3>
+            </div>
             <div className={styles.eventsList}>
               {schedules[shiftInfo.shift][selectedDay].map((lesson, index) => (
                 <EventCard
@@ -387,8 +308,13 @@ export default function Schedule() {
                   type="class"
                   icon={getSubjectIcon(lesson.subject)}
                   title={lesson.subject}
-                  time={lesson.time}
-                  onClick={() => handleEventClick(lesson.subject, lesson.time)}
+                  time={lesson.order}
+                  classType={lesson.order}
+                  startTime={lesson.startTime}
+                  endTime={lesson.endTime}
+                  color={getSubjectInfo(lesson.subject).color}
+                  shift={shiftInfo.shift}
+                  onClick={() => handleEventClick(lesson.subject, lesson.order)}
                 />
               ))}
             </div>
@@ -396,7 +322,12 @@ export default function Schedule() {
         ) : (
           <>
             {/* Classes first for morning shift */}
-            <div className={styles.sectionHeader}>Nastava</div>
+            <div className={styles.sectionHeader}>
+              <h3 className={styles.sectionTitle}>{shiftInfo.shiftName}</h3>
+              <h3 className={styles.sectionTimeRange}>
+                {calculateSectionTimeRange(schedules[shiftInfo.shift][selectedDay])}
+              </h3>
+            </div>
             <div className={styles.eventsList}>
               {schedules[shiftInfo.shift][selectedDay].map((lesson, index) => (
                 <EventCard
@@ -404,15 +335,25 @@ export default function Schedule() {
                   type="class"
                   icon={getSubjectIcon(lesson.subject)}
                   title={lesson.subject}
-                  time={lesson.time}
-                  onClick={() => handleEventClick(lesson.subject, lesson.time)}
+                  time={lesson.order}
+                  classType={lesson.order}
+                  startTime={lesson.startTime}
+                  endTime={lesson.endTime}
+                  color={getSubjectInfo(lesson.subject).color}
+                  shift={shiftInfo.shift}
+                  onClick={() => handleEventClick(lesson.subject, lesson.order)}
                 />
               ))}
             </div>
             {/* Daycare activities second for morning shift */}
             {showDaycare && (
               <>
-                <div className={styles.sectionHeader}>Produženi boravak</div>
+                <div className={styles.sectionHeader}>
+                  <h3 className={styles.sectionTitle}>Produženi boravak</h3>
+                  <h3 className={styles.sectionTimeRange}>
+                    {calculateSectionTimeRange(daycareActivities[shiftInfo.shift])}
+                  </h3>
+                </div>
                 <div className={styles.eventsList}>
                   {daycareActivities[shiftInfo.shift].map((activity, index) => (
                     <EventCard
@@ -421,6 +362,7 @@ export default function Schedule() {
                       icon={getSubjectIcon(activity.activity)}
                       title={activity.activity}
                       time={activity.time}
+                      shift={shiftInfo.shift}
                       onClick={() => handleEventClick(activity.activity, activity.time)}
                     />
                   ))}

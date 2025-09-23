@@ -2,69 +2,90 @@
 
 /* Base typography styles */
 body {
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-family-body);
   font-size: var(--font-size-base);
   line-height: var(--line-height-normal);
+  color: var(--color-text-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Headings */
-h1 {
-  font-size: var(--font-size-4xl);
+/* Display Classes - Using Merriweather Bold */
+.display1 {
+  font-family: var(--font-family-heading);
+  font-size: 24px;
+  line-height: 32px;
   font-weight: var(--font-weight-bold);
-  line-height: var(--line-height-tight);
   color: var(--color-text-primary);
-  margin-bottom: var(--spacing-lg);
+  text-transform: capitalize;
 }
 
+.display2 {
+  font-family: var(--font-family-heading);
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: var(--font-weight-bold);
+}
+
+/* Headings */
 h2 {
-  font-size: var(--font-size-3xl);
+  font-size: 16px;
+  line-height: 24px;
   font-weight: var(--font-weight-semibold);
-  line-height: var(--line-height-tight);
-  color: var(--color-text-primary);
-  margin-bottom: var(--spacing-md);
 }
 
 h3 {
-  font-size: var(--font-size-2xl);
+  font-size: 14px;
+  line-height: 16px;
   font-weight: var(--font-weight-semibold);
-  line-height: var(--line-height-tight);
-  color: var(--color-text-primary);
-  margin-bottom: var(--spacing-md);
-}
-
-h4 {
-  font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-medium);
-  line-height: var(--line-height-normal);
-  color: var(--color-text-primary);
-  margin-bottom: var(--spacing-sm);
 }
 
 /* Body text */
 p {
-  font-size: var(--font-size-base);
-  line-height: var(--line-height-normal);
-  color: var(--color-text-primary);
-  margin-bottom: var(--spacing-md);
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: var(--font-weight-normal);
+}
+
+/* Small paragraph text */
+.paragraph-small {
+  font-size: 14px;
+  line-height: 16px;
+  font-weight: var(--font-weight-normal);
+}
+
+/* Caption text */
+.caption-small {
+  font-size: 10px;
+  line-height: 16px;
+  font-weight: var(--font-weight-bold);
+}
+
+.caption-large {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: var(--font-weight-semibold);
 }
 
 /* Links */
 a {
-  color: var(--color-primary);
   text-decoration: none;
   transition: color var(--transition-fast);
 }
 
-a:hover {
-  color: var(--color-primary-hover);
-}
-
 /* Button typography */
 button {
-  font-family: inherit;
   font-size: var(--font-size-base);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-semibold);
   line-height: var(--line-height-normal);
 }
+
+/* Typography utility classes */
+.font-heading {
+  font-family: var(--font-family-heading);
+}
+
+.font-body {
+  font-family: var(--font-family-body);
+}
+
