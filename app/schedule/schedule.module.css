@@ -1,5 +1,5 @@
 .container {
-  max-width: 800px;
+  max-width: 580px;
   margin: 0 auto;
 }
 
@@ -158,11 +158,9 @@
   transform: translateY(0);
 }
 
-
 .dayButtons {
   display: flex;
-  justify-content: center;
-  gap: var(--spacing-xs);
+  justify-content: space-between;
   margin-bottom: var(--spacing-xl);
   flex-wrap: wrap;
 }
@@ -186,8 +184,8 @@
 }
 
 .dayName {
+  font-size: var(--font-size-caption-small);
   font-weight: var(--font-weight-medium);
-  font-size: var(--font-size-xs);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   color: var(--color-text-secondary);
@@ -199,37 +197,35 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
 }
 
 .dayDate {
-  font-family: var(--font-family-heading);
-  font-size: 16px;
-  line-height: 24px;
-  font-weight: var(--font-weight-bold);
+  /* Using h2 typography from global styles */
+  color: var(--color-text-primary);
   position: relative;
   z-index: 2;
 }
 
 /* Active state - circular background */
 .dayButton.active .dayDateWrapper {
-  background: var(--color-primary);
+  background: #8eecc4;
   border-radius: 50%;
 }
 
 .dayButton.active .dayDate {
-  color: white;
+  color: var(--color-text-primary);
 }
 
 .dayButton.active .dayName {
-  color: var(--color-primary);
+  color: var(--color-text-primary);
   font-weight: var(--font-weight-semibold);
 }
 
 /* Today indicator - dot below */
 .dayButton.today .dayDateWrapper::after {
-  content: '';
+  content: "";
   position: absolute;
   bottom: -6px;
   left: 50%;
@@ -243,8 +239,7 @@
 
 /* Today + Active state */
 .dayButton.today.active .dayDateWrapper {
-  background: var(--color-primary);
-  box-shadow: 0 0 0 2px var(--color-warning);
+  background: #8eecc4;
 }
 
 .dayButton.today.active .dayDateWrapper::after {
@@ -257,25 +252,24 @@
 }
 
 .dayButton.weekend .dayName {
-  color: var(--color-text-tertiary);
+  color: var(--color-text-secondary);
 }
 
 .dayButton.weekend .dayDate {
-  color: var(--color-text-secondary);
+  color: var(--color-text-primary);
 }
 
 .dayButton.weekend.active .dayDateWrapper {
-  background: var(--color-text-secondary);
+  background: #8eecc4;
 }
 
 .dayButton.weekend.active .dayDate {
-  color: white;
+  color: var(--color-text-primary);
 }
 
 .dayButton.weekend.active .dayName {
-  color: var(--color-text-secondary);
+  color: var(--color-text-primary);
 }
-
 
 .examsContainer {
   display: flex;
@@ -283,7 +277,11 @@
   gap: var(--spacing-sm);
   margin-bottom: var(--spacing-lg);
   padding: var(--spacing-md);
-  background: linear-gradient(135deg, var(--color-error-light), var(--color-background-muted));
+  background: linear-gradient(
+    135deg,
+    var(--color-error-light),
+    var(--color-background-muted)
+  );
   border-radius: var(--radius-lg);
   border: 2px solid var(--color-error);
   box-shadow: var(--shadow-md);
@@ -367,13 +365,11 @@
   }
 
   .dayDateWrapper {
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
   }
 
   .dayDate {
     font-size: var(--font-size-base);
   }
-
 }
-

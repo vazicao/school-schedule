@@ -60,7 +60,7 @@ const getSubjectIcon = (subject: string): string => {
 };
 
 // Helper function to extract time from time string
-const extractTime = (timeString: string): string => {
+const extractTime = (timeString?: string): string => {
   // Extract time from formats like "1. čas (08:00)" or "Pretčas (13:10)" or just "08:00"
   if (!timeString) return "";
   const match = timeString.match(/\((\d{2}:\d{2})\)/);
@@ -234,9 +234,9 @@ export default function Schedule() {
             >
               <span className={styles.dayName}>{day.charAt(0)}</span>
               <div className={styles.dayDateWrapper}>
-                <span className={styles.dayDate}>
+                <h2 className={styles.dayDate}>
                   {format(date, "d", { locale: sr })}
-                </span>
+                </h2>
               </div>
             </button>
           );
