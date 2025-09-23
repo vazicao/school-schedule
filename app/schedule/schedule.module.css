@@ -47,6 +47,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: var(--spacing-xl);
+  padding: 0 24px;
 }
 
 .currentShift {
@@ -163,6 +164,7 @@
   justify-content: space-between;
   margin-bottom: var(--spacing-xl);
   flex-wrap: wrap;
+  padding: 0 24px;
 }
 
 .dayButton {
@@ -170,13 +172,12 @@
   flex-direction: column;
   align-items: center;
   gap: var(--spacing-xs);
-  padding: var(--spacing-sm);
   background: transparent;
   border: none;
   border-radius: var(--radius-md);
   cursor: pointer;
   transition: all var(--transition-fast);
-  min-width: 50px;
+  width: 40px;
 }
 
 .dayButton:hover {
@@ -184,12 +185,8 @@
 }
 
 .dayName {
-  font-size: var(--font-size-caption-small);
-  font-weight: var(--font-weight-medium);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
   color: var(--color-text-secondary);
-  margin-bottom: 2px;
 }
 
 .dayDateWrapper {

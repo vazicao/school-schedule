@@ -232,7 +232,9 @@ export default function Schedule() {
               className={`${styles.dayButton} ${isSelected ? styles.active : ""} ${isToday ? styles.today : ""} ${isWeekend ? styles.weekend : ""}`}
               onClick={() => setSelectedDay(day)}
             >
-              <span className={styles.dayName}>{day.charAt(0)}</span>
+              <span className={`${styles.dayName} caption-small`}>
+                {day.charAt(0)}
+              </span>
               <div className={styles.dayDateWrapper}>
                 <h2 className={styles.dayDate}>
                   {format(date, "d", { locale: sr })}
