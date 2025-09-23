@@ -6,7 +6,6 @@ import { schedules, getCurrentDay, getSubjectInfo, type Day, type ClassPeriod } 
 import { getWeeklyWeather, type WeeklyWeather } from '../../lib/weatherService';
 import { getShiftInfo } from '../../lib/shiftDetection';
 import { downloadWeeklySchedulePDF } from '../../lib/pdfService';
-import { getCurrentClass } from '../../lib/schoolConfig';
 import {
   getCurrentWeekInfo,
   getNextWeek,

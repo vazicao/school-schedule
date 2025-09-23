@@ -145,7 +145,7 @@ const WeeklySchedulePDF: React.FC<WeeklySchedulePDFProps> = ({
   weather,
   weekDates,
 }) => {
-  const days: Day[] = ['Ponedeljak', 'Utorak', 'Sreda', 'Četvrtak', 'Petak'];
+  const days: Day[] = ['Ponedeljak', 'Utorak', 'Sreda', 'Четврtak', 'Petak'];
   const shiftName = shift === 'morning' ? 'Jutarnja smena' : 'Popodnevna smena';
 
   // Get school and class info
@@ -154,9 +154,9 @@ const WeeklySchedulePDF: React.FC<WeeklySchedulePDFProps> = ({
 
   const getEventsForDay = (day: Day, dayShift: ShiftType) => {
     const classEvents = schedules[dayShift][day].map(lesson => ({
-      time: lesson.time,
+      time: `${lesson.startTime} - ${lesson.endTime}`,
       title: lesson.subject,
-      type: 'Nastava',
+      type: lesson.order,
       isClass: true,
     }));
 
