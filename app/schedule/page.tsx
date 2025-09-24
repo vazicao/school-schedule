@@ -27,36 +27,70 @@ import EventCard from "../../components/EventCard";
 import EventModal, { EventDetails } from "../../components/EventModal";
 import { getEventDetails } from "../../lib/eventDetailsService";
 import { getExamsForWeek, type Exam } from "../../lib/examData";
+import SvgIcon from "../../components/SvgIcon";
 
 const daycareActivities = {
   morning: [
-    { time: "07:00", activity: "Početak rada" },
-    { time: "08:30-10:30", activity: "Rad na domaćim zadacima" },
-    { time: "12:00", activity: "Ručak" },
+    {
+      time: "12:30-13:00",
+      activity: "Ručak",
+      startTime: "12:30",
+      endTime: "13:00",
+    },
+    {
+      time: "13:00-14:30",
+      activity: "Domaći",
+      startTime: "13:00",
+      endTime: "14:30",
+    },
+    {
+      time: "14:30-17:30",
+      activity: "Slobodno vreme",
+      startTime: "14:30",
+      endTime: "17:30",
+    },
   ],
   afternoon: [
-    { time: "12:30", activity: "Ručak" },
-    { time: "13:00-14:30", activity: "Rad na domaćim zadacima" },
+    {
+      time: "07:00-08:30",
+      activity: "Prijem dece",
+      startTime: "07:00",
+      endTime: "08:30",
+    },
+    {
+      time: "08:30-10:30",
+      activity: "Domaći zadatak",
+      startTime: "08:30",
+      endTime: "10:30",
+    },
+    {
+      time: "12:30-13:00",
+      activity: "Ručak",
+      startTime: "12:30",
+      endTime: "13:00",
+    },
+    {
+      time: "12:30-13:10",
+      activity: "Slobodno vreme",
+      startTime: "12:30",
+      endTime: "13:10",
+    },
   ],
 };
 
 // Icon mapping for subjects and activities
-const getSubjectIcon = (subject: string): string => {
-  // For regular subjects, use the subject info
+const getSubjectIcon = (subject: string): React.ReactNode => {
+  // For all subjects and daycare activities, use the subject info
   const subjectInfo = getSubjectInfo(subject);
-  if (subjectInfo.name === subject) {
-    return subjectInfo.icon;
+
+  // Check if it's an SVG icon
+  if (subjectInfo.icon.startsWith("svg:")) {
+    const iconId = subjectInfo.icon.replace("svg:", "");
+    return <SvgIcon iconId={iconId} size={24} />;
   }
 
-  // For daycare activities and other non-subject items
-  const iconMap: Record<string, string> = {
-    "Početak rada": "🌅",
-    "Rad na domaćim zadacima": "📖",
-    Ručak: "🍽️",
-    Exam: "📝",
-  };
-
-  return iconMap[subject] || "📋";
+  // Return emoji as string
+  return subjectInfo.icon;
 };
 
 // Helper function to extract time from time string
@@ -320,6 +354,9 @@ export default function Schedule() {
                       icon={getSubjectIcon(activity.activity)}
                       title={activity.activity}
                       time={activity.time}
+                      startTime={activity.startTime}
+                      endTime={activity.endTime}
+                      color={getSubjectInfo(activity.activity).color}
                       shift={shiftInfo.shift}
                       onClick={() =>
                         handleEventClick(activity.activity, activity.time)
@@ -403,6 +440,9 @@ export default function Schedule() {
                       icon={getSubjectIcon(activity.activity)}
                       title={activity.activity}
                       time={activity.time}
+                      startTime={activity.startTime}
+                      endTime={activity.endTime}
+                      color={getSubjectInfo(activity.activity).color}
                       shift={shiftInfo.shift}
                       onClick={() =>
                         handleEventClick(activity.activity, activity.time)

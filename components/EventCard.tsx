@@ -8,7 +8,7 @@ export type EventType = "class" | "daycare" | "weekend" | "exam";
 
 export interface EventCardProps {
   type: EventType;
-  icon: string;
+  icon: React.ReactNode;
   title: string;
   time: string;
   subtitle?: string;

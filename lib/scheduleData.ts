@@ -43,9 +43,15 @@ export const subjects: Record<string, Subject> = {
   },
   "Dopunska nastava": {
     name: "Dopunska nastava",
-    icon: "📚",
-    color: "#007AFF",
+    icon: "🏋",
+    color: "#F0E5FF",
   },
+  // Daycare activities
+  "Prijem dece": { name: "Prijem dece", icon: "👋", color: "#E3F2FD" },
+  "Domaći zadatak": { name: "Domaći zadatak", icon: "📝", color: "#FBCCFF" },
+  Ručak: { name: "Ručak", icon: "🍲", color: "#FFE9D2" },
+  Domaći: { name: "Domaći", icon: "📝", color: "#FBCCFF" },
+  "Slobodno vreme": { name: "Slobodno vreme", icon: "🛝", color: "#D8E1FD" },
 };
 
 // Class period with complete time information

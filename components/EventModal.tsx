@@ -1,12 +1,14 @@
-'use client';
+"use client";
 
-import { useRef, useEffect } from 'react';
-import styles from './EventModal.module.css';
-import { EventType } from './EventCard';
+import { useRef, useEffect } from "react";
+import styles from "./EventModal.module.css";
+import { EventType } from "./EventCard";
+import { getSubjectInfo } from "../lib/scheduleData";
+import SvgIcon from "./SvgIcon";
 
 export interface EventDetails {
   type: EventType;
-  icon: string;
+  icon: React.ReactNode;
   title: string;
   time: string;
   classType?: string;
@@ -38,19 +40,19 @@ const EventModal: React.FC<EventModalProps> = ({
   // Close modal on escape key
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
+      if (event.key === "Escape") {
         onClose();
       }
     };
 
     if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'hidden'; // Prevent background scrolling
+      document.addEventListener("keydown", handleEscape);
+      document.body.style.overflow = "hidden"; // Prevent background scrolling
     }
 
     return () => {
-      document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'unset';
+      document.removeEventListener("keydown", handleEscape);
+      document.body.style.overflow = "unset";
     };
   }, [isOpen, onClose]);
 
@@ -63,17 +65,29 @@ const EventModal: React.FC<EventModalProps> = ({
 
   if (!isOpen || !eventDetails) return null;
 
-  const { icon, title, time, classType, subtitle, books, equipment, allExams } = eventDetails;
+  const { title, time, classType, subtitle, books, equipment, allExams } =
+    eventDetails;
+  const subjectInfo = getSubjectInfo(title);
 
   return (
     <div className={styles.backdrop} onClick={handleBackdropClick}>
-      <div className={styles.modal} ref={modalRef} role="dialog" aria-modal="true">
+      <div
+        className={styles.modal}
+        ref={modalRef}
+        role="dialog"
+        aria-modal="true"
+      >
         <div className={styles.header}>
           <div className={styles.eventInfo}>
-            <div className={styles.eventIcon}>{icon}</div>
+            <div
+              className={styles.iconContainer}
+              style={{ backgroundColor: subjectInfo.color }}
+            >
+              <div className={styles.eventIcon}>{subjectInfo.icon}</div>
+            </div>
             <div className={styles.eventDetails}>
               {classType && <div className={styles.classType}>{classType}</div>}
-              <h2 className={styles.eventTitle}>{title}</h2>
+              <h1 className="display1">{title}</h1>
               {subtitle && <div className={styles.subtitle}>{subtitle}</div>}
             </div>
           </div>
@@ -91,10 +105,15 @@ const EventModal: React.FC<EventModalProps> = ({
           {/* Books Section */}
           {books && books.length > 0 && (
             <div className={styles.section}>
-              <h3 className={styles.sectionTitle}>📚 Potrebne knjige</h3>
+              <div className={styles.sectionHeadline}>
+                <SvgIcon iconId="notebook" size={24} />
+                <h3>Udžbenici</h3>
+              </div>
               <ul className={styles.list}>
                 {books.map((book, index) => (
-                  <li key={index} className={styles.listItem}>{book}</li>
+                  <li key={index} className={styles.listItem}>
+                    {book}
+                  </li>
                 ))}
               </ul>
             </div>
@@ -103,10 +122,15 @@ const EventModal: React.FC<EventModalProps> = ({
           {/* Equipment Section */}
           {equipment && equipment.length > 0 && (
             <div className={styles.section}>
-              <h3 className={styles.sectionTitle}>🎒 Potrebna oprema</h3>
+              <div className={styles.sectionHeadline}>
+                <SvgIcon iconId="briefcase" size={24} />
+                <h3>Pribor</h3>
+              </div>
               <ul className={styles.list}>
                 {equipment.map((item, index) => (
-                  <li key={index} className={styles.listItem}>{item}</li>
+                  <li key={index} className={styles.listItem}>
+                    {item}
+                  </li>
                 ))}
               </ul>
             </div>
@@ -115,17 +139,22 @@ const EventModal: React.FC<EventModalProps> = ({
           {/* Exams Section */}
           {allExams && allExams.length > 0 && (
             <div className={styles.section}>
-              <h3 className={styles.sectionTitle}>📝 Pismeni zadaci</h3>
+              <div className={styles.sectionHeadline}>
+                <SvgIcon iconId="brain" size={24} />
+                <h3>Pismeni zadaci</h3>
+              </div>
               <div className={styles.examsList}>
                 {allExams.map((exam, index) => (
                   <div
                     key={index}
-                    className={`${styles.examItem} ${exam.isPast ? styles.pastExam : ''} ${exam.isUpcoming ? styles.upcomingExam : ''}`}
+                    className={`${styles.examItem} ${exam.isPast ? styles.pastExam : ""} ${exam.isUpcoming ? styles.upcomingExam : ""}`}
                   >
                     <div className={styles.examDate}>{exam.date}</div>
                     <div className={styles.examDetails}>
                       <div className={styles.examType}>{exam.type}</div>
-                      <div className={styles.examDescription}>{exam.description}</div>
+                      <div className={styles.examDescription}>
+                        {exam.description}
+                      </div>
                     </div>
                   </div>
                 ))}
