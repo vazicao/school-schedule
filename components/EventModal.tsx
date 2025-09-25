@@ -19,6 +19,7 @@ export interface EventDetails {
     date: string;
     type: string;
     description: string;
+    weekInfo: string;
     isPast?: boolean;
     isUpcoming?: boolean;
   }[];
@@ -110,6 +111,31 @@ const EventModal: React.FC<EventModalProps> = ({
         </div>
 
         <div className={styles.content}>
+          {/* Exams Section - moved to first position */}
+          {allExams && allExams.length > 0 && (
+            <div className={styles.section}>
+              <div className={styles.sectionHeadline}>
+                <SvgIcon iconId="brain" size={24} />
+                <h3>Pismeni zadaci</h3>
+              </div>
+              <ul className={styles.examsList}>
+                {allExams.map((exam, index) => (
+                  <li key={index} className={styles.examItem}>
+                    <div className={styles.examContent}>
+                      <p className="paragraph-small">{exam.description}</p>
+                      <p className="paragraph-small text-secondary">
+                        {exam.weekInfo}
+                      </p>
+                    </div>
+                    <div
+                      className={`${styles.examStatus} ${exam.isPast ? styles.statusPassed : exam.isUpcoming ? styles.statusCurrent : styles.statusPending}`}
+                    ></div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           {/* Books Section */}
           {books && books.length > 0 && (
             <div className={styles.section}>
@@ -120,7 +146,7 @@ const EventModal: React.FC<EventModalProps> = ({
               <ul className={styles.list}>
                 {books.map((book, index) => (
                   <li key={index} className={styles.listItem}>
-                    {book}
+                    <p className="paragraph-small">{book}</p>
                   </li>
                 ))}
               </ul>
@@ -137,42 +163,10 @@ const EventModal: React.FC<EventModalProps> = ({
               <ul className={styles.list}>
                 {equipment.map((item, index) => (
                   <li key={index} className={styles.listItem}>
-                    {item}
+                    <p className="paragraph-small">{item}</p>
                   </li>
                 ))}
               </ul>
-            </div>
-          )}
-
-          {/* Exams Section */}
-          {allExams && allExams.length > 0 && (
-            <div className={styles.section}>
-              <div className={styles.sectionHeadline}>
-                <SvgIcon iconId="brain" size={24} />
-                <h3>Pismeni zadaci</h3>
-              </div>
-              <div className={styles.examsList}>
-                {allExams.map((exam, index) => (
-                  <div
-                    key={index}
-                    className={`${styles.examItem} ${exam.isPast ? styles.pastExam : ""} ${exam.isUpcoming ? styles.upcomingExam : ""}`}
-                  >
-                    <p className={`${styles.examDate} caption-small`}>
-                      {exam.date}
-                    </p>
-                    <div className={styles.examDetails}>
-                      <h4 className={`${styles.examType} caption-large`}>
-                        {exam.type}
-                      </h4>
-                      <p
-                        className={`${styles.examDescription} paragraph-small`}
-                      >
-                        {exam.description}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
             </div>
           )}
         </div>

@@ -27,6 +27,7 @@ import EventModal, { EventDetails } from "../../components/EventModal";
 import { getEventDetails } from "../../lib/eventDetailsService";
 import { getExamsForWeek, type Exam } from "../../lib/examData";
 import SvgIcon from "../../components/SvgIcon";
+import ExamSummary from "../../components/ExamSummary";
 
 const daycareActivities = {
   morning: [
@@ -258,39 +259,7 @@ export default function Schedule() {
       </nav>
 
       {/* Exams section */}
-      {weekExams.length > 0 && (
-        <div className={styles.examsContainer}>
-          <div className={styles.sectionHeader}>
-            <h3 className={styles.sectionTitle}>Kontrolni zadaci</h3>
-            <h3 className={styles.sectionTimeRange}>
-              {calculateSectionTimeRange(
-                weekExams.map((exam) => ({
-                  time: exam.confirmedDate || `Nedelja ${exam.isoWeek}`,
-                })),
-              )}
-            </h3>
-          </div>
-          <div className={styles.eventsList}>
-            {weekExams.map((exam, index) => (
-              <EventCard
-                key={`exam-${index}`}
-                type="exam"
-                icon="📝"
-                title={exam.subject}
-                time={exam.confirmedDate || `Nedelja ${exam.isoWeek}`}
-                subtitle={exam.topic}
-                onClick={() =>
-                  handleEventClick(
-                    exam.subject,
-                    exam.confirmedDate || `Nedelja ${exam.isoWeek}`,
-                    "exam",
-                  )
-                }
-              />
-            ))}
-          </div>
-        </div>
-      )}
+      {weekExams.length > 0 && <ExamSummary exams={weekExams} />}
 
       <div className={styles.eventsContainer}>
         {selectedDay === "Subota" || selectedDay === "Nedelja" ? (

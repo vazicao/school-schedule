@@ -17,6 +17,7 @@ const getAllExamsForSubject = (
   date: string;
   type: string;
   description: string;
+  weekInfo: string;
   isPast?: boolean;
   isUpcoming?: boolean;
 }> => {
@@ -54,6 +55,7 @@ const getAllExamsForSubject = (
         date: formatExamDate(exam),
         type: "Kontrolni zadatak",
         description: exam.topic || "Tema će biti najavljena",
+        weekInfo: `Недеља ${exam.isoWeek} (${format(parseISO(exam.weekStart), "d.", { locale: sr })} – ${format(parseISO(exam.weekEnd), "d. MMMM", { locale: sr })})`,
         isPast,
         isUpcoming,
       };
