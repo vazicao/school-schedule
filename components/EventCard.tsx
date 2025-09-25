@@ -107,10 +107,10 @@ const EventCard: React.FC<EventCardProps> = ({
 
       <div className={styles.eventContent}>
         {displayClassType && (
-          <h3 className={styles.classType}>{displayClassType}</h3>
+          <h3 className="text-secondary">{displayClassType}</h3>
         )}
-        <h2 className={styles.eventTitle}>{title}</h2>
-        {subtitle && <div className={styles.eventSubtitle}>{subtitle}</div>}
+        <h2>{title}</h2>
+        {subtitle && <p className="caption-small">{subtitle}</p>}
       </div>
 
       <div className={styles.timeContainer}>
@@ -148,9 +148,9 @@ const EventCard: React.FC<EventCardProps> = ({
 
           return (
             <>
-              <h3 className={styles.startTime}>{displayStartTime}</h3>
+              <h3 className="text-secondary">{displayStartTime}</h3>
               {displayEndTime && (
-                <h3 className={styles.endTime}>{displayEndTime}</h3>
+                <h3 className="text-secondary">{displayEndTime}</h3>
               )}
             </>
           );

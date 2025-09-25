@@ -5,14 +5,14 @@
   --color-primary-hover: #0056b3;
   --color-primary-light: #f0f8ff;
 
-  --color-text-primary: #002E22;
-  --color-text-secondary: #76847E;
-  --color-text-light: #FCFBF9;
+  --color-text-primary: #002e22;
+  --color-text-secondary: #76847e;
+  --color-text-light: #fcfbf9;
 
-  --color-surface-primary: #FCFBF9;
-  --color-surface-secondary: #F8F4F0;
+  --color-surface-primary: #fcfbf9;
+  --color-surface-secondary: #f8f4f0;
 
-  --color-border: #F0EDE9;
+  --color-border: #f0ede9;
 
   --color-success: #28a745;
   --color-warning: #ffc107;
@@ -41,29 +41,4 @@
   --transition-fast: 0.15s ease;
   --transition-normal: 0.2s ease;
   --transition-slow: 0.3s ease;
-
-  /* Typography scale */
-  --font-size-xs: 0.75rem;   /* 12px */
-  --font-size-sm: 0.875rem;  /* 14px */
-  --font-size-base: 1rem;    /* 16px */
-  --font-size-lg: 1.125rem;  /* 18px */
-  --font-size-xl: 1.25rem;   /* 20px */
-  --font-size-2xl: 1.5rem;   /* 24px */
-  --font-size-3xl: 1.875rem; /* 30px */
-  --font-size-4xl: 2.25rem;  /* 36px */
-
-  /* Line heights */
-  --line-height-tight: 1.25;
-  --line-height-normal: 1.5;
-  --line-height-relaxed: 1.75;
-
-  /* Font weights */
-  --font-weight-normal: 400;
-  --font-weight-medium: 500;
-  --font-weight-semibold: 600;
-  --font-weight-bold: 700;
-
-  /* Font families */
-  --font-family-heading: "Merriweather", "Times New Roman", serif;
-  --font-family-body: "Open Sans", "Helvetica Neue", Arial, sans-serif;
 }

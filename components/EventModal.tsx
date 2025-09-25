@@ -86,12 +86,20 @@ const EventModal: React.FC<EventModalProps> = ({
               <div className={styles.eventIcon}>{subjectInfo.icon}</div>
             </div>
             <div className={styles.eventDetails}>
-              {classType && <div className={styles.classType}>{classType}</div>}
+              {classType && (
+                <p className={`${styles.classType} caption-large`}>
+                  {classType}
+                </p>
+              )}
               <h1 className="display1">{title}</h1>
-              {subtitle && <div className={styles.subtitle}>{subtitle}</div>}
+              {subtitle && (
+                <p className={`${styles.subtitle} paragraph-small`}>
+                  {subtitle}
+                </p>
+              )}
             </div>
           </div>
-          <div className={styles.timeDisplay}>{time}</div>
+          <p className={`${styles.timeDisplay} caption-large`}>{time}</p>
           <button
             className={styles.closeButton}
             onClick={onClose}
@@ -149,12 +157,18 @@ const EventModal: React.FC<EventModalProps> = ({
                     key={index}
                     className={`${styles.examItem} ${exam.isPast ? styles.pastExam : ""} ${exam.isUpcoming ? styles.upcomingExam : ""}`}
                   >
-                    <div className={styles.examDate}>{exam.date}</div>
+                    <p className={`${styles.examDate} caption-small`}>
+                      {exam.date}
+                    </p>
                     <div className={styles.examDetails}>
-                      <div className={styles.examType}>{exam.type}</div>
-                      <div className={styles.examDescription}>
+                      <h4 className={`${styles.examType} caption-large`}>
+                        {exam.type}
+                      </h4>
+                      <p
+                        className={`${styles.examDescription} paragraph-small`}
+                      >
                         {exam.description}
-                      </div>
+                      </p>
                     </div>
                   </div>
                 ))}

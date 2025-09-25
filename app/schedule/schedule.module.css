@@ -17,12 +17,6 @@
   text-align: left;
 }
 
-.schoolName {
-  /* Uses h2 typography from global styles */
-  color: var(--color-text-primary);
-  margin-bottom: var(--spacing-xs);
-}
-
 .classContainer {
   display: flex;
   align-items: center;
@@ -59,14 +53,9 @@
 .currentShift h3 {
   margin-bottom: 0;
   color: var(--color-primary);
-  font-size: var(--font-size-xl);
-  font-weight: var(--font-weight-bold);
-}
-
-.weekInfo {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
-  font-weight: var(--font-weight-medium);
+  font-size: 20px;
+  line-height: 24px;
+  font-weight: 700;
 }
 
 .pdfButton {

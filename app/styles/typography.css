@@ -2,9 +2,9 @@
 
 /* Base typography styles */
 body {
-  font-family: var(--font-family-body);
-  font-size: var(--font-size-base);
-  line-height: var(--line-height-normal);
+  font-family: "Open Sans", "Helvetica Neue", Arial, sans-serif;
+  font-size: 16px;
+  line-height: 24px;
   color: var(--color-text-primary);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -12,20 +12,19 @@ body {
 
 /* Display Classes - Using Merriweather Variable Font */
 .display1 {
-  font-family: var(--font-family-heading);
+  font-family: "Merriweather", "Times New Roman", serif;
   font-size: 24px;
   line-height: 32px;
-  font-weight: var(--font-weight-bold);
+  font-weight: 700;
   font-optical-sizing: auto;
-  color: var(--color-text-primary);
   text-transform: capitalize;
 }
 
 .display2 {
-  font-family: var(--font-family-heading);
+  font-family: "Merriweather", "Times New Roman", serif;
   font-size: 16px;
   line-height: 24px;
-  font-weight: var(--font-weight-bold);
+  font-weight: 700;
   font-optical-sizing: auto;
 }
 
@@ -33,61 +32,59 @@ body {
 h2 {
   font-size: 16px;
   line-height: 24px;
-  font-weight: var(--font-weight-semibold);
+  font-weight: 600;
 }
 
 h3 {
   font-size: 14px;
   line-height: 16px;
-  font-weight: var(--font-weight-semibold);
+  font-weight: 600;
 }
 
-/* Body text */
-p {
-  font-size: 16px;
-  line-height: 24px;
-  font-weight: var(--font-weight-normal);
+h4 {
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
 }
+
+/* Body text - inherits from body, no need to redeclare */
+/* p inherits font-size, line-height, and font-weight from body */
 
 /* Small paragraph text */
 .paragraph-small {
   font-size: 14px;
   line-height: 16px;
-  font-weight: var(--font-weight-normal);
+  font-weight: 400;
 }
 
 /* Caption text */
 .caption-small {
   font-size: 10px;
   line-height: 16px;
-  font-weight: var(--font-weight-bold);
+  font-weight: 700;
 }
 
 .caption-large {
   font-size: 12px;
   line-height: 16px;
-  font-weight: var(--font-weight-semibold);
+  font-weight: 600;
 }
 
 /* Links */
 a {
   text-decoration: none;
-  transition: color var(--transition-fast);
+  transition: color 0.15s ease;
 }
 
-/* Button typography */
-button {
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-semibold);
-  line-height: var(--line-height-normal);
+/* Utility Color Classes */
+.text-primary {
+  color: var(--color-text-primary);
 }
 
-/* Typography utility classes */
-.font-heading {
-  font-family: var(--font-family-heading);
-  font-optical-sizing: auto;
+.text-secondary {
+  color: var(--color-text-secondary);
 }
 
-.font-body {
-  font-family: var(--font-family-body);
+.text-light {
+  color: var(--color-text-light);
 }

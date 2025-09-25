@@ -34,20 +34,6 @@
   flex-direction: column;
 }
 
-.classType {
-  /* Using h3 typography from global styles */
-  color: var(--color-text-secondary);
-}
-
-.eventTitle {
-  /* Using h2 typography from global styles */
-}
-
-.eventSubtitle {
-  font-size: var(--font-size-xs);
-  font-style: italic;
-}
-
 /* Time container - vertically stacked on the right */
 .timeContainer {
   display: flex;
@@ -55,12 +41,6 @@
   align-items: flex-end;
   gap: 2px;
   flex-shrink: 0;
-}
-
-.startTime,
-.endTime {
-  /* Using h3 typography from global styles */
-  color: var(--color-text-secondary);
 }
 
 /* Event type classes (no styling) */

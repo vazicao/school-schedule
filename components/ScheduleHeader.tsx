@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { format } from 'date-fns';
-import { sr } from 'date-fns/locale';
-import styles from '../app/schedule/schedule.module.css';
-import SettingsDropdown from './SettingsDropdown';
-import { getCurrentClass } from '../lib/schoolConfig';
-import { type WeekInfo } from '../lib/weekNavigation';
+import { format } from "date-fns";
+import { sr } from "date-fns/locale";
+import styles from "../app/schedule/schedule.module.css";
+import SettingsDropdown from "./SettingsDropdown";
+import { getCurrentClass } from "../lib/schoolConfig";
+import { type WeekInfo } from "../lib/weekNavigation";
 
 interface ScheduleHeaderProps {
   selectedWeek: WeekInfo;
@@ -33,14 +33,10 @@ export default function ScheduleHeader({
   return (
     <>
       <div className={styles.header}>
-        <div className={styles.classContainer}>
-          {classInfo.name}
-        </div>
+        <div className={styles.classContainer}>{classInfo.name}</div>
         <div className={styles.schoolInfo}>
-          <h2 className={styles.schoolName}>Јелена Ћетковић</h2>
-          <div className="caption-large" style={{ color: 'var(--color-text-secondary)' }}>
-            Врањска 26, Београд
-          </div>
+          <h2>Јелена Ћетковић</h2>
+          <p className="caption-large text-secondary">Врањска 26, Београд</p>
         </div>
         <SettingsDropdown
           showDaycare={showDaycare}
@@ -52,10 +48,13 @@ export default function ScheduleHeader({
 
       <div className={styles.shiftIndicator}>
         <div className={styles.currentShift}>
-          <span className={styles.weekInfo}>
-            <span className="display1">{format(selectedWeek.startDate, 'MMMM', { locale: sr })}</span> W{selectedWeek.week}
-            {selectedWeek.isCurrentWeek && ' (trenutna nedelja)'}
-          </span>
+          <h1 className="display1">
+            {format(selectedWeek.startDate, "MMMM", { locale: sr })}
+          </h1>
+          <p className="paragraph-small text-secondary">
+            W{selectedWeek.week}
+            {selectedWeek.isCurrentWeek && " (trenutna nedelja)"}
+          </p>
         </div>
         <div className={styles.weekNavigation}>
           {!selectedWeek.isCurrentWeek && (

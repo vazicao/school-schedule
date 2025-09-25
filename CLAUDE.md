@@ -48,10 +48,30 @@ The application automatically alternates between morning and afternoon shifts ba
 
 ### CSS Architecture
 
-- Design tokens in `/app/styles/tokens.css` define colors, spacing, and variables
-- Typography and button styles are modularized
+- Design tokens in `/app/styles/tokens.css` define colors, spacing, and variables (excludes typography)
+- Typography rules are centralized in `/app/styles/typography.css`
 - Components use CSS Modules for scoped styling
 - Fonts: Merriweather (serif) and Open Sans (sans-serif) loaded from Google Fonts
+
+### Typography Principles
+
+- Always use semantic HTML tags (`h1–h6`, `p`, `a`) for text
+- Never put text directly inside a `div`. Inline `span` is acceptable in specific cases
+- Classes are only for **variants**, not for normal text:
+  - **Display classes (`.display1`, `.display2`) must ALWAYS be applied to `<h1>` tags**
+  - Example: `<h1 class="display1">`, `<h1 class="display2">` (different display sizes)
+  - Example: `p.paragraph-small` (smaller body variant)
+  - Available classes: `.display1`, `.display2`, `.caption-small`, `.caption-large`, `.paragraph-small`
+- Base styles (font family, size, line height, color, antialiasing) belong on the `body`
+- **Browser defaults override inheritance**: Elements like `h1-h6`, `button`, etc. have default styles that prevent inheritance
+- **Be explicit with typography**: Always declare font-size and line-height explicitly on elements and classes, even if they match body values
+- **Rationale**: Explicit declarations are more predictable and maintainable than relying on inheritance
+- Use color tokens only on `body` (`--color-text-primary`), other elements inherit color properly
+- All line heights are defined in px for consistency
+- Responsive typography: Only create responsive typography when explicitly instructed
+- Do not use design tokens for typography in this project
+- Keep all typography rules in `typography.css` and import that file into the global CSS file
+- Button typography rules are in `buttons.css` alongside other button styles
 
 ### Serbian Localization
 
