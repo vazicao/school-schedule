@@ -9,7 +9,6 @@ import {
   type Day,
   type ClassPeriod,
 } from "../../lib/scheduleData";
-import { getWeeklyWeather, type WeeklyWeather } from "../../lib/weatherService";
 import { getShiftInfo } from "../../lib/shiftDetection";
 import { downloadWeeklySchedulePDF } from "../../lib/pdfService";
 import {
@@ -137,7 +136,6 @@ export default function Schedule() {
   const [selectedWeek, setSelectedWeek] =
     useState<WeekInfo>(getCurrentWeekInfo());
   const [selectedDay, setSelectedDay] = useState<Day>(getCurrentDay());
-  const [weather, setWeather] = useState<WeeklyWeather>({});
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [showDaycare, setShowDaycare] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
@@ -161,25 +159,6 @@ export default function Schedule() {
   // Get dates for the selected week (including weekends)
   const weekDates = getWeekDates(selectedWeek.year, selectedWeek.week, true);
   const today = new Date();
-
-  // Fetch weather data when selected week changes
-  useEffect(() => {
-    const currentWeekDates = getWeekDates(
-      selectedWeek.year,
-      selectedWeek.week,
-      true,
-    );
-    const fetchWeather = async () => {
-      try {
-        const weatherData = await getWeeklyWeather(currentWeekDates);
-        setWeather(weatherData);
-      } catch (error) {
-        console.error("Failed to fetch weather:", error);
-      }
-    };
-
-    fetchWeather();
-  }, [selectedWeek.week, selectedWeek.year]);
 
   // Fetch exams for the selected week
   useEffect(() => {
@@ -229,7 +208,6 @@ export default function Schedule() {
         shiftInfo.shift,
         selectedWeek.week,
         selectedWeek.year,
-        weather,
         weekDates,
       );
     } catch (error) {

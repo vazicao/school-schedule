@@ -1,7 +1,6 @@
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 import { schedules, type Day } from "../lib/scheduleData";
 import { type ShiftType } from "../lib/shiftDetection";
-import { type WeeklyWeather } from "../lib/weatherService";
 import { getCurrentSchool, getCurrentClass } from "../lib/schoolConfig";
 import { format } from "date-fns";
 import { sr } from "date-fns/locale";
@@ -72,11 +71,6 @@ const styles = StyleSheet.create({
     color: "#666666",
     marginBottom: 4,
   },
-  weather: {
-    fontSize: 10,
-    textAlign: "center",
-    color: "#666666",
-  },
   eventsContainer: {
     padding: 4,
   },
@@ -122,7 +116,6 @@ interface WeeklySchedulePDFProps {
   shift: ShiftType;
   week: number;
   year: number;
-  weather: WeeklyWeather;
   weekDates: Date[];
 }
 
@@ -142,7 +135,6 @@ const WeeklySchedulePDF: React.FC<WeeklySchedulePDFProps> = ({
   shift,
   week,
   year,
-  weather,
   weekDates,
 }) => {
   const days: Day[] = ["Ponedeljak", "Utorak", "Sreda", "Četvrtak", "Petak"];
@@ -191,7 +183,6 @@ const WeeklySchedulePDF: React.FC<WeeklySchedulePDFProps> = ({
         <View style={styles.weekContainer}>
           {days.map((day, index) => {
             const date = weekDates[index];
-            const dayWeather = weather[day];
             const events = getEventsForDay(day, shift);
 
             return (
@@ -201,11 +192,6 @@ const WeeklySchedulePDF: React.FC<WeeklySchedulePDFProps> = ({
                   <Text style={styles.dayDate}>
                     {format(date, "d.M.", { locale: sr })}
                   </Text>
-                  {dayWeather && (
-                    <Text style={styles.weather}>
-                      {dayWeather.high}°/{dayWeather.low}°
-                    </Text>
-                  )}
                 </View>
 
                 <View style={styles.eventsContainer}>

@@ -5,7 +5,6 @@ A modern school schedule application with automatic shift detection and PDF expo
 ## Features
 
 - 📅 **Automatic shift detection** based on calendar week
-- 🌤️ **Real weather integration** using OpenWeatherMap
 - 📄 **PDF export** for weekly schedules
 - 📱 **Responsive design** with Apple Calendar-style events
 - 🇷🇸 **Serbian localization** for days and subjects
@@ -17,7 +16,6 @@ A modern school schedule application with automatic shift detection and PDF expo
 - TypeScript
 - CSS Modules with design tokens
 - React-PDF for PDF generation
-- OpenWeatherMap API
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
