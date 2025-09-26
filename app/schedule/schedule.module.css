@@ -9,7 +9,7 @@
   align-items: center;
   gap: 8px;
   margin-bottom: var(--spacing-xl);
-  padding: 16px 24px;
+  padding: 16px;
   background: #d17f00;
   border-bottom: 1px solid var(--color-border-light);
 }

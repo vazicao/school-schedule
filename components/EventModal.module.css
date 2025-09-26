@@ -232,9 +232,35 @@
 
 /* Mobile styles */
 @media (max-width: 600px) {
+  .backdrop {
+    padding: 0;
+    align-items: flex-end;
+  }
+
   .modal {
-    max-height: 95vh;
+    max-height: 80vh;
     width: 100%;
     max-width: none;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-md);
+  }
+
+  .eventInfo {
+    width: 100%;
+  }
+
+  .timeDisplay {
+    align-self: flex-end;
+  }
+
+  .closeButton {
+    position: absolute;
+    top: var(--spacing-md);
+    right: var(--spacing-md);
   }
 }
