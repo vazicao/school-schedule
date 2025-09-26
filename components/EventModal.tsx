@@ -136,7 +136,7 @@ const EventModal: React.FC<EventModalProps> = ({
             </div>
           )}
 
-          {/* Books Section */}
+          {/* Books Section - temporarily hidden
           {books && books.length > 0 && (
             <div className={styles.section}>
               <div className={styles.sectionHeadline}>
@@ -152,6 +152,7 @@ const EventModal: React.FC<EventModalProps> = ({
               </ul>
             </div>
           )}
+          */}
 
           {/* Equipment Section */}
           {equipment && equipment.length > 0 && (
