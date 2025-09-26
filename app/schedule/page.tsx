@@ -10,7 +10,6 @@ import {
   type ClassPeriod,
 } from "../../lib/scheduleData";
 import { getShiftInfo } from "../../lib/shiftDetection";
-import { downloadWeeklySchedulePDF } from "../../lib/pdfService";
 import {
   getCurrentWeekInfo,
   getNextWeek,
@@ -137,7 +136,6 @@ export default function Schedule() {
   const [selectedWeek, setSelectedWeek] =
     useState<WeekInfo>(getCurrentWeekInfo());
   const [selectedDay, setSelectedDay] = useState<Day>(getCurrentDay());
-  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [showDaycare, setShowDaycare] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedEventDetails, setSelectedEventDetails] =
@@ -202,31 +200,12 @@ export default function Schedule() {
     setSelectedEventDetails(null);
   };
 
-  const handleDownloadPDF = async () => {
-    setIsGeneratingPDF(true);
-    try {
-      await downloadWeeklySchedulePDF(
-        shiftInfo.shift,
-        selectedWeek.week,
-        selectedWeek.year,
-        weekDates,
-      );
-    } catch (error) {
-      console.error("Failed to generate PDF:", error);
-      // You could add a toast notification here
-    } finally {
-      setIsGeneratingPDF(false);
-    }
-  };
-
   return (
     <div className={styles.container}>
       <ScheduleHeader
         selectedWeek={selectedWeek}
         showDaycare={showDaycare}
         onToggleDaycare={setShowDaycare}
-        onDownloadPDF={handleDownloadPDF}
-        isGeneratingPDF={isGeneratingPDF}
         onPreviousWeek={handlePreviousWeek}
         onNextWeek={handleNextWeek}
         onGoToCurrentWeek={handleGoToCurrentWeek}

@@ -39,7 +39,7 @@
 .shiftIndicator {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
   margin-bottom: var(--spacing-xl);
   padding: 0 24px;
 }
@@ -52,44 +52,15 @@
 
 .currentShift h3 {
   margin-bottom: 0;
-  color: var(--color-primary);
-  font-size: 20px;
-  line-height: 24px;
-  font-weight: 700;
 }
 
-.pdfButton {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-  padding: var(--spacing-sm) var(--spacing-md);
-  background: var(--color-success);
-  color: white;
-  border: none;
-  border-radius: var(--radius-md);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
-  cursor: pointer;
-  transition: all var(--transition-normal);
-  box-shadow: var(--shadow-sm);
-}
-
-.pdfButton:hover:not(:disabled) {
-  background: var(--color-success);
-  filter: brightness(1.1);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
-}
-
-.pdfButton:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-  transform: none;
+.currentShift h1 {
+  margin-bottom: 0;
 }
 
 .weekNavigation {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   gap: var(--spacing-sm);
 }
 
@@ -97,55 +68,42 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
+  padding: 0;
   background: var(--color-background);
   color: var(--color-text-primary);
-  border: 2px solid var(--color-border);
-  border-radius: var(--radius-md);
-  font-size: var(--font-size-lg);
-  font-weight: var(--font-weight-bold);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
   cursor: pointer;
   transition: all var(--transition-normal);
-  box-shadow: var(--shadow-sm);
 }
 
 .weekNavButton:hover:not(:disabled) {
   background: var(--color-background-secondary);
-  border-color: var(--color-primary);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
-}
-
-.weekNavButton:active {
-  transform: translateY(0);
+  border-color: var(--color-text-primary);
 }
 
 .currentWeekButton {
   display: flex;
   align-items: center;
-  gap: var(--spacing-xs);
-  padding: var(--spacing-sm) var(--spacing-md);
-  background: var(--color-warning);
-  color: var(--color-text-primary);
-  border: 2px solid var(--color-warning);
-  border-radius: var(--radius-md);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-semibold);
+  justify-content: center;
+  height: 32px;
+  padding: 0 12px;
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
   cursor: pointer;
   transition: all var(--transition-normal);
-  box-shadow: var(--shadow-sm);
 }
 
 .currentWeekButton:hover:not(:disabled) {
-  background: var(--color-warning);
-  filter: brightness(1.1);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
+  background: var(--color-background-secondary);
+  border-color: var(--color-text-primary);
 }
 
-.currentWeekButton:active {
-  transform: translateY(0);
+.currentWeekButton h3 {
+  margin: 0;
 }
 
 .dayButtons {
@@ -209,18 +167,13 @@
   font-weight: var(--font-weight-semibold);
 }
 
-/* Today indicator - dot below */
-.dayButton.today .dayDateWrapper::after {
-  content: "";
-  position: absolute;
-  bottom: -6px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 4px;
-  height: 4px;
-  background: var(--color-warning);
-  border-radius: 50%;
-  z-index: 1;
+/* Today indicator - colored text */
+.dayButton.today .dayDate {
+  color: #f25730;
+}
+
+.dayButton.today .dayName {
+  color: #f25730;
 }
 
 /* Today + Active state */
@@ -228,8 +181,12 @@
   background: #8eecc4;
 }
 
-.dayButton.today.active .dayDateWrapper::after {
-  display: none;
+.dayButton.today.active .dayDate {
+  color: var(--color-text-primary);
+}
+
+.dayButton.today.active .dayName {
+  color: var(--color-text-primary);
 }
 
 /* Weekend styling */
@@ -254,6 +211,23 @@
 }
 
 .dayButton.weekend.active .dayName {
+  color: var(--color-text-primary);
+}
+
+/* Weekend + Today combinations */
+.dayButton.weekend.today .dayDate {
+  color: #f25730;
+}
+
+.dayButton.weekend.today .dayName {
+  color: #f25730;
+}
+
+.dayButton.weekend.today.active .dayDate {
+  color: var(--color-text-primary);
+}
+
+.dayButton.weekend.today.active .dayName {
   color: var(--color-text-primary);
 }
 

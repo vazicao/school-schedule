@@ -1,20 +1,16 @@
-'use client';
+"use client";
 
-import { useState, useRef, useEffect } from 'react';
-import styles from './SettingsDropdown.module.css';
+import { useState, useRef, useEffect } from "react";
+import styles from "./SettingsDropdown.module.css";
 
 interface SettingsDropdownProps {
   showDaycare: boolean;
   onToggleDaycare: (show: boolean) => void;
-  onDownloadPDF: () => void;
-  isGeneratingPDF: boolean;
 }
 
 const SettingsDropdown: React.FC<SettingsDropdownProps> = ({
   showDaycare,
   onToggleDaycare,
-  onDownloadPDF,
-  isGeneratingPDF,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -22,34 +18,37 @@ const SettingsDropdown: React.FC<SettingsDropdownProps> = ({
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     };
 
     if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isOpen]);
 
   // Close dropdown on escape key
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
+      if (event.key === "Escape") {
         setIsOpen(false);
       }
     };
 
     if (isOpen) {
-      document.addEventListener('keydown', handleEscape);
+      document.addEventListener("keydown", handleEscape);
     }
 
     return () => {
-      document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener("keydown", handleEscape);
     };
   }, [isOpen]);
 
@@ -57,7 +56,7 @@ const SettingsDropdown: React.FC<SettingsDropdownProps> = ({
     <div className={styles.dropdown} ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`${styles.settingsButton} ${isOpen ? styles.active : ''}`}
+        className={`${styles.settingsButton} ${isOpen ? styles.active : ""}`}
         aria-label="Podešavanja"
         aria-expanded={isOpen}
         aria-haspopup="true"
@@ -67,26 +66,7 @@ const SettingsDropdown: React.FC<SettingsDropdownProps> = ({
 
       {isOpen && (
         <div className={styles.dropdownMenu} role="menu">
-          <div className={styles.dropdownHeader}>
-            Podešavanja
-          </div>
-
-          <button
-            className={styles.menuButton}
-            onClick={() => {
-              onDownloadPDF();
-              setIsOpen(false);
-            }}
-            disabled={isGeneratingPDF}
-            role="menuitem"
-          >
-            <span className={styles.buttonIcon}>📄</span>
-            <span className={styles.buttonText}>
-              {isGeneratingPDF ? 'Generiše PDF...' : 'Preuzmi PDF'}
-            </span>
-          </button>
-
-          <div className={styles.menuDivider} />
+          <div className={styles.dropdownHeader}>Podešavanja</div>
 
           <div className={styles.menuItem} role="menuitem">
             <label className={styles.menuLabel}>
@@ -96,7 +76,9 @@ const SettingsDropdown: React.FC<SettingsDropdownProps> = ({
                 onChange={(e) => onToggleDaycare(e.target.checked)}
                 className={styles.menuCheckbox}
               />
-              <span className={styles.checkboxText}>Prikaži produženi boravak</span>
+              <span className={styles.checkboxText}>
+                Prikaži produženi boravak
+              </span>
             </label>
           </div>
 

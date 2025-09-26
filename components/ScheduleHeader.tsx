@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import { sr } from "date-fns/locale";
 import styles from "../app/schedule/schedule.module.css";
 import SettingsDropdown from "./SettingsDropdown";
+import SvgIcon from "./SvgIcon";
 import { getCurrentClass } from "../lib/schoolConfig";
 import { type WeekInfo } from "../lib/weekNavigation";
 
@@ -11,8 +12,6 @@ interface ScheduleHeaderProps {
   selectedWeek: WeekInfo;
   showDaycare: boolean;
   onToggleDaycare: (show: boolean) => void;
-  onDownloadPDF: () => void;
-  isGeneratingPDF: boolean;
   onPreviousWeek: () => void;
   onNextWeek: () => void;
   onGoToCurrentWeek: () => void;
@@ -22,13 +21,14 @@ export default function ScheduleHeader({
   selectedWeek,
   showDaycare,
   onToggleDaycare,
-  onDownloadPDF,
-  isGeneratingPDF,
   onPreviousWeek,
   onNextWeek,
   onGoToCurrentWeek,
 }: ScheduleHeaderProps) {
   const classInfo = getCurrentClass();
+  const monthName = format(selectedWeek.startDate, "MMMM", { locale: sr });
+  const capitalizedMonth =
+    monthName.charAt(0).toUpperCase() + monthName.slice(1);
 
   return (
     <>
@@ -41,20 +41,18 @@ export default function ScheduleHeader({
         <SettingsDropdown
           showDaycare={showDaycare}
           onToggleDaycare={onToggleDaycare}
-          onDownloadPDF={onDownloadPDF}
-          isGeneratingPDF={isGeneratingPDF}
         />
       </div>
 
       <div className={styles.shiftIndicator}>
         <div className={styles.currentShift}>
+          <h3 className="text-secondary">{capitalizedMonth}</h3>
           <h1 className="display1">
-            {format(selectedWeek.startDate, "MMMM", { locale: sr })}
-          </h1>
-          <p className="caption-large text-secondary">
             Недеља {selectedWeek.week}
-            {selectedWeek.isCurrentWeek && " (тренутна недеља)"}
-          </p>
+            {selectedWeek.isCurrentWeek && (
+              <span className="text-secondary"> (Тренутна)</span>
+            )}
+          </h1>
         </div>
         <div className={styles.weekNavigation}>
           {!selectedWeek.isCurrentWeek && (
@@ -63,7 +61,7 @@ export default function ScheduleHeader({
               className={styles.currentWeekButton}
               aria-label="Idi na trenutnu nedelju"
             >
-              📅 Danas
+              <h3 className="text-secondary">Данас</h3>
             </button>
           )}
           <button
@@ -71,14 +69,14 @@ export default function ScheduleHeader({
             className={styles.weekNavButton}
             aria-label="Prethodna nedelja"
           >
-            ←
+            <SvgIcon iconId="caret-left" size={20} />
           </button>
           <button
             onClick={onNextWeek}
             className={styles.weekNavButton}
             aria-label="Sledeća nedelja"
           >
-            →
+            <SvgIcon iconId="caret-right" size={20} />
           </button>
         </div>
       </div>
