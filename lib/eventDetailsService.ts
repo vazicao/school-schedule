@@ -1,6 +1,5 @@
 import { EventDetails } from "../components/EventModal";
 import { getExamsForSubject, type Exam } from "./examData";
-import { getSubjectPribor } from "./priborData";
 import { getSubjectInfo } from "./scheduleData";
 import { format, parseISO, isBefore } from "date-fns";
 import { sr } from "date-fns/locale";
@@ -124,8 +123,8 @@ export const getEventDetails = (
   time: string,
   classType?: string,
 ): EventDetails | null => {
-  // Get pribor data for the subject
-  const priborData = getSubjectPribor(title);
+  // Get subject info which now contains pribor data
+  const subjectInfo = getSubjectInfo(title);
 
   // Get subject info for icon
   const eventType = getEventType(title);
@@ -141,13 +140,13 @@ export const getEventDetails = (
   };
 
   // Add books if available
-  if (priborData?.books && priborData.books.length > 0) {
-    eventDetails.books = priborData.books;
+  if (subjectInfo.books && subjectInfo.books.length > 0) {
+    eventDetails.books = subjectInfo.books;
   }
 
-  // Add equipment if available
-  if (priborData?.equipment && priborData.equipment.length > 0) {
-    eventDetails.equipment = priborData.equipment.map((item) => item.name);
+  // Add pribor as equipment if available
+  if (subjectInfo.pribor && subjectInfo.pribor.length > 0) {
+    eventDetails.equipment = subjectInfo.pribor;
   }
 
   // Add subtitle for daycare activities
