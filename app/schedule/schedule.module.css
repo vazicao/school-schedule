@@ -234,7 +234,7 @@
 .eventsContainer {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-lg);
+  gap: var(--spacing-md);
 }
 
 .sectionHeader {
@@ -243,7 +243,6 @@
   align-items: center;
   background: var(--color-surface-secondary);
   padding: 12px 24px;
-  margin-bottom: var(--spacing-sm);
 }
 
 .sectionTitle {
