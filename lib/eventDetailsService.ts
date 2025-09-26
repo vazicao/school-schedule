@@ -53,8 +53,8 @@ const getAllExamsForSubject = (
 
       return {
         date: formatExamDate(exam),
-        type: "Kontrolni zadatak",
-        description: exam.topic || "Tema će biti najavljena",
+        type: "Контролни задатак",
+        description: exam.topic || "Тема ће бити најављена",
         weekInfo: `Недеља ${exam.isoWeek} (${format(parseISO(exam.weekStart), "d.", { locale: sr })} – ${format(parseISO(exam.weekEnd), "d. MMMM", { locale: sr })})`,
         isPast,
         isUpcoming,
@@ -83,10 +83,10 @@ const getAllExamsForSubject = (
 
 // Dummy data for event details
 const dummyEventDetails: Record<string, EventDetails> = {
-  Matematika: {
+  Математика: {
     type: "class",
     icon: "🔢",
-    title: "Matematika",
+    title: "Математика",
     time: "",
     books: [
       "Matematika za 2. razred - udžbenik",
@@ -94,12 +94,12 @@ const dummyEventDetails: Record<string, EventDetails> = {
       "Zbirka zadataka iz matematike",
     ],
     equipment: ["Свеска А5 квадратићи", "Лењири", "Шестар"],
-    allExams: getAllExamsForSubject("Matematika"),
+    allExams: getAllExamsForSubject("Математика"),
   },
-  "Srpski jezik": {
+  "Српски језик": {
     type: "class",
     icon: "📝",
-    title: "Srpski jezik",
+    title: "Српски језик",
     time: "",
     books: [
       "Srpski jezik za 2. razred - udžbenik",
@@ -107,12 +107,12 @@ const dummyEventDetails: Record<string, EventDetails> = {
       "Čitanka za 2. razred",
     ],
     equipment: ["Olovka", "Naliv pero", "Gumica", "Sveska u linije"],
-    allExams: getAllExamsForSubject("Srpski jezik"),
+    allExams: getAllExamsForSubject("Српски језик"),
   },
-  "Engleski jezik": {
+  "Енглески језик": {
     type: "class",
     icon: "🇬🇧",
-    title: "Engleski jezik",
+    title: "Енглески језик",
     time: "",
     books: [
       "English for Kids 2 - udžbenik",
@@ -120,33 +120,33 @@ const dummyEventDetails: Record<string, EventDetails> = {
       "Ilustrovani rečnik",
     ],
     equipment: ["Olovka", "Bojice", "Gumica"],
-    allExams: getAllExamsForSubject("Engleski jezik"),
+    allExams: getAllExamsForSubject("Енглески језик"),
   },
-  "Digitalni svet": {
+  "Дигитални свет": {
     type: "class",
     icon: "💻",
-    title: "Digitalni svet",
+    title: "Дигитални свет",
     time: "",
     books: ["Digitalni svet za 2. razred - udžbenik"],
     equipment: ["USB flash memorija", "Slušalice"],
     allExams: [],
   },
-  "Svet oko nas": {
+  "Свет око нас": {
     type: "class",
     icon: "🌍",
-    title: "Svet oko nas",
+    title: "Свет око нас",
     time: "",
     books: [
       "Svet oko nas za 2. razred - udžbenik",
       "Svet oko nas za 2. razred - radna sveska",
     ],
     equipment: ["Olovka", "Bojice", "Lupica (ponekad)"],
-    allExams: getAllExamsForSubject("Svet oko nas"),
+    allExams: getAllExamsForSubject("Свет око нас"),
   },
-  "Likovna kultura": {
+  "Ликовна култура": {
     type: "class",
     icon: "🎨",
-    title: "Likovna kultura",
+    title: "Ликовна култура",
     time: "",
     books: ["Likovna kultura za 2. razred - udžbenik"],
     equipment: [
@@ -159,35 +159,35 @@ const dummyEventDetails: Record<string, EventDetails> = {
     ],
     allExams: [],
   },
-  "Muzička kultura": {
+  "Музичка култура": {
     type: "class",
     icon: "🎵",
-    title: "Muzička kultura",
+    title: "Музичка култура",
     time: "",
     books: ["Muzička kultura za 2. razred - udžbenik"],
     equipment: ["Dečije orgulje (opciono)"],
     allExams: [],
   },
-  "Fizičko i zdravstveno vaspitanje": {
+  "Физичко и здравствено васпитање": {
     type: "class",
     icon: "🏃‍♂️",
-    title: "Fizičko i zdravstveno vaspitanje",
+    title: "Физичко и здравствено васпитање",
     time: "",
     equipment: ["Sportska oprema", "Patike za sport", "Flaša vode"],
     allExams: [],
   },
-  ČOS: {
+  ЧОС: {
     type: "class",
     icon: "👥",
-    title: "ČOS",
+    title: "ЧОС",
     time: "",
     books: ["ČOS za 2. razred - udžbenik"],
     equipment: ["Olovka", "Sveska"],
   },
-  "Građansko vaspitanje / Verska nastava": {
+  "Грађанско васпитање / Верска настава": {
     type: "class",
     icon: "🤝",
-    title: "Građansko vaspitanje / Verska nastava",
+    title: "Грађанско васпитање / Верска настава",
     time: "",
     books: [
       "Građansko vaspitanje za 2. razred - udžbenik",
@@ -195,35 +195,50 @@ const dummyEventDetails: Record<string, EventDetails> = {
     ],
     equipment: ["Olovka", "Sveska"],
   },
-  "Dopunska nastava": {
+  "Допунска настава": {
     type: "class",
     icon: "📚",
-    title: "Dopunska nastava",
+    title: "Допунска настава",
     time: "",
     equipment: ["Materijali za predmet koji se dopunjuje", "Olovka", "Sveska"],
   },
   // Daycare activities
-  "Početak rada": {
+  "Пријем деце": {
     type: "daycare",
     icon: "🌅",
-    title: "Početak rada",
+    title: "Пријем деце",
     time: "",
-    subtitle: "Dolazak dece u produženi boravak",
+    subtitle: "Долазак деце у продужени боравак",
   },
-  "Rad na domaćim zadacima": {
+  "Домаћи задатак": {
     type: "daycare",
     icon: "📖",
-    title: "Rad na domaćim zadacima",
+    title: "Домаћи задатак",
     time: "",
     equipment: ["Sav školski pribor", "Udžbenici i sveske", "Zadaci za kuću"],
-    subtitle: "Rad pod nadzorom vaspitača",
+    subtitle: "Рад под надзором васпитача",
   },
-  Ručak: {
+  Ручак: {
     type: "daycare",
     icon: "🍽️",
-    title: "Ručak",
+    title: "Ручак",
     time: "",
-    subtitle: "Obrok u školskoj menzi",
+    subtitle: "Оброк у школској мензи",
+  },
+  Домаћи: {
+    type: "daycare",
+    icon: "📝",
+    title: "Домаћи",
+    time: "",
+    equipment: ["Sav školski pribor", "Udžbenici i sveske", "Zadaci za kuću"],
+    subtitle: "Рад под надзором васпитача",
+  },
+  "Слободно време": {
+    type: "daycare",
+    icon: "🛝",
+    title: "Слободно време",
+    time: "",
+    subtitle: "Слободне активности и игра",
   },
 };
 

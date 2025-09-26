@@ -33,19 +33,19 @@ const daycareActivities = {
   morning: [
     {
       time: "12:30-13:00",
-      activity: "Ručak",
+      activity: "Ручак",
       startTime: "12:30",
       endTime: "13:00",
     },
     {
       time: "13:00-14:30",
-      activity: "Domaći",
+      activity: "Домаћи",
       startTime: "13:00",
       endTime: "14:30",
     },
     {
       time: "14:30-17:30",
-      activity: "Slobodno vreme",
+      activity: "Слободно време",
       startTime: "14:30",
       endTime: "17:30",
     },
@@ -53,25 +53,25 @@ const daycareActivities = {
   afternoon: [
     {
       time: "07:00-08:30",
-      activity: "Prijem dece",
+      activity: "Пријем деце",
       startTime: "07:00",
       endTime: "08:30",
     },
     {
       time: "08:30-10:30",
-      activity: "Domaći zadatak",
+      activity: "Домаћи задатак",
       startTime: "08:30",
       endTime: "10:30",
     },
     {
       time: "12:30-13:00",
-      activity: "Ručak",
+      activity: "Ручак",
       startTime: "12:30",
       endTime: "13:00",
     },
     {
       time: "12:30-13:10",
-      activity: "Slobodno vreme",
+      activity: "Слободно време",
       startTime: "12:30",
       endTime: "13:10",
     },
@@ -145,13 +145,13 @@ export default function Schedule() {
   const [weekExams, setWeekExams] = useState<Exam[]>([]);
 
   const days: Day[] = [
-    "Ponedeljak",
-    "Utorak",
-    "Sreda",
-    "Četvrtak",
-    "Petak",
-    "Subota",
-    "Nedelja",
+    "Понедељак",
+    "Уторак",
+    "Среда",
+    "Четвртак",
+    "Петак",
+    "Субота",
+    "Недеља",
   ];
 
   // Get shift info for the selected week
@@ -237,7 +237,7 @@ export default function Schedule() {
           const date = weekDates[index];
           const isToday = isSameDay(date, today);
           const isSelected = selectedDay === day;
-          const isWeekend = day === "Subota" || day === "Nedelja";
+          const isWeekend = day === "Субота" || day === "Недеља";
 
           return (
             <button
@@ -262,21 +262,21 @@ export default function Schedule() {
       {weekExams.length > 0 && <ExamSummary exams={weekExams} />}
 
       <div className={styles.eventsContainer}>
-        {selectedDay === "Subota" || selectedDay === "Nedelja" ? (
+        {selectedDay === "Субота" || selectedDay === "Недеља" ? (
           /* Weekend display */
           <>
             <div className={styles.sectionHeader}>
-              <h3 className={styles.sectionTitle}>Vikend</h3>
+              <h3 className={styles.sectionTitle}>Викенд</h3>
               <h3 className={styles.sectionTimeRange}></h3>
             </div>
             <div className={styles.eventsList}>
               <EventCard
                 type="weekend"
                 icon="🎉"
-                title="Nema nastave"
+                title="Нема наставе"
                 time="☀️"
-                subtitle="Mogućnost dodavanja rođendana ili posebnih aktivnosti"
-                onClick={() => handleEventClick("Nema nastave", "☀️")}
+                subtitle="Могућност додавања рођендана или посебних активности"
+                onClick={() => handleEventClick("Нема наставе", "☀️")}
               />
             </div>
           </>
@@ -286,7 +286,7 @@ export default function Schedule() {
             {showDaycare && (
               <>
                 <div className={styles.sectionHeader}>
-                  <h3 className={styles.sectionTitle}>Produženi boravak</h3>
+                  <h3 className={styles.sectionTitle}>Продужени боравак</h3>
                   <h3 className={styles.sectionTimeRange}>
                     {calculateSectionTimeRange(
                       daycareActivities[shiftInfo.shift],
@@ -372,7 +372,7 @@ export default function Schedule() {
             {showDaycare && (
               <>
                 <div className={styles.sectionHeader}>
-                  <h3 className={styles.sectionTitle}>Produženi boravak</h3>
+                  <h3 className={styles.sectionTitle}>Продужени боравак</h3>
                   <h3 className={styles.sectionTimeRange}>
                     {calculateSectionTimeRange(
                       daycareActivities[shiftInfo.shift],

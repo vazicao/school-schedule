@@ -51,9 +51,9 @@ export default function ScheduleHeader({
           <h1 className="display1">
             {format(selectedWeek.startDate, "MMMM", { locale: sr })}
           </h1>
-          <p className="paragraph-small text-secondary">
-            W{selectedWeek.week}
-            {selectedWeek.isCurrentWeek && " (trenutna nedelja)"}
+          <p className="caption-large text-secondary">
+            Недеља {selectedWeek.week}
+            {selectedWeek.isCurrentWeek && " (тренутна недеља)"}
           </p>
         </div>
         <div className={styles.weekNavigation}>

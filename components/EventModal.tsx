@@ -116,7 +116,7 @@ const EventModal: React.FC<EventModalProps> = ({
             <div className={styles.section}>
               <div className={styles.sectionHeadline}>
                 <SvgIcon iconId="brain" size={24} />
-                <h3>Pismeni zadaci</h3>
+                <h3>Писмени задаци</h3>
               </div>
               <ul className={styles.examsList}>
                 {allExams.map((exam, index) => (
@@ -141,7 +141,7 @@ const EventModal: React.FC<EventModalProps> = ({
             <div className={styles.section}>
               <div className={styles.sectionHeadline}>
                 <SvgIcon iconId="notebook" size={24} />
-                <h3>Udžbenici</h3>
+                <h3>Уџбеници</h3>
               </div>
               <ul className={styles.list}>
                 {books.map((book, index) => (
@@ -158,7 +158,7 @@ const EventModal: React.FC<EventModalProps> = ({
             <div className={styles.section}>
               <div className={styles.sectionHeadline}>
                 <SvgIcon iconId="briefcase" size={24} />
-                <h3>Pribor</h3>
+                <h3>Прибор</h3>
               </div>
               <ul className={styles.list}>
                 {equipment.map((item, index) => (

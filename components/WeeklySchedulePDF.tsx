@@ -137,8 +137,8 @@ const WeeklySchedulePDF: React.FC<WeeklySchedulePDFProps> = ({
   year,
   weekDates,
 }) => {
-  const days: Day[] = ["Ponedeljak", "Utorak", "Sreda", "Četvrtak", "Petak"];
-  const shiftName = shift === "morning" ? "Jutarnja smena" : "Popodnevna smena";
+  const days: Day[] = ["Понедељак", "Уторак", "Среда", "Четвртак", "Петак"];
+  const shiftName = shift === "morning" ? "Јутарња смена" : "Поподневна смена";
 
   // Get school and class info
   const school = getCurrentSchool();
@@ -155,7 +155,7 @@ const WeeklySchedulePDF: React.FC<WeeklySchedulePDFProps> = ({
     const daycareEvents = daycareActivities[dayShift].map((activity) => ({
       time: activity.time,
       title: activity.activity,
-      type: "Produženi boravak",
+      type: "Продужени боравак",
       isClass: false,
     }));
 
