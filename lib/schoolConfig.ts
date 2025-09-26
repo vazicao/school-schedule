@@ -19,26 +19,26 @@ export interface ClassConfig {
 // This can be expanded to support multiple schools in the future
 export const schoolConfigs: SchoolConfig[] = [
   {
-    id: 'os-jelena-cetkovic',
-    name: 'OŠ Jelena Četković',
+    id: "os-jelena-cetkovic",
+    name: "OŠ Jelena Četković",
     fullName: 'Osnovna škola "Jelena Četković"',
-    address: 'Beograd, Srbija',
+    address: "Beograd, Srbija",
     classes: [
       {
-        id: 'ii2',
-        name: 'II2',
+        id: "ii2",
+        name: "II·2",
         grade: 2,
-        section: '2',
-        teacher: 'Marija Petrović',
+        section: "2",
+        teacher: "Marija Petrović",
         studentCount: 24,
       },
       // Future classes can be added here
       {
-        id: 'ii1',
-        name: 'II1',
+        id: "ii1",
+        name: "II1",
         grade: 2,
-        section: '1',
-        teacher: 'Ana Nikolić',
+        section: "1",
+        teacher: "Ana Nikolić",
         studentCount: 22,
       },
     ],
@@ -52,15 +52,18 @@ export const getCurrentSchool = (): SchoolConfig => {
 
 export const getCurrentClass = (): ClassConfig => {
   const school = getCurrentSchool();
-  return school.classes.find(c => c.id === 'ii2') || school.classes[0];
+  return school.classes.find((c) => c.id === "ii2") || school.classes[0];
 };
 
 // Helper functions for future multi-school support
 export const getSchoolById = (schoolId: string): SchoolConfig | undefined => {
-  return schoolConfigs.find(school => school.id === schoolId);
+  return schoolConfigs.find((school) => school.id === schoolId);
 };
 
-export const getClassById = (schoolId: string, classId: string): ClassConfig | undefined => {
+export const getClassById = (
+  schoolId: string,
+  classId: string,
+): ClassConfig | undefined => {
   const school = getSchoolById(schoolId);
-  return school?.classes.find(c => c.id === classId);
+  return school?.classes.find((c) => c.id === classId);
 };

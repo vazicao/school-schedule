@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import styles from "./SettingsDropdown.module.css";
+import SvgIcon from "./SvgIcon";
 
 interface SettingsDropdownProps {
   showDaycare: boolean;
@@ -57,16 +58,16 @@ const SettingsDropdown: React.FC<SettingsDropdownProps> = ({
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={`${styles.settingsButton} ${isOpen ? styles.active : ""}`}
-        aria-label="Podešavanja"
+        aria-label="Подешавања"
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
-        ⚙️
+        <SvgIcon iconId="gear-six" size={24} />
       </button>
 
       {isOpen && (
         <div className={styles.dropdownMenu} role="menu">
-          <div className={styles.dropdownHeader}>Podešavanja</div>
+          <div className={styles.dropdownHeader}>Подешавања</div>
 
           <div className={styles.menuItem} role="menuitem">
             <label className={styles.menuLabel}>
@@ -77,15 +78,9 @@ const SettingsDropdown: React.FC<SettingsDropdownProps> = ({
                 className={styles.menuCheckbox}
               />
               <span className={styles.checkboxText}>
-                Prikaži produženi boravak
+                Прикажи продужени боравак
               </span>
             </label>
-          </div>
-
-          <div className={styles.menuDivider} />
-
-          <div className={styles.menuInfo}>
-            Dodatne opcije će biti dodane uskoro
           </div>
         </div>
       )}

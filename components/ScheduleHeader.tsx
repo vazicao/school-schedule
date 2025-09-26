@@ -7,9 +7,11 @@ import SettingsDropdown from "./SettingsDropdown";
 import SvgIcon from "./SvgIcon";
 import { getCurrentClass } from "../lib/schoolConfig";
 import { type WeekInfo } from "../lib/weekNavigation";
+import { getCurrentDay } from "../lib/scheduleData";
 
 interface ScheduleHeaderProps {
   selectedWeek: WeekInfo;
+  selectedDay: string;
   showDaycare: boolean;
   onToggleDaycare: (show: boolean) => void;
   onPreviousWeek: () => void;
@@ -19,6 +21,7 @@ interface ScheduleHeaderProps {
 
 export default function ScheduleHeader({
   selectedWeek,
+  selectedDay,
   showDaycare,
   onToggleDaycare,
   onPreviousWeek,
@@ -33,10 +36,10 @@ export default function ScheduleHeader({
   return (
     <>
       <div className={styles.header}>
-        <div className={styles.classContainer}>{classInfo.name}</div>
         <div className={styles.schoolInfo}>
+          <h2>{classInfo.name}</h2>
+          <div className={styles.separator}></div>
           <h2>Јелена Ћетковић</h2>
-          <p className="caption-large text-secondary">Врањска 26, Београд</p>
         </div>
         <SettingsDropdown
           showDaycare={showDaycare}
@@ -47,15 +50,10 @@ export default function ScheduleHeader({
       <div className={styles.shiftIndicator}>
         <div className={styles.currentShift}>
           <h3 className="text-secondary">{capitalizedMonth}</h3>
-          <h1 className="display1">
-            Недеља {selectedWeek.week}
-            {selectedWeek.isCurrentWeek && (
-              <span className="text-secondary"> (Тренутна)</span>
-            )}
-          </h1>
+          <h1 className="display1">Недеља {selectedWeek.week}</h1>
         </div>
         <div className={styles.weekNavigation}>
-          {!selectedWeek.isCurrentWeek && (
+          {(selectedDay !== getCurrentDay() || !selectedWeek.isCurrentWeek) && (
             <button
               onClick={onGoToCurrentWeek}
               className={styles.currentWeekButton}

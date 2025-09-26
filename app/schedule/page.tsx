@@ -172,15 +172,18 @@ export default function Schedule() {
       selectedWeek.week,
     );
     setSelectedWeek(getWeekInfo(year, week));
+    setSelectedDay("Понедељак");
   };
 
   const handleNextWeek = () => {
     const { year, week } = getNextWeek(selectedWeek.year, selectedWeek.week);
     setSelectedWeek(getWeekInfo(year, week));
+    setSelectedDay("Понедељак");
   };
 
   const handleGoToCurrentWeek = () => {
     setSelectedWeek(getCurrentWeekInfo());
+    setSelectedDay(getCurrentDay());
   };
 
   const handleEventClick = (
@@ -204,6 +207,7 @@ export default function Schedule() {
     <div className={styles.container}>
       <ScheduleHeader
         selectedWeek={selectedWeek}
+        selectedDay={selectedDay}
         showDaycare={showDaycare}
         onToggleDaycare={setShowDaycare}
         onPreviousWeek={handlePreviousWeek}
