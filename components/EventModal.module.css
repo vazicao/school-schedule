@@ -183,6 +183,25 @@
   margin-bottom: 0;
 }
 
+.textbookLink {
+  color: var(--color-text-primary);
+  text-decoration: underline;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.textbookLink:hover {
+  color: var(--color-primary);
+}
+
+.textbookAuthors {
+  margin-bottom: 2px;
+}
+
+.textbookIsbn {
+  margin-bottom: 0;
+}
+
 .examsList {
   list-style: none;
   margin: 0;

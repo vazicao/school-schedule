@@ -4,6 +4,7 @@ import { useRef, useEffect } from "react";
 import styles from "./EventModal.module.css";
 import { EventType } from "./EventCard";
 import { getSubjectInfo } from "../lib/scheduleData";
+import { type Textbook } from "../lib/textbookData";
 import SvgIcon from "./SvgIcon";
 
 export interface EventDetails {
@@ -13,7 +14,7 @@ export interface EventDetails {
   time: string;
   classType?: string;
   subtitle?: string;
-  books?: string[];
+  books?: Textbook[];
   equipment?: string[];
   allExams?: {
     date: string;
@@ -136,7 +137,7 @@ const EventModal: React.FC<EventModalProps> = ({
             </div>
           )}
 
-          {/* Books Section - temporarily hidden
+          {/* Books Section */}
           {books && books.length > 0 && (
             <div className={styles.section}>
               <div className={styles.sectionHeadline}>
@@ -146,13 +147,27 @@ const EventModal: React.FC<EventModalProps> = ({
               <ul className={styles.list}>
                 {books.map((book, index) => (
                   <li key={index} className={styles.listItem}>
-                    <p className="paragraph-small">{book}</p>
+                    <a
+                      href={book.link}
+                      className={`paragraph-small ${styles.textbookLink}`}
+                    >
+                      {book.naziv}
+                    </a>
+                    <p
+                      className={`paragraph-small text-secondary ${styles.textbookAuthors}`}
+                    >
+                      {book.autori.join(", ")}
+                    </p>
+                    <p
+                      className={`paragraph-small text-secondary ${styles.textbookIsbn}`}
+                    >
+                      ISBN: {book.isbn}
+                    </p>
                   </li>
                 ))}
               </ul>
             </div>
           )}
-          */}
 
           {/* Equipment Section */}
           {equipment && equipment.length > 0 && (

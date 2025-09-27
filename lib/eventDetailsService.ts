@@ -1,6 +1,7 @@
 import { EventDetails } from "../components/EventModal";
 import { getExamsForSubject, type Exam } from "./examData";
 import { getSubjectInfo } from "./scheduleData";
+import { getTextbooksForSubject } from "./textbookData";
 import { format, parseISO, isBefore } from "date-fns";
 import { sr } from "date-fns/locale";
 
@@ -139,9 +140,10 @@ export const getEventDetails = (
     classType,
   };
 
-  // Add books if available
-  if (subjectInfo.books && subjectInfo.books.length > 0) {
-    eventDetails.books = subjectInfo.books;
+  // Add books from textbook data
+  const textbooks = getTextbooksForSubject(title);
+  if (textbooks.length > 0) {
+    eventDetails.books = textbooks;
   }
 
   // Add pribor as equipment if available

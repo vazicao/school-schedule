@@ -25,32 +25,17 @@ export const subjects: Record<string, Subject> = {
     icon: "🧮",
     color: "#FFE9D2",
     pribor: ["Свеска A5 квадратићи", "Лењири", "Шестар"],
-    books: [
-      "Matematika za 2. razred - udžbenik",
-      "Matematika za 2. razred - radna sveska",
-      "Zbirka zadataka iz matematike",
-    ],
   },
   "Српски језик": {
     name: "Српски језик",
     icon: "📖",
     color: "#FED712",
     pribor: ["Свеска A5 линије"],
-    books: [
-      "Srpski jezik za 2. razred - udžbenik",
-      "Srpski jezik za 2. razred - radna sveska",
-      "Čitanka za 2. razred",
-    ],
   },
   "Енглески језик": {
     name: "Енглески језик",
     icon: "🇬🇧",
     color: "#BFF2F4",
-    books: [
-      "English for Kids 2 - udžbenik",
-      "English for Kids 2 - radna sveska",
-      "Ilustrovani rečnik",
-    ],
   },
   "Ликовна култура": {
     name: "Ликовна култура",
@@ -69,14 +54,12 @@ export const subjects: Record<string, Subject> = {
       "Палета",
       "Заштитна подлога за сто",
     ],
-    books: ["Likovna kultura za 2. razred - udžbenik"],
   },
   "Музичка култура": {
     name: "Музичка култура",
     icon: "🎹",
     color: "#FE7209",
     pribor: ["Свеска A5 квадратићи"],
-    books: ["Muzička kultura za 2. razred - udžbenik"],
   },
   "Физичко и здравствено васпитање": {
     name: "Физичко и здравствено васпитање",
@@ -103,46 +86,34 @@ export const subjects: Record<string, Subject> = {
     icon: "🪴",
     color: "#FFD2B1",
     pribor: ["Свеска A5 квадратићи"],
-    books: [
-      "Svet oko nas za 2. razred - udžbenik",
-      "Svet oko nas za 2. razred - radna sveska",
-    ],
   },
   "Дигитални свет": {
     name: "Дигитални свет",
     icon: "💾",
     color: "#FBCCFF",
     pribor: ["Свеска A5 квадратићи"],
-    books: ["Digitalni svet za 2. razred - udžbenik"],
   },
   ЧОС: {
     name: "ЧОС",
     icon: "🧑‍🏫",
     color: "#FFE9D2",
-    books: ["ČOS za 2. razred - udžbenik"],
   },
   "Грađанско васпитање": {
     name: "Грађанско васпитање",
     icon: "⛪",
     color: "#D4E3F1",
     pribor: ["20 белих папира у фасцикли"],
-    books: ["Građansko vaspitanje za 2. razred - udžbenik"],
   },
   "Верска настава": {
     name: "Верска настава",
     icon: "⛪",
     color: "#D4E3F1",
     pribor: ["Велика свеска квадратићи"],
-    books: ["Verska nastava za 2. razred - udžbenik"],
   },
   "Грађанско васпитање / Верска настава": {
     name: "Грађанско васпитање / Верска настава",
     icon: "⛪",
     color: "#D4E3F1",
-    books: [
-      "Građansko vaspitanje za 2. razred - udžbenik",
-      "ili Verska nastava za 2. razred - udžbenik",
-    ],
   },
   "Допунска настава": {
     name: "Допунска настава",
