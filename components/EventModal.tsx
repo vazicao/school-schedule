@@ -5,6 +5,7 @@ import styles from "./EventModal.module.css";
 import { EventType } from "./EventCard";
 import { getSubjectInfo } from "../lib/scheduleData";
 import { type Textbook } from "../lib/textbookData";
+import { type Teacher } from "../lib/teacherData";
 import SvgIcon from "./SvgIcon";
 
 export interface EventDetails {
@@ -16,6 +17,7 @@ export interface EventDetails {
   subtitle?: string;
   books?: Textbook[];
   equipment?: string[];
+  teacher?: Teacher;
   allExams?: {
     date: string;
     type: string;
@@ -67,8 +69,16 @@ const EventModal: React.FC<EventModalProps> = ({
 
   if (!isOpen || !eventDetails) return null;
 
-  const { title, time, classType, subtitle, books, equipment, allExams } =
-    eventDetails;
+  const {
+    title,
+    time,
+    classType,
+    subtitle,
+    books,
+    equipment,
+    teacher,
+    allExams,
+  } = eventDetails;
   const subjectInfo = getSubjectInfo(title);
 
   return (
@@ -179,6 +189,24 @@ const EventModal: React.FC<EventModalProps> = ({
                   </li>
                 ))}
               </ul>
+            </div>
+          )}
+
+          {/* Teacher Section */}
+          {teacher && (
+            <div className={styles.section}>
+              <div className={styles.sectionHeadline}>
+                <SvgIcon iconId="identification-badge" size={24} />
+                <h3>Наставник</h3>
+              </div>
+              <div className={styles.teacherInfo}>
+                <p className="paragraph-small">{teacher.name}</p>
+                {teacher.email && (
+                  <p className="paragraph-small text-secondary">
+                    {teacher.email}
+                  </p>
+                )}
+              </div>
             </div>
           )}
 

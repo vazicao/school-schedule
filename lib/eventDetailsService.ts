@@ -2,6 +2,7 @@ import { EventDetails } from "../components/EventModal";
 import { getExamsForSubject, type Exam } from "./examData";
 import { getSubjectInfo } from "./scheduleData";
 import { getTextbooksForSubject } from "./textbookData";
+import { getTeacherForSubject } from "./teacherData";
 import { format, parseISO, isBefore } from "date-fns";
 import { sr } from "date-fns/locale";
 
@@ -149,6 +150,14 @@ export const getEventDetails = (
   // Add pribor as equipment if available
   if (subjectInfo.pribor && subjectInfo.pribor.length > 0) {
     eventDetails.equipment = subjectInfo.pribor;
+  }
+
+  // Add teacher information for class subjects
+  if (eventType === "class") {
+    const teacher = getTeacherForSubject(title);
+    if (teacher) {
+      eventDetails.teacher = teacher;
+    }
   }
 
   // Add subtitle for daycare activities
