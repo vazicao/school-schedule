@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useEffect } from "react";
+import Image from "next/image";
 import styles from "./EventModal.module.css";
 import { EventType } from "./EventCard";
 import { getSubjectInfo } from "../lib/scheduleData";
@@ -147,22 +148,35 @@ const EventModal: React.FC<EventModalProps> = ({
               <ul className={styles.list}>
                 {books.map((book, index) => (
                   <li key={index} className={styles.listItem}>
-                    <a
-                      href={book.link}
-                      className={`paragraph-small ${styles.textbookLink}`}
-                    >
-                      {book.naziv}
-                    </a>
-                    <p
-                      className={`paragraph-small text-secondary ${styles.textbookAuthors}`}
-                    >
-                      {book.autori.join(", ")}
-                    </p>
-                    <p
-                      className={`paragraph-small text-secondary ${styles.textbookIsbn}`}
-                    >
-                      ISBN: {book.isbn}
-                    </p>
+                    <div className={styles.textbookItem}>
+                      {book.imageUrl && (
+                        <Image
+                          src={book.imageUrl}
+                          alt={book.naziv}
+                          width={44}
+                          height={60}
+                          className={styles.textbookImage}
+                        />
+                      )}
+                      <div className={styles.textbookContent}>
+                        <a
+                          href={book.link}
+                          className={`paragraph-small ${styles.textbookLink}`}
+                        >
+                          {book.naziv}
+                        </a>
+                        <p
+                          className={`paragraph-small text-secondary ${styles.textbookAuthors}`}
+                        >
+                          {book.autori.join(", ")}
+                        </p>
+                        <p
+                          className={`paragraph-small text-secondary ${styles.textbookIsbn}`}
+                        >
+                          ISBN: {book.isbn}
+                        </p>
+                      </div>
+                    </div>
                   </li>
                 ))}
               </ul>
