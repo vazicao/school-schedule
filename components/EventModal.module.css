@@ -247,14 +247,18 @@
 }
 
 .examStatus {
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .statusPassed {
   background-color: #03d47c;
+  color: white;
 }
 
 .statusCurrent {

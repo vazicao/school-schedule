@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef, useEffect } from "react";
-import Image from "next/image";
 import styles from "./EventModal.module.css";
 import { EventType } from "./EventCard";
 import { getSubjectInfo } from "../lib/scheduleData";
@@ -131,7 +130,9 @@ const EventModal: React.FC<EventModalProps> = ({
                     </div>
                     <div
                       className={`${styles.examStatus} ${exam.isPast ? styles.statusPassed : exam.isUpcoming ? styles.statusCurrent : styles.statusPending}`}
-                    ></div>
+                    >
+                      {exam.isPast && <SvgIcon iconId="check" size={16} />}
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -150,11 +151,9 @@ const EventModal: React.FC<EventModalProps> = ({
                   <li key={index} className={styles.listItem}>
                     <div className={styles.textbookItem}>
                       {book.imageUrl && (
-                        <Image
+                        <img
                           src={book.imageUrl}
                           alt={book.naziv}
-                          width={44}
-                          height={60}
                           className={styles.textbookImage}
                         />
                       )}
