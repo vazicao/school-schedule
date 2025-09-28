@@ -10,22 +10,20 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Display Classes - Using Merriweather Variable Font */
+/* Display Classes - Using Alegreya Font */
 .display1 {
-  font-family: "Merriweather", "Times New Roman", serif;
-  font-size: 24px;
-  line-height: 32px;
-  font-weight: 700;
-  font-optical-sizing: auto;
+  font-family: "Alegreya", "Times New Roman", serif;
+  font-size: 30px;
+  line-height: 40px;
+  font-weight: 500;
   text-transform: capitalize;
 }
 
 .display2 {
-  font-family: "Merriweather", "Times New Roman", serif;
+  font-family: "Alegreya", "Times New Roman", serif;
   font-size: 16px;
   line-height: 24px;
   font-weight: 700;
-  font-optical-sizing: auto;
 }
 
 /* Headings */
