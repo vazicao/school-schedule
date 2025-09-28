@@ -304,7 +304,9 @@ export const schedules: ShiftSchedules = {
 
 // Helper function to get current day
 export const getCurrentDay = (): Day => {
-  const today = getDay(new Date());
+  // Use the current date in the user's timezone consistently
+  const today = new Date();
+  const dayOfWeek = getDay(today);
   const dayMap: Record<number, Day> = {
     0: "Недеља",
     1: "Понедељак",
@@ -314,7 +316,7 @@ export const getCurrentDay = (): Day => {
     5: "Петак",
     6: "Субота",
   };
-  return dayMap[today] || "Понедељак";
+  return dayMap[dayOfWeek] || "Понедељак";
 };
 
 // Helper function to get subject info

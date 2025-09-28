@@ -18,7 +18,7 @@ import {
   getWeekDates,
   type WeekInfo,
 } from "../../lib/weekNavigation";
-import { format, isSameDay } from "date-fns";
+import { format, isSameDay, startOfDay } from "date-fns";
 import { sr } from "date-fns/locale";
 import ScheduleHeader from "../../components/ScheduleHeader";
 import EventCard from "../../components/EventCard";
@@ -133,14 +133,14 @@ const calculateSectionTimeRange = (
 };
 
 export default function Schedule() {
-  const [selectedWeek, setSelectedWeek] =
-    useState<WeekInfo>(getCurrentWeekInfo());
-  const [selectedDay, setSelectedDay] = useState<Day>(getCurrentDay());
+  const [selectedWeek, setSelectedWeek] = useState<WeekInfo | null>(null);
+  const [selectedDay, setSelectedDay] = useState<Day | null>(null);
   const [showDaycare, setShowDaycare] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedEventDetails, setSelectedEventDetails] =
     useState<EventDetails | null>(null);
   const [weekExams, setWeekExams] = useState<Exam[]>([]);
+  const [isClient, setIsClient] = useState(false);
 
   const days: Day[] = [
     "Понедељак",
@@ -152,18 +152,32 @@ export default function Schedule() {
     "Недеља",
   ];
 
+  // Initialize client-side state to prevent hydration mismatches
+  useEffect(() => {
+    setIsClient(true);
+    setSelectedWeek(getCurrentWeekInfo());
+    setSelectedDay(getCurrentDay());
+  }, []);
+
+  // Fetch exams for the selected week
+  useEffect(() => {
+    if (selectedWeek) {
+      const examsForWeek = getExamsForWeek(selectedWeek.week);
+      setWeekExams(examsForWeek);
+    }
+  }, [selectedWeek]);
+
+  // Don't render until client-side hydration is complete
+  if (!isClient || !selectedWeek || !selectedDay) {
+    return <div className={styles.container}>Loading...</div>;
+  }
+
   // Get shift info for the selected week
   const shiftInfo = getShiftInfo(selectedWeek.startDate);
 
   // Get dates for the selected week (including weekends)
   const weekDates = getWeekDates(selectedWeek.year, selectedWeek.week, true);
-  const today = new Date();
-
-  // Fetch exams for the selected week
-  useEffect(() => {
-    const examsForWeek = getExamsForWeek(selectedWeek.week);
-    setWeekExams(examsForWeek);
-  }, [selectedWeek.week]);
+  const today = startOfDay(new Date());
 
   // Week navigation handlers
   const handlePreviousWeek = () => {
@@ -182,8 +196,10 @@ export default function Schedule() {
   };
 
   const handleGoToCurrentWeek = () => {
-    setSelectedWeek(getCurrentWeekInfo());
-    setSelectedDay(getCurrentDay());
+    const currentWeek = getCurrentWeekInfo();
+    const currentDay = getCurrentDay();
+    setSelectedWeek(currentWeek);
+    setSelectedDay(currentDay);
   };
 
   const handleEventClick = (
@@ -218,7 +234,7 @@ export default function Schedule() {
       <nav className={styles.dayButtons}>
         {days.map((day, index) => {
           const date = weekDates[index];
-          const isToday = isSameDay(date, today);
+          const isToday = isSameDay(startOfDay(date), today);
           const isSelected = selectedDay === day;
           const isWeekend = day === "Субота" || day === "Недеља";
 
