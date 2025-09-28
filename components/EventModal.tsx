@@ -101,9 +101,11 @@ const EventModal: React.FC<EventModalProps> = ({
             </div>
             <div className={styles.eventDetails}>
               <h1 className="display1">{title}</h1>
-              {classType && formattedTime && (
+              {(classType || formattedTime) && (
                 <h3 className="text-secondary">
-                  {classType} — {formattedTime}
+                  {classType
+                    ? `${classType} — ${formattedTime || time}`
+                    : formattedTime}
                 </h3>
               )}
               {subtitle && (

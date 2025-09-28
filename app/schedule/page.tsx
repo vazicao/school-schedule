@@ -334,7 +334,9 @@ export default function Schedule() {
                   endTime={lesson.endTime}
                   color={getSubjectInfo(lesson.subject).color}
                   shift={shiftInfo.shift}
-                  onClick={() => handleEventClick(lesson.subject, lesson.order)}
+                  onClick={() =>
+                    handleEventClick(lesson.subject, lesson.order, lesson.order)
+                  }
                 />
               ))}
             </div>
@@ -363,7 +365,9 @@ export default function Schedule() {
                   endTime={lesson.endTime}
                   color={getSubjectInfo(lesson.subject).color}
                   shift={shiftInfo.shift}
-                  onClick={() => handleEventClick(lesson.subject, lesson.order)}
+                  onClick={() =>
+                    handleEventClick(lesson.subject, lesson.order, lesson.order)
+                  }
                 />
               ))}
             </div>

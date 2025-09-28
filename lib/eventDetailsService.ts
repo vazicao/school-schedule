@@ -109,19 +109,6 @@ const getEventType = (subject: string): "class" | "daycare" | "weekend" => {
   return "class";
 };
 
-// Dynamic subtitle generation for daycare activities
-const getDaycareSubtitle = (activity: string): string => {
-  const subtitles: Record<string, string> = {
-    "Пријем деце": "Долазак деце у продужени боравак",
-    "Домаћи задатак": "Рад под надзором васпитача",
-    Ручак: "Оброк у школској мензи",
-    Домаћи: "Рад под надзором васпитача",
-    "Слободно време": "Слободне активности и игра",
-  };
-
-  return subtitles[activity] || "";
-};
-
 // Helper function to format class time information
 const getFormattedClassTime = (classOrder: string): string => {
   const currentShift = getCurrentShift();
@@ -146,9 +133,18 @@ export const getEventDetails = (
   const eventType = getEventType(title);
   const iconData = getSubjectIconData(title);
 
-  // Get formatted time for classes
-  const formattedTime =
-    eventType === "class" ? getFormattedClassTime(time) : undefined;
+  // Get formatted time for classes and daycare activities
+  let formattedTime: string | undefined;
+
+  if (eventType === "class") {
+    formattedTime = getFormattedClassTime(time);
+  } else if (eventType === "daycare") {
+    // Extract time range from daycare activity time (e.g., "12:30-13:00")
+    const timeMatch = time.match(/(\d{2}:\d{2})-(\d{2}:\d{2})/);
+    if (timeMatch) {
+      formattedTime = `${timeMatch[1]}–${timeMatch[2]}`;
+    }
+  }
 
   // Build the event details
   const eventDetails: EventDetails = {
@@ -177,11 +173,6 @@ export const getEventDetails = (
     if (teacher) {
       eventDetails.teacher = teacher;
     }
-  }
-
-  // Add subtitle for daycare activities
-  if (eventType === "daycare") {
-    eventDetails.subtitle = getDaycareSubtitle(title);
   }
 
   // Add exams for class subjects
