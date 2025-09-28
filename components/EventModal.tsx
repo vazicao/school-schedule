@@ -13,6 +13,7 @@ export interface EventDetails {
   icon: React.ReactNode;
   title: string;
   time: string;
+  formattedTime?: string;
   classType?: string;
   subtitle?: string;
   books?: Textbook[];
@@ -72,6 +73,7 @@ const EventModal: React.FC<EventModalProps> = ({
   const {
     title,
     time,
+    formattedTime,
     classType,
     subtitle,
     books,
@@ -98,12 +100,12 @@ const EventModal: React.FC<EventModalProps> = ({
               <div className={styles.eventIcon}>{subjectInfo.icon}</div>
             </div>
             <div className={styles.eventDetails}>
-              {classType && (
-                <p className={`${styles.classType} caption-large`}>
-                  {classType}
-                </p>
-              )}
               <h1 className="display1">{title}</h1>
+              {classType && formattedTime && (
+                <h3 className="text-secondary">
+                  {classType} — {formattedTime}
+                </h3>
+              )}
               {subtitle && (
                 <p className={`${styles.subtitle} paragraph-small`}>
                   {subtitle}
@@ -111,13 +113,12 @@ const EventModal: React.FC<EventModalProps> = ({
               )}
             </div>
           </div>
-          <p className={`${styles.timeDisplay} caption-large`}>{time}</p>
           <button
             className={styles.closeButton}
             onClick={onClose}
             aria-label="Zatvori"
           >
-            ✕
+            <SvgIcon iconId="x" size={24} />
           </button>
         </div>
 

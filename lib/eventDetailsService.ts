@@ -3,6 +3,8 @@ import { getExamsForSubject, type Exam } from "./examData";
 import { getSubjectInfo } from "./scheduleData";
 import { getTextbooksForSubject } from "./textbookData";
 import { getTeacherForSubject } from "./teacherData";
+import { getClassTimes } from "./timeMapping";
+import { getCurrentShift } from "./shiftDetection";
 import { format, parseISO, isBefore } from "date-fns";
 import { sr } from "date-fns/locale";
 
@@ -120,6 +122,18 @@ const getDaycareSubtitle = (activity: string): string => {
   return subtitles[activity] || "";
 };
 
+// Helper function to format class time information
+const getFormattedClassTime = (classOrder: string): string => {
+  const currentShift = getCurrentShift();
+  const times = getClassTimes(classOrder, currentShift);
+
+  if (times) {
+    return `${times.startTime}–${times.endTime}`;
+  }
+
+  return "";
+};
+
 export const getEventDetails = (
   title: string,
   time: string,
@@ -132,12 +146,17 @@ export const getEventDetails = (
   const eventType = getEventType(title);
   const iconData = getSubjectIconData(title);
 
+  // Get formatted time for classes
+  const formattedTime =
+    eventType === "class" ? getFormattedClassTime(time) : undefined;
+
   // Build the event details
   const eventDetails: EventDetails = {
     type: eventType,
     icon: iconData,
     title,
     time,
+    formattedTime,
     classType,
   };
 

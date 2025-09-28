@@ -26,21 +26,11 @@ export const teachers: Record<string, Teacher> = {
     phone: "+381 11 234 5678",
     room: "205",
   },
-  "kalickanin-tamara": {
-    id: "kalickanin-tamara",
-    name: "Каличанин Тамара",
-    subjects: ["Верска настава"],
-    classes: [],
-    phone: "+381 11 345 6789",
-    room: "302",
-  },
 };
 
 // Subject to teacher mapping for specific overrides
 export const subjectTeacherMap: Record<string, string> = {
   "Енглески језик": "domnic-popovic-natasa",
-  "Верска настава": "kalickanin-tamara",
-  "Грађанско васпитање / Верска настава": "kalickanin-tamara", // Assuming same teacher handles this
 };
 
 // Default class teacher for subjects not in override map
