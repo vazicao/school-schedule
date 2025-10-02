@@ -265,3 +265,39 @@
   flex-direction: column;
   margin-bottom: var(--spacing-md);
 }
+
+.weekendBlock {
+  background: var(--color-text-light);
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-xl);
+  text-align: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.weekendBlock h2 {
+  margin: 0 0 var(--spacing-md) 0;
+}
+
+.weekendBlock p {
+  margin: 0;
+}
+
+.weekendIcon {
+  font-size: 64px;
+  margin: var(--spacing-md) 0;
+  line-height: 1;
+}
+
+.weekendPreviewItem {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  margin-top: var(--spacing-sm);
+}
+
+.weekendPreviewItem h3 {
+  margin: 0;
+}

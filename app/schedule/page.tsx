@@ -179,6 +179,12 @@ export default function Schedule() {
   const weekDates = getWeekDates(selectedWeek.year, selectedWeek.week, true);
   const today = startOfDay(new Date());
 
+  // Get next week info for weekend preview
+  const nextWeek = getNextWeek(selectedWeek.year, selectedWeek.week);
+  const nextWeekInfo = getWeekInfo(nextWeek.year, nextWeek.week);
+  const nextWeekShift = getShiftInfo(nextWeekInfo.startDate);
+  const nextWeekExams = getExamsForWeek(nextWeekInfo.week);
+
   // Week navigation handlers
   const handlePreviousWeek = () => {
     const { year, week } = getPreviousWeek(
@@ -257,26 +263,43 @@ export default function Schedule() {
         })}
       </nav>
 
-      {/* Exams section */}
-      {weekExams.length > 0 && <ExamSummary exams={weekExams} />}
+      {/* Exams section - hide on weekends */}
+      {weekExams.length > 0 &&
+        selectedDay !== "Субота" &&
+        selectedDay !== "Недеља" && <ExamSummary exams={weekExams} />}
 
       <div className={styles.eventsContainer}>
         {selectedDay === "Субота" || selectedDay === "Недеља" ? (
           /* Weekend display */
           <>
-            <div className={styles.sectionHeader}>
-              <h3 className={styles.sectionTitle}>Викенд</h3>
-              <h3 className={styles.sectionTimeRange}></h3>
+            <div className={styles.weekendBlock}>
+              <h2>Данас Нема Наставе</h2>
+              <div className={styles.weekendIcon}>🎉</div>
+              <p className="text-secondary">Уживајте у викенду</p>
             </div>
-            <div className={styles.eventsList}>
-              <EventCard
-                type="weekend"
-                icon="🎉"
-                title="Нема наставе"
-                time="☀️"
-                subtitle="Могућност додавања рођендана или посебних активности"
-                onClick={() => handleEventClick("Нема наставе", "☀️")}
-              />
+
+            <div className={styles.weekendBlock}>
+              <h2>Следеће Недеље</h2>
+
+              <div className={styles.weekendPreviewItem}>
+                <SvgIcon
+                  iconId={
+                    nextWeekShift.shift === "morning" ? "sun-horizon" : "sun"
+                  }
+                  size={24}
+                />
+                <h3 className="text-primary">{nextWeekShift.shiftName}</h3>
+              </div>
+
+              {nextWeekExams.length > 0 && (
+                <div className={styles.weekendPreviewItem}>
+                  <SvgIcon iconId="brain" size={24} />
+                  <h3 className="text-primary">
+                    {nextWeekExams[0].subject} -{" "}
+                    {nextWeekExams[0].topic || "Контролни задатак"}
+                  </h3>
+                </div>
+              )}
             </div>
           </>
         ) : shiftInfo.shift === "afternoon" ? (
