@@ -63,16 +63,10 @@ const daycareActivities = {
       endTime: "10:30",
     },
     {
-      time: "12:30-13:00",
+      time: "12:00-12:30",
       activity: "Ручак",
-      startTime: "12:30",
-      endTime: "13:00",
-    },
-    {
-      time: "12:30-13:10",
-      activity: "Слободно време",
-      startTime: "12:30",
-      endTime: "13:10",
+      startTime: "12:00",
+      endTime: "12:30",
     },
   ],
 };
@@ -310,9 +304,23 @@ export default function Schedule() {
                 <div className={styles.sectionHeader}>
                   <h3 className={styles.sectionTitle}>Продужени боравак</h3>
                   <h3 className={styles.sectionTimeRange}>
-                    {calculateSectionTimeRange(
-                      daycareActivities[shiftInfo.shift],
-                    )}
+                    {(() => {
+                      const firstClass =
+                        schedules[shiftInfo.shift][selectedDay][0];
+                      const freeTimeEnd = firstClass
+                        ? firstClass.startTime
+                        : "13:10";
+                      const activitiesWithFreeTime = [
+                        ...daycareActivities[shiftInfo.shift],
+                        {
+                          time: `12:30-${freeTimeEnd}`,
+                          activity: "Слободно време",
+                          startTime: "12:30",
+                          endTime: freeTimeEnd,
+                        },
+                      ];
+                      return calculateSectionTimeRange(activitiesWithFreeTime);
+                    })()}
                   </h3>
                 </div>
                 <div className={styles.eventsList}>
@@ -332,6 +340,38 @@ export default function Schedule() {
                       }
                     />
                   ))}
+                  {(() => {
+                    const firstClass =
+                      schedules[shiftInfo.shift][selectedDay][0];
+                    const freeTimeEnd = firstClass
+                      ? firstClass.startTime
+                      : "13:10";
+                    const freeTimeActivity = {
+                      time: `12:30-${freeTimeEnd}`,
+                      activity: "Слободно време",
+                      startTime: "12:30",
+                      endTime: freeTimeEnd,
+                    };
+                    return (
+                      <EventCard
+                        key="daycare-freetime"
+                        type="daycare"
+                        icon={getSubjectIcon(freeTimeActivity.activity)}
+                        title={freeTimeActivity.activity}
+                        time={freeTimeActivity.time}
+                        startTime={freeTimeActivity.startTime}
+                        endTime={freeTimeActivity.endTime}
+                        color={getSubjectInfo(freeTimeActivity.activity).color}
+                        shift={shiftInfo.shift}
+                        onClick={() =>
+                          handleEventClick(
+                            freeTimeActivity.activity,
+                            freeTimeActivity.time,
+                          )
+                        }
+                      />
+                    );
+                  })()}
                 </div>
               </>
             )}
