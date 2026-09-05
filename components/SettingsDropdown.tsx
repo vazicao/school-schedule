@@ -58,7 +58,7 @@ const SettingsDropdown: React.FC<SettingsDropdownProps> = ({
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={`${styles.settingsButton} ${isOpen ? styles.active : ""}`}
-        aria-label="Подешавања"
+        aria-label="Podešavanja"
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
@@ -67,7 +67,7 @@ const SettingsDropdown: React.FC<SettingsDropdownProps> = ({
 
       {isOpen && (
         <div className={styles.dropdownMenu} role="menu">
-          <div className={styles.dropdownHeader}>Подешавања</div>
+          <div className={styles.dropdownHeader}>Podešavanja</div>
 
           <div className={styles.menuItem} role="menuitem">
             <label className={styles.menuLabel}>
@@ -78,7 +78,7 @@ const SettingsDropdown: React.FC<SettingsDropdownProps> = ({
                 className={styles.menuCheckbox}
               />
               <span className={styles.checkboxText}>
-                Прикажи продужени боравак
+                Prikaži produženi boravak
               </span>
             </label>
           </div>

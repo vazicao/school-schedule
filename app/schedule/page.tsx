@@ -8,6 +8,7 @@ import {
   getSubjectInfo,
   type Day,
   type ClassPeriod,
+  type SubjectId,
 } from "../../lib/scheduleData";
 import { getShiftInfo } from "../../lib/shiftDetection";
 import {
@@ -19,7 +20,7 @@ import {
   type WeekInfo,
 } from "../../lib/weekNavigation";
 import { format, isSameDay, startOfDay } from "date-fns";
-import { sr } from "date-fns/locale";
+import { srLatn as sr } from "date-fns/locale";
 import ScheduleHeader from "../../components/ScheduleHeader";
 import EventCard from "../../components/EventCard";
 import EventModal, { EventDetails } from "../../components/EventModal";
@@ -28,48 +29,54 @@ import { getExamsForWeek, type Exam } from "../../lib/examData";
 import SvgIcon from "../../components/SvgIcon";
 import ExamSummary from "../../components/ExamSummary";
 
-const daycareActivities = {
-  morning: [
-    {
-      time: "12:30-13:00",
-      activity: "Ручак",
-      startTime: "12:30",
-      endTime: "13:00",
-    },
-    {
-      time: "13:00-14:30",
-      activity: "Домаћи",
-      startTime: "13:00",
-      endTime: "14:30",
-    },
-    {
-      time: "14:30-17:30",
-      activity: "Слободно време",
-      startTime: "14:30",
-      endTime: "17:30",
-    },
-  ],
-  afternoon: [
-    {
-      time: "07:00-08:30",
-      activity: "Пријем деце",
-      startTime: "07:00",
-      endTime: "08:30",
-    },
-    {
-      time: "08:30-10:30",
-      activity: "Домаћи задатак",
-      startTime: "08:30",
-      endTime: "10:30",
-    },
-    {
-      time: "12:00-12:30",
-      activity: "Ручак",
-      startTime: "12:00",
-      endTime: "12:30",
-    },
-  ],
-};
+// BORAVAK (produženi boravak) — disabled starting 3rd grade (no boravak at this
+// school for this grade). Kept in code in case this expands to another
+// school/class that has it, or a private boravak arrangement is added.
+// To re-enable: uncomment this block plus the two "BORAVAK" JSX sections
+// below, and the showDaycare state + ScheduleHeader props further down.
+//
+// const daycareActivities = {
+//   morning: [
+//     {
+//       time: "12:30-13:00",
+//       activity: "Ručak",
+//       startTime: "12:30",
+//       endTime: "13:00",
+//     },
+//     {
+//       time: "13:00-14:30",
+//       activity: "Domaći",
+//       startTime: "13:00",
+//       endTime: "14:30",
+//     },
+//     {
+//       time: "14:30-17:30",
+//       activity: "Slobodno vreme",
+//       startTime: "14:30",
+//       endTime: "17:30",
+//     },
+//   ],
+//   afternoon: [
+//     {
+//       time: "07:00-08:30",
+//       activity: "Prijem dece",
+//       startTime: "07:00",
+//       endTime: "08:30",
+//     },
+//     {
+//       time: "08:30-10:30",
+//       activity: "Domaći zadatak",
+//       startTime: "08:30",
+//       endTime: "10:30",
+//     },
+//     {
+//       time: "12:00-12:30",
+//       activity: "Ručak",
+//       startTime: "12:00",
+//       endTime: "12:30",
+//     },
+//   ],
+// };
 
 // Icon mapping for subjects and activities
 const getSubjectIcon = (subject: string): React.ReactNode => {
@@ -129,7 +136,9 @@ const calculateSectionTimeRange = (
 export default function Schedule() {
   const [selectedWeek, setSelectedWeek] = useState<WeekInfo | null>(null);
   const [selectedDay, setSelectedDay] = useState<Day | null>(null);
-  const [showDaycare, setShowDaycare] = useState(true);
+  // BORAVAK — disabled for 3rd grade, see block near top of file. Re-enable
+  // by restoring this state and the ScheduleHeader props below.
+  // const [showDaycare, setShowDaycare] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedEventDetails, setSelectedEventDetails] =
     useState<EventDetails | null>(null);
@@ -137,13 +146,13 @@ export default function Schedule() {
   const [isClient, setIsClient] = useState(false);
 
   const days: Day[] = [
-    "Понедељак",
-    "Уторак",
-    "Среда",
-    "Четвртак",
-    "Петак",
-    "Субота",
-    "Недеља",
+    "Ponedeljak",
+    "Utorak",
+    "Sreda",
+    "Četvrtak",
+    "Petak",
+    "Subota",
+    "Nedelja",
   ];
 
   // Initialize client-side state to prevent hydration mismatches
@@ -186,13 +195,13 @@ export default function Schedule() {
       selectedWeek.week,
     );
     setSelectedWeek(getWeekInfo(year, week));
-    setSelectedDay("Понедељак");
+    setSelectedDay("Ponedeljak");
   };
 
   const handleNextWeek = () => {
     const { year, week } = getNextWeek(selectedWeek.year, selectedWeek.week);
     setSelectedWeek(getWeekInfo(year, week));
-    setSelectedDay("Понедељак");
+    setSelectedDay("Ponedeljak");
   };
 
   const handleGoToCurrentWeek = () => {
@@ -203,7 +212,7 @@ export default function Schedule() {
   };
 
   const handleEventClick = (
-    title: string,
+    title: SubjectId,
     time: string,
     classType?: string,
   ) => {
@@ -224,8 +233,9 @@ export default function Schedule() {
       <ScheduleHeader
         selectedWeek={selectedWeek}
         selectedDay={selectedDay}
-        showDaycare={showDaycare}
-        onToggleDaycare={setShowDaycare}
+        // BORAVAK — disabled for 3rd grade; see showDaycare state above.
+        // showDaycare={showDaycare}
+        // onToggleDaycare={setShowDaycare}
         onPreviousWeek={handlePreviousWeek}
         onNextWeek={handleNextWeek}
         onGoToCurrentWeek={handleGoToCurrentWeek}
@@ -236,7 +246,7 @@ export default function Schedule() {
           const date = weekDates[index];
           const isToday = isSameDay(startOfDay(date), today);
           const isSelected = selectedDay === day;
-          const isWeekend = day === "Субота" || day === "Недеља";
+          const isWeekend = day === "Subota" || day === "Nedelja";
 
           return (
             <button
@@ -259,21 +269,21 @@ export default function Schedule() {
 
       {/* Exams section - hide on weekends */}
       {weekExams.length > 0 &&
-        selectedDay !== "Субота" &&
-        selectedDay !== "Недеља" && <ExamSummary exams={weekExams} />}
+        selectedDay !== "Subota" &&
+        selectedDay !== "Nedelja" && <ExamSummary exams={weekExams} />}
 
       <div className={styles.eventsContainer}>
-        {selectedDay === "Субота" || selectedDay === "Недеља" ? (
+        {selectedDay === "Subota" || selectedDay === "Nedelja" ? (
           /* Weekend display */
           <>
             <div className={styles.weekendBlock}>
-              <h2>Данас Нема Наставе</h2>
+              <h2>Danas Nema Nastave</h2>
               <div className={styles.weekendIcon}>🎉</div>
-              <p className="text-secondary">Уживајте у викенду</p>
+              <p className="text-secondary">Uživajte u vikendu</p>
             </div>
 
             <div className={styles.weekendBlock}>
-              <h2>Следеће Недеље</h2>
+              <h2>Sledeće Nedelje</h2>
 
               <div className={styles.weekendPreviewItem}>
                 <SvgIcon
@@ -290,7 +300,7 @@ export default function Schedule() {
                   <SvgIcon iconId="brain" size={24} />
                   <h3 className="text-primary">
                     {nextWeekExams[0].subject} -{" "}
-                    {nextWeekExams[0].topic || "Контролни задатак"}
+                    {nextWeekExams[0].topic || "Kontrolni zadatak"}
                   </h3>
                 </div>
               )}
@@ -298,11 +308,14 @@ export default function Schedule() {
           </>
         ) : shiftInfo.shift === "afternoon" ? (
           <>
-            {/* Daycare activities first for afternoon shift */}
+            {/* BORAVAK — disabled for 3rd grade (no boravak this year).
+                Kept for a future school/class that has it. To re-enable,
+                restore daycareActivities + showDaycare above and uncomment:
+
             {showDaycare && (
               <>
                 <div className={styles.sectionHeader}>
-                  <h3 className={styles.sectionTitle}>Продужени боравак</h3>
+                  <h3 className={styles.sectionTitle}>Produženi boravak</h3>
                   <h3 className={styles.sectionTimeRange}>
                     {(() => {
                       const firstClass =
@@ -314,7 +327,7 @@ export default function Schedule() {
                         ...daycareActivities[shiftInfo.shift],
                         {
                           time: `12:30-${freeTimeEnd}`,
-                          activity: "Слободно време",
+                          activity: "Slobodno vreme",
                           startTime: "12:30",
                           endTime: freeTimeEnd,
                         },
@@ -348,7 +361,7 @@ export default function Schedule() {
                       : "13:10";
                     const freeTimeActivity = {
                       time: `12:30-${freeTimeEnd}`,
-                      activity: "Слободно време",
+                      activity: "Slobodno vreme",
                       startTime: "12:30",
                       endTime: freeTimeEnd,
                     };
@@ -375,6 +388,8 @@ export default function Schedule() {
                 </div>
               </>
             )}
+
+            */}
             {/* Classes second for afternoon shift */}
             <div className={styles.sectionHeader}>
               <h3 className={styles.sectionTitle}>{shiftInfo.shiftName}</h3>
@@ -434,11 +449,14 @@ export default function Schedule() {
                 />
               ))}
             </div>
-            {/* Daycare activities second for morning shift */}
+            {/* BORAVAK — disabled for 3rd grade (no boravak this year).
+                Kept for a future school/class that has it. To re-enable,
+                restore daycareActivities + showDaycare above and uncomment:
+
             {showDaycare && (
               <>
                 <div className={styles.sectionHeader}>
-                  <h3 className={styles.sectionTitle}>Продужени боравак</h3>
+                  <h3 className={styles.sectionTitle}>Produženi boravak</h3>
                   <h3 className={styles.sectionTimeRange}>
                     {calculateSectionTimeRange(
                       daycareActivities[shiftInfo.shift],
@@ -465,6 +483,8 @@ export default function Schedule() {
                 </div>
               </>
             )}
+
+            */}
           </>
         )}
       </div>

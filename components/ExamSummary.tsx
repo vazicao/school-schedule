@@ -8,9 +8,9 @@ interface ExamSummaryProps {
 }
 
 const getExamText = (count: number): string => {
-  if (count === 1) return "1 Писмени Задатак ове Недеље";
-  if (count < 5) return `${count} Писмена Задатка ове Недеље`;
-  return `${count} Писмених Задатака ове Недеље`;
+  if (count === 1) return "1 Pismeni Zadatak ove Nedelje";
+  if (count < 5) return `${count} Pismena Zadatka ove Nedelje`;
+  return `${count} Pismenih Zadataka ove Nedelje`;
 };
 
 const ExamSummary: React.FC<ExamSummaryProps> = ({ exams }) => {
@@ -37,7 +37,7 @@ const ExamSummary: React.FC<ExamSummaryProps> = ({ exams }) => {
         <div className={styles.examDetails}>
           {exams.map((exam, index) => (
             <p key={index} className="caption-large">
-              {exam.subject} - {exam.topic || "Контролни задатак"}
+              {exam.subject} - {exam.topic || "Kontrolni zadatak"}
             </p>
           ))}
         </div>

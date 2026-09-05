@@ -1,11 +1,17 @@
-import { getISOWeek, getISOWeekYear, startOfISOWeek, addWeeks, getDay } from 'date-fns';
+import {
+  getISOWeek,
+  getISOWeekYear,
+  startOfISOWeek,
+  addWeeks,
+  getDay,
+} from "date-fns";
 
-export type ShiftType = 'morning' | 'afternoon';
+export type ShiftType = "morning" | "afternoon";
 
 // Week 38 of September 2025 is afternoon shift (reference point)
 const REFERENCE_WEEK = 38;
 const REFERENCE_YEAR = 2025;
-const REFERENCE_SHIFT: ShiftType = 'afternoon';
+const REFERENCE_SHIFT: ShiftType = "afternoon";
 
 /**
  * Get ISO week number for a given date
@@ -13,7 +19,7 @@ const REFERENCE_SHIFT: ShiftType = 'afternoon';
 function getWeekNumber(date: Date): { week: number; year: number } {
   return {
     week: getISOWeek(date),
-    year: getISOWeekYear(date)
+    year: getISOWeekYear(date),
   };
 }
 
@@ -25,7 +31,8 @@ export function getCurrentShift(date: Date = new Date()): ShiftType {
   const { week, year } = getWeekNumber(date);
 
   // Calculate total weeks from reference point
-  const totalWeeksFromReference = (year - REFERENCE_YEAR) * 52 + (week - REFERENCE_WEEK);
+  const totalWeeksFromReference =
+    (year - REFERENCE_YEAR) * 52 + (week - REFERENCE_WEEK);
 
   // If the difference is even, same shift as reference
   // If odd, opposite shift
@@ -34,7 +41,7 @@ export function getCurrentShift(date: Date = new Date()): ShiftType {
   if (isEvenWeekDifference) {
     return REFERENCE_SHIFT;
   } else {
-    return REFERENCE_SHIFT === 'afternoon' ? 'morning' : 'afternoon';
+    return REFERENCE_SHIFT === "afternoon" ? "morning" : "afternoon";
   }
 }
 
@@ -50,7 +57,7 @@ export function getShiftInfo(date: Date = new Date()): {
   const { week, year } = getWeekNumber(date);
   const shift = getCurrentShift(date);
 
-  const shiftName = shift === 'morning' ? 'Јутарња смена' : 'Поподневна смена';
+  const shiftName = shift === "morning" ? "Jutarnja smena" : "Popodnevna smena";
 
   return {
     shift,

@@ -1,15 +1,22 @@
+import type { SubjectId } from "./scheduleData";
+
 export type Exam = {
   weekStart: string; // ISO date, first day of the exam week
   weekEnd: string; // ISO date, last day of the exam week
   isoWeek: number; // ISO week number
-  subject: string; // e.g. "Matematika"
+  subject: SubjectId; // must match a key in scheduleData.ts's `subjects`
   topic?: string; // e.g. "Prirodni brojevi" or "Inicijalni test"
   semester: 1 | 2; // 1 = first polugodiste, 2 = second
   confirmedDate?: string | null; // optional exact date when known
 };
 
-// Exam data configuration
-const examConfig = {
+// Exam data configuration. `exams` is annotated as Exam[] (not cast) so that
+// each entry's `subject` is checked against SubjectId as it's written — a
+// typo'd or stale subject name is a compile error here, not a silent miss.
+const examConfig: {
+  metadata: { lastUpdated: string; schoolYear: string; academicYear: number };
+  exams: Exam[];
+} = {
   metadata: {
     lastUpdated: "2025-09-20",
     schoolYear: "2025/2026",
@@ -20,8 +27,8 @@ const examConfig = {
       weekStart: "2025-09-01",
       weekEnd: "2025-09-05",
       isoWeek: 36,
-      subject: "Свет око нас",
-      topic: "Иницијални тест",
+      subject: "Svet oko nas",
+      topic: "Inicijalni test",
       semester: 1,
       confirmedDate: null,
     },
@@ -29,8 +36,8 @@ const examConfig = {
       weekStart: "2025-09-01",
       weekEnd: "2025-09-05",
       isoWeek: 36,
-      subject: "Српски језик",
-      topic: "Иницијални тест",
+      subject: "Srpski jezik",
+      topic: "Inicijalni test",
       semester: 1,
       confirmedDate: null,
     },
@@ -38,8 +45,8 @@ const examConfig = {
       weekStart: "2025-09-08",
       weekEnd: "2025-09-12",
       isoWeek: 37,
-      subject: "Математика",
-      topic: "Иницијални тест",
+      subject: "Matematika",
+      topic: "Inicijalni test",
       semester: 1,
       confirmedDate: null,
     },
@@ -47,8 +54,8 @@ const examConfig = {
       weekStart: "2025-09-08",
       weekEnd: "2025-09-12",
       isoWeek: 37,
-      subject: "Енглески језик",
-      topic: "Иницијални тест",
+      subject: "Engleski jezik",
+      topic: "Inicijalni test",
       semester: 1,
       confirmedDate: null,
     },
@@ -56,8 +63,8 @@ const examConfig = {
       weekStart: "2025-09-29",
       weekEnd: "2025-10-03",
       isoWeek: 40,
-      subject: "Математика",
-      topic: "Природни бројеви",
+      subject: "Matematika",
+      topic: "Prirodni brojevi",
       semester: 1,
       confirmedDate: null,
     },
@@ -65,8 +72,8 @@ const examConfig = {
       weekStart: "2025-10-06",
       weekEnd: "2025-10-10",
       isoWeek: 41,
-      subject: "Српски језик",
-      topic: "Именице",
+      subject: "Srpski jezik",
+      topic: "Imenice",
       semester: 1,
       confirmedDate: null,
     },
@@ -74,8 +81,8 @@ const examConfig = {
       weekStart: "2025-10-13",
       weekEnd: "2025-10-17",
       isoWeek: 42,
-      subject: "Свет око нас",
-      topic: "Култура живљења",
+      subject: "Svet oko nas",
+      topic: "Kultura življenja",
       semester: 1,
       confirmedDate: null,
     },
@@ -83,8 +90,8 @@ const examConfig = {
       weekStart: "2025-10-27",
       weekEnd: "2025-10-31",
       isoWeek: 44,
-      subject: "Српски језик",
-      topic: "Правопис (диктат)",
+      subject: "Srpski jezik",
+      topic: "Pravopis (diktat)",
       semester: 1,
       confirmedDate: null,
     },
@@ -92,8 +99,8 @@ const examConfig = {
       weekStart: "2025-11-03",
       weekEnd: "2025-11-07",
       isoWeek: 45,
-      subject: "Математика",
-      topic: "Јединице мере и обим фигуре",
+      subject: "Matematika",
+      topic: "Jedinice mere i obim figure",
       semester: 1,
       confirmedDate: null,
     },
@@ -101,8 +108,8 @@ const examConfig = {
       weekStart: "2025-11-12",
       weekEnd: "2025-11-14",
       isoWeek: 46,
-      subject: "Свет око нас",
-      topic: "Оријентација у времену",
+      subject: "Svet oko nas",
+      topic: "Orijentacija u vremenu",
       semester: 1,
       confirmedDate: null,
     },
@@ -110,8 +117,8 @@ const examConfig = {
       weekStart: "2025-11-17",
       weekEnd: "2025-11-21",
       isoWeek: 47,
-      subject: "Српски језик",
-      topic: "Придеви",
+      subject: "Srpski jezik",
+      topic: "Pridevi",
       semester: 1,
       confirmedDate: null,
     },
@@ -119,8 +126,8 @@ const examConfig = {
       weekStart: "2025-11-24",
       weekEnd: "2025-11-28",
       isoWeek: 48,
-      subject: "Математика",
-      topic: "Једначине",
+      subject: "Matematika",
+      topic: "Jednačine",
       semester: 1,
       confirmedDate: null,
     },
@@ -128,15 +135,15 @@ const examConfig = {
       weekStart: "2025-12-01",
       weekEnd: "2025-12-05",
       isoWeek: 49,
-      subject: "Математика",
-      topic: "Задаци са две операције",
+      subject: "Matematika",
+      topic: "Zadaci sa dve operacije",
       semester: 1,
       confirmedDate: null,
     },
   ],
 };
 
-export const exams: Exam[] = examConfig.exams as Exam[];
+export const exams: Exam[] = examConfig.exams;
 export const examMetadata = examConfig.metadata;
 
 // Helper functions for working with exam data
@@ -149,7 +156,7 @@ export const getExamsForSemester = (semester: 1 | 2): Exam[] => {
   return exams.filter((exam) => exam.semester === semester);
 };
 
-export const getExamsForSubject = (subject: string): Exam[] => {
+export const getExamsForSubject = (subject: SubjectId): Exam[] => {
   return exams.filter((exam) => exam.subject === subject);
 };
 

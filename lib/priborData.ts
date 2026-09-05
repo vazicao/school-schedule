@@ -1,3 +1,5 @@
+import type { SubjectId } from "./scheduleData";
+
 export interface PriborItem {
   name: string;
   category:
@@ -20,116 +22,116 @@ export interface SubjectPribor {
 // Common pribor items used across multiple subjects
 export const commonPribor: Record<string, PriborItem> = {
   olovka: {
-    name: "Оловка",
+    name: "Olovka",
     category: "writing",
     isRequired: true,
   },
   gumica: {
-    name: "Гумица",
+    name: "Gumica",
     category: "writing",
     isRequired: true,
   },
   nalivPero: {
-    name: "Налив перо",
+    name: "Naliv pero",
     category: "writing",
     isRequired: true,
   },
   sveska: {
-    name: "Свеска",
+    name: "Sveska",
     category: "general",
     isRequired: true,
   },
   sveskaA5Kvadratici: {
-    name: "Свеска А5 квадратићи",
+    name: "Sveska A5 kvadratići",
     category: "general",
     isRequired: true,
   },
   sveskaLinije: {
-    name: "Свеска у линије",
+    name: "Sveska u linije",
     category: "general",
     isRequired: true,
   },
   bojice: {
-    name: "Бојице",
+    name: "Bojice",
     category: "drawing",
     isRequired: true,
   },
   flomastere: {
-    name: "Фломастери",
+    name: "Flomasteri",
     category: "drawing",
     isRequired: false,
   },
   vodeneBoze: {
-    name: "Водене боје",
+    name: "Vodene boje",
     category: "drawing",
     isRequired: false,
   },
   cetkice: {
-    name: "Четкице",
+    name: "Četkice",
     category: "drawing",
     isRequired: false,
   },
   papirZaCrtanje: {
-    name: "Папир за цртање",
+    name: "Papir za crtanje",
     category: "drawing",
     isRequired: false,
   },
   plastelin: {
-    name: "Пластелин",
+    name: "Plastelin",
     category: "drawing",
     isRequired: false,
   },
   lenjiri: {
-    name: "Лењири",
+    name: "Lenjiri",
     category: "measuring",
     isRequired: true,
   },
   sestor: {
-    name: "Шестар",
+    name: "Šestar",
     category: "measuring",
     isRequired: true,
   },
   usbFlash: {
-    name: "USB флеш меморија",
+    name: "USB fleš memorija",
     category: "digital",
     isRequired: false,
   },
   slusalice: {
-    name: "Слушалице",
+    name: "Slušalice",
     category: "digital",
     isRequired: false,
   },
   sportskaOprema: {
-    name: "Спортска опрема",
+    name: "Sportska oprema",
     category: "sport",
     isRequired: true,
   },
   patikeZaSport: {
-    name: "Патике за спорт",
+    name: "Patike za sport",
     category: "sport",
     isRequired: true,
   },
   flasaVode: {
-    name: "Флаша воде",
+    name: "Flaša vode",
     category: "sport",
     isRequired: true,
   },
   lupica: {
-    name: "Лупа (понекад)",
+    name: "Lupa (ponekad)",
     category: "general",
     isRequired: false,
-    notes: "Потребна само за неке активности",
+    notes: "Potrebna samo za neke aktivnosti",
   },
   decijeOrgulje: {
-    name: "Дечије оргуље (опционо)",
+    name: "Dečije orgulje (opciono)",
     category: "general",
     isRequired: false,
   },
 };
 
 // Subject-specific pribor configuration
-export const subjectPribor: Record<string, SubjectPribor> = {
-  Математика: {
+export const subjectPribor: Partial<Record<SubjectId, SubjectPribor>> = {
+  Matematika: {
     books: [
       "Matematika za 2. razred - udžbenik",
       "Matematika za 2. razred - radna sveska",
@@ -143,7 +145,7 @@ export const subjectPribor: Record<string, SubjectPribor> = {
       commonPribor.gumica,
     ],
   },
-  "Српски језик": {
+  "Srpski jezik": {
     books: [
       "Srpski jezik za 2. razred - udžbenik",
       "Srpski jezik za 2. razred - radna sveska",
@@ -156,7 +158,7 @@ export const subjectPribor: Record<string, SubjectPribor> = {
       commonPribor.sveskaLinije,
     ],
   },
-  "Енглески језик": {
+  "Engleski jezik": {
     books: [
       "English for Kids 2 - udžbenik",
       "English for Kids 2 - radna sveska",
@@ -169,7 +171,7 @@ export const subjectPribor: Record<string, SubjectPribor> = {
       commonPribor.sveska,
     ],
   },
-  "Дигитални свет": {
+  "Digitalni svet": {
     books: ["Digitalni svet za 2. razred - udžbenik"],
     equipment: [
       commonPribor.usbFlash,
@@ -178,7 +180,7 @@ export const subjectPribor: Record<string, SubjectPribor> = {
       commonPribor.sveska,
     ],
   },
-  "Свет око нас": {
+  "Svet oko nas": {
     books: [
       "Svet oko nas za 2. razred - udžbenik",
       "Svet oko nas za 2. razred - radna sveska",
@@ -190,7 +192,7 @@ export const subjectPribor: Record<string, SubjectPribor> = {
       commonPribor.sveska,
     ],
   },
-  "Ликовна култура": {
+  "Likovna kultura": {
     books: ["Likovna kultura za 2. razred - udžbenik"],
     equipment: [
       commonPribor.bojice,
@@ -201,7 +203,7 @@ export const subjectPribor: Record<string, SubjectPribor> = {
       commonPribor.plastelin,
     ],
   },
-  "Музичка култура": {
+  "Muzička kultura": {
     books: ["Muzička kultura za 2. razred - udžbenik"],
     equipment: [
       commonPribor.decijeOrgulje,
@@ -209,7 +211,7 @@ export const subjectPribor: Record<string, SubjectPribor> = {
       commonPribor.sveska,
     ],
   },
-  "Физичко и здравствено васпитање": {
+  "Fizičko i zdravstveno vaspitanje": {
     books: [],
     equipment: [
       commonPribor.sportskaOprema,
@@ -217,7 +219,7 @@ export const subjectPribor: Record<string, SubjectPribor> = {
       commonPribor.flasaVode,
     ],
   },
-  "Физичко и здравствено васпитање (сала)": {
+  "Fizičko i zdravstveno vaspitanje (sala)": {
     books: [],
     equipment: [
       commonPribor.sportskaOprema,
@@ -225,25 +227,25 @@ export const subjectPribor: Record<string, SubjectPribor> = {
       commonPribor.flasaVode,
     ],
   },
-  ЧОС: {
+  ČOS: {
     books: ["ČOS za 2. razred - udžbenik"],
     equipment: [commonPribor.olovka, commonPribor.sveska],
   },
-  "Грађанско васпитање / Верска настава": {
+  "Građansko vaspitanje / Verska nastava": {
     books: [
       "Građansko vaspitanje za 2. razred - udžbenik",
       "ili Verska nastava za 2. razred - udžbenik",
     ],
     equipment: [commonPribor.olovka, commonPribor.sveska],
   },
-  "Допунска настава": {
+  "Dopunska nastava": {
     books: [],
     equipment: [
       {
-        name: "Материјали за предмет који се допуњује",
+        name: "Materijali za predmet koji se dopunjuje",
         category: "general",
         isRequired: true,
-        notes: "Зависи од предмета",
+        notes: "Zavisi od predmeta",
       },
       commonPribor.olovka,
       commonPribor.sveska,
@@ -252,44 +254,44 @@ export const subjectPribor: Record<string, SubjectPribor> = {
 };
 
 // Daycare activities pribor
-export const daycarePribor: Record<string, SubjectPribor> = {
-  "Домаћи задатак": {
+export const daycarePribor: Partial<Record<SubjectId, SubjectPribor>> = {
+  "Domaći zadatak": {
     books: [],
     equipment: [
       {
-        name: "Сав школски прибор",
+        name: "Sav školski pribor",
         category: "general",
         isRequired: true,
-        notes: "Све што је потребно за школу",
+        notes: "Sve što je potrebno za školu",
       },
       {
-        name: "Уџбеници и свеске",
+        name: "Udžbenici i sveske",
         category: "general",
         isRequired: true,
       },
       {
-        name: "Задаци за кућу",
+        name: "Zadaci za kuću",
         category: "general",
         isRequired: true,
       },
     ],
   },
-  Домаћи: {
+  Domaći: {
     books: [],
     equipment: [
       {
-        name: "Сав школски прибор",
+        name: "Sav školski pribor",
         category: "general",
         isRequired: true,
-        notes: "Све што је потребно за школу",
+        notes: "Sve što je potrebno za školu",
       },
       {
-        name: "Уџбеници и свеске",
+        name: "Udžbenici i sveske",
         category: "general",
         isRequired: true,
       },
       {
-        name: "Задаци за кућу",
+        name: "Zadaci za kuću",
         category: "general",
         isRequired: true,
       },
@@ -298,24 +300,26 @@ export const daycarePribor: Record<string, SubjectPribor> = {
 };
 
 // Helper function to get pribor for a subject
-export const getSubjectPribor = (subjectName: string): SubjectPribor | null => {
+export const getSubjectPribor = (
+  subjectName: SubjectId,
+): SubjectPribor | null => {
   return subjectPribor[subjectName] || daycarePribor[subjectName] || null;
 };
 
 // Helper function to get all equipment names for a subject
-export const getSubjectEquipmentNames = (subjectName: string): string[] => {
+export const getSubjectEquipmentNames = (subjectName: SubjectId): string[] => {
   const pribor = getSubjectPribor(subjectName);
   return pribor ? pribor.equipment.map((item) => item.name) : [];
 };
 
 // Helper function to get required equipment for a subject
-export const getRequiredEquipment = (subjectName: string): PriborItem[] => {
+export const getRequiredEquipment = (subjectName: SubjectId): PriborItem[] => {
   const pribor = getSubjectPribor(subjectName);
   return pribor ? pribor.equipment.filter((item) => item.isRequired) : [];
 };
 
 // Helper function to get optional equipment for a subject
-export const getOptionalEquipment = (subjectName: string): PriborItem[] => {
+export const getOptionalEquipment = (subjectName: SubjectId): PriborItem[] => {
   const pribor = getSubjectPribor(subjectName);
   return pribor ? pribor.equipment.filter((item) => !item.isRequired) : [];
 };

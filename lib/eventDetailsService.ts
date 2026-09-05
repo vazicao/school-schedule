@@ -1,12 +1,12 @@
 import { EventDetails } from "../components/EventModal";
 import { getExamsForSubject, type Exam } from "./examData";
-import { getSubjectInfo } from "./scheduleData";
+import { getSubjectInfo, type SubjectId } from "./scheduleData";
 import { getTextbooksForSubject } from "./textbookData";
 import { getTeacherForSubject } from "./teacherData";
 import { getClassTimes } from "./timeMapping";
 import { getCurrentShift } from "./shiftDetection";
 import { format, parseISO, isBefore } from "date-fns";
-import { sr } from "date-fns/locale";
+import { srLatn as sr } from "date-fns/locale";
 
 // Helper functions to convert exam data
 const formatExamDate = (exam: Exam): string => {
@@ -17,7 +17,7 @@ const formatExamDate = (exam: Exam): string => {
 };
 
 const getAllExamsForSubject = (
-  subject: string,
+  subject: SubjectId,
 ): Array<{
   date: string;
   type: string;
@@ -58,9 +58,9 @@ const getAllExamsForSubject = (
 
       return {
         date: formatExamDate(exam),
-        type: "Контролни задатак",
-        description: exam.topic || "Тема ће бити најављена",
-        weekInfo: `Недеља ${exam.isoWeek} (${format(parseISO(exam.weekStart), "d.", { locale: sr })} – ${format(parseISO(exam.weekEnd), "d. MMMM", { locale: sr })})`,
+        type: "Kontrolni zadatak",
+        description: exam.topic || "Tema će biti najavljena",
+        weekInfo: `Nedelja ${exam.isoWeek} (${format(parseISO(exam.weekStart), "d.", { locale: sr })} – ${format(parseISO(exam.weekEnd), "d. MMMM", { locale: sr })})`,
         isPast,
         isUpcoming,
       };
@@ -87,19 +87,22 @@ const getAllExamsForSubject = (
 };
 
 // Helper function to get icon for a subject - returns the icon string/identifier
-const getSubjectIconData = (subject: string): string => {
+const getSubjectIconData = (subject: SubjectId): string => {
   const subjectInfo = getSubjectInfo(subject);
   return subjectInfo.icon;
 };
 
 // Helper function to determine event type
-const getEventType = (subject: string): "class" | "daycare" | "weekend" => {
-  const daycareActivities = [
-    "Пријем деце",
-    "Домаћи задатак",
-    "Ручак",
-    "Домаћи",
-    "Слободно време",
+const getEventType = (subject: SubjectId): "class" | "daycare" | "weekend" => {
+  // BORAVAK — these activities are only ever produced by the daycare JSX in
+  // app/schedule/page.tsx, currently disabled for 3rd grade. Left here so
+  // re-enabling boravak doesn't also require restoring this list.
+  const daycareActivities: SubjectId[] = [
+    "Prijem dece",
+    "Domaći zadatak",
+    "Ručak",
+    "Domaći",
+    "Slobodno vreme",
   ];
 
   if (daycareActivities.includes(subject)) {
@@ -122,7 +125,7 @@ const getFormattedClassTime = (classOrder: string): string => {
 };
 
 export const getEventDetails = (
-  title: string,
+  title: SubjectId,
   time: string,
   classType?: string,
 ): EventDetails | null => {

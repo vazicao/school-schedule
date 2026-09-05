@@ -1,3 +1,5 @@
+import type { SubjectId } from "./scheduleData";
+
 export interface Teacher {
   id: string;
   name: string;
@@ -11,17 +13,17 @@ export interface Teacher {
 export const teachers: Record<string, Teacher> = {
   "maksimovic-bojana": {
     id: "maksimovic-bojana",
-    name: "Максимовић Бојана",
-    subjects: ["Разредна настава"], // Default for all subjects except overrides
-    classes: ["II2"],
+    name: "Maksimović Bojana",
+    subjects: ["Razredna nastava"], // Default for all subjects except overrides
+    classes: ["III2"],
     email: "bojanaucha@gmail.com",
     phone: "+381 11 123 4567",
     room: "101",
   },
   "domnic-popovic-natasa": {
     id: "domnic-popovic-natasa",
-    name: "Домнић Поповић Наташа",
-    subjects: ["Енглески језик"],
+    name: "Domnić Popović Nataša",
+    subjects: ["Engleski jezik"],
     classes: [],
     phone: "+381 11 234 5678",
     room: "205",
@@ -29,18 +31,18 @@ export const teachers: Record<string, Teacher> = {
 };
 
 // Subject to teacher mapping for specific overrides
-export const subjectTeacherMap: Record<string, string> = {
-  "Енглески језик": "domnic-popovic-natasa",
+export const subjectTeacherMap: Partial<Record<SubjectId, string>> = {
+  "Engleski jezik": "domnic-popovic-natasa",
 };
 
 // Default class teacher for subjects not in override map
 export const classTeachers: Record<string, string> = {
-  II2: "maksimovic-bojana",
+  III2: "maksimovic-bojana",
 };
 
 export const getTeacherForSubject = (
-  subject: string,
-  className: string = "II2",
+  subject: SubjectId,
+  className: string = "III2",
 ): Teacher | null => {
   // First check for specific subject override
   const specificTeacherId = subjectTeacherMap[subject];

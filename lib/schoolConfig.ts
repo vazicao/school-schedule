@@ -25,9 +25,9 @@ export const schoolConfigs: SchoolConfig[] = [
     address: "Beograd, Srbija",
     classes: [
       {
-        id: "ii2",
-        name: "II·2",
-        grade: 2,
+        id: "iii2",
+        name: "III·2",
+        grade: 3,
         section: "2",
         teacher: "Marija Petrović",
         studentCount: 24,
@@ -52,7 +52,7 @@ export const getCurrentSchool = (): SchoolConfig => {
 
 export const getCurrentClass = (): ClassConfig => {
   const school = getCurrentSchool();
-  return school.classes.find((c) => c.id === "ii2") || school.classes[0];
+  return school.classes.find((c) => c.id === "iii2") || school.classes[0];
 };
 
 // Helper functions for future multi-school support
