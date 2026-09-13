@@ -4,14 +4,20 @@ import {
   startOfISOWeek,
   addWeeks,
   getDay,
+  differenceInCalendarWeeks,
 } from "date-fns";
 
 export type ShiftType = "morning" | "afternoon";
 
-// Week 38 of September 2025 is afternoon shift (reference point)
-const REFERENCE_WEEK = 38;
-const REFERENCE_YEAR = 2025;
-const REFERENCE_SHIFT: ShiftType = "afternoon";
+// Reference point for 3rd grade: the Monday of ISO week 38, 2026
+// (2026-09-14) is a morning-shift week; week 39 (2026-09-21) is afternoon.
+// Shifts alternate weekly from there. Anchored to an actual date (not a
+// week/year pair) so the parity math below is exact calendar arithmetic —
+// no approximation of "weeks per year" that would drift across a year
+// boundary (2026 itself has 53 ISO weeks, so a naive "* 52" would have
+// silently flipped the parity wrong partway through this school year).
+const REFERENCE_MONDAY = new Date(2026, 8, 14); // September 14, 2026
+const REFERENCE_SHIFT: ShiftType = "morning";
 
 /**
  * Get ISO week number for a given date
@@ -24,19 +30,20 @@ function getWeekNumber(date: Date): { week: number; year: number } {
 }
 
 /**
- * Determine the current shift based on the week number
- * Shifts alternate weekly: W37=afternoon, W38=morning, W39=afternoon, etc.
+ * Determine the current shift based on the week
+ * Shifts alternate weekly relative to REFERENCE_MONDAY.
  */
 export function getCurrentShift(date: Date = new Date()): ShiftType {
-  const { week, year } = getWeekNumber(date);
-
-  // Calculate total weeks from reference point
-  const totalWeeksFromReference =
-    (year - REFERENCE_YEAR) * 52 + (week - REFERENCE_WEEK);
+  const targetMonday = startOfISOWeek(date);
+  const weeksFromReference = differenceInCalendarWeeks(
+    targetMonday,
+    REFERENCE_MONDAY,
+    { weekStartsOn: 1 },
+  );
 
   // If the difference is even, same shift as reference
   // If odd, opposite shift
-  const isEvenWeekDifference = totalWeeksFromReference % 2 === 0;
+  const isEvenWeekDifference = ((weeksFromReference % 2) + 2) % 2 === 0;
 
   if (isEvenWeekDifference) {
     return REFERENCE_SHIFT;
