@@ -87,6 +87,15 @@ export const subjects = {
     color: "#FFD2B1",
     pribor: ["Sveska A5 kvadratići"],
   },
+  // "Svet oko nas" (2nd grade) becomes "Priroda i društvo" starting 3rd grade
+  // — a real curriculum rename, not a typo, so kept as a separate subject
+  // rather than overwriting the old one (which stays as unused 2nd-grade data).
+  "Priroda i društvo": {
+    name: "Priroda i društvo",
+    icon: "🌍",
+    color: "#FFD2B1",
+    pribor: ["Sveska A5 kvadratići"],
+  },
   "Digitalni svet": {
     name: "Digitalni svet",
     icon: "💾",
@@ -175,33 +184,34 @@ const afternoonTimes = {
   "6. čas": { startTime: "18:25", endTime: "19:10" },
 };
 
-// Afternoon schedule
+// Afternoon schedule (3rd grade, confirmed against the school's printed
+// timetable — see commit message for the source)
 export const afternoonSchedule: WeekSchedule = {
   Ponedeljak: [
+    { order: "Predčas", ...afternoonTimes["Predčas"], subject: "ČOS" },
     {
-      order: "Predčas",
-      ...afternoonTimes["Predčas"],
+      order: "1. čas",
+      ...afternoonTimes["1. čas"],
       subject: "Fizičko i zdravstveno vaspitanje (sala)",
     },
-    { order: "1. čas", ...afternoonTimes["1. čas"], subject: "Matematika" },
-    { order: "2. čas", ...afternoonTimes["2. čas"], subject: "Digitalni svet" },
-    { order: "3. čas", ...afternoonTimes["3. čas"], subject: "Engleski jezik" },
+    { order: "2. čas", ...afternoonTimes["2. čas"], subject: "Matematika" },
+    { order: "3. čas", ...afternoonTimes["3. čas"], subject: "Digitalni svet" },
     { order: "4. čas", ...afternoonTimes["4. čas"], subject: "Srpski jezik" },
   ],
   Utorak: [
-    { order: "Predčas", ...afternoonTimes["Predčas"], subject: "Srpski jezik" },
-    { order: "1. čas", ...afternoonTimes["1. čas"], subject: "Matematika" },
-    { order: "2. čas", ...afternoonTimes["2. čas"], subject: "Svet oko nas" },
+    {
+      order: "Predčas",
+      ...afternoonTimes["Predčas"],
+      subject: "Dopunska nastava",
+    },
+    { order: "1. čas", ...afternoonTimes["1. čas"], subject: "Srpski jezik" },
+    { order: "2. čas", ...afternoonTimes["2. čas"], subject: "Matematika" },
     {
       order: "3. čas",
       ...afternoonTimes["3. čas"],
-      subject: "Likovna kultura",
+      subject: "Priroda i društvo",
     },
-    {
-      order: "4. čas",
-      ...afternoonTimes["4. čas"],
-      subject: "Likovna kultura",
-    },
+    { order: "4. čas", ...afternoonTimes["4. čas"], subject: "Engleski jezik" },
   ],
   Sreda: [
     { order: "1. čas", ...afternoonTimes["1. čas"], subject: "Matematika" },
@@ -209,37 +219,45 @@ export const afternoonSchedule: WeekSchedule = {
     {
       order: "3. čas",
       ...afternoonTimes["3. čas"],
-      subject: "Muzička kultura",
+      subject: "Likovna kultura",
     },
-    { order: "4. čas", ...afternoonTimes["4. čas"], subject: "Engleski jezik" },
-  ],
-  Četvrtak: [
-    {
-      order: "Predčas",
-      ...afternoonTimes["Predčas"],
-      subject: "Fizičko i zdravstveno vaspitanje (sala)",
-    },
-    { order: "1. čas", ...afternoonTimes["1. čas"], subject: "Srpski jezik" },
-    { order: "2. čas", ...afternoonTimes["2. čas"], subject: "Matematika" },
-    { order: "3. čas", ...afternoonTimes["3. čas"], subject: "Svet oko nas" },
-    { order: "4. čas", ...afternoonTimes["4. čas"], subject: "ČOS" },
-  ],
-  Petak: [
-    {
-      order: "Predčas",
-      ...afternoonTimes["Predčas"],
-      subject: "Dopunska nastava",
-    },
-    { order: "1. čas", ...afternoonTimes["1. čas"], subject: "Matematika" },
-    {
-      order: "2. čas",
-      ...afternoonTimes["2. čas"],
-      subject: "Fizičko i zdravstveno vaspitanje (sala)",
-    },
-    { order: "3. čas", ...afternoonTimes["3. čas"], subject: "Srpski jezik" },
     {
       order: "4. čas",
       ...afternoonTimes["4. čas"],
+      subject: "Likovna kultura",
+    },
+  ],
+  Četvrtak: [
+    { order: "1. čas", ...afternoonTimes["1. čas"], subject: "Srpski jezik" },
+    { order: "2. čas", ...afternoonTimes["2. čas"], subject: "Matematika" },
+    {
+      order: "3. čas",
+      ...afternoonTimes["3. čas"],
+      subject: "Priroda i društvo",
+    },
+    {
+      order: "4. čas",
+      ...afternoonTimes["4. čas"],
+      subject: "Fizičko i zdravstveno vaspitanje (sala)",
+    },
+    { order: "5. čas", ...afternoonTimes["5. čas"], subject: "Engleski jezik" },
+  ],
+  Petak: [
+    { order: "1. čas", ...afternoonTimes["1. čas"], subject: "Matematika" },
+    { order: "2. čas", ...afternoonTimes["2. čas"], subject: "Srpski jezik" },
+    {
+      order: "3. čas",
+      ...afternoonTimes["3. čas"],
+      subject: "Muzička kultura",
+    },
+    {
+      order: "4. čas",
+      ...afternoonTimes["4. čas"],
+      subject: "Fizičko i zdravstveno vaspitanje",
+    },
+    {
+      order: "5. čas",
+      ...afternoonTimes["5. čas"],
       subject: "Građansko vaspitanje / Verska nastava",
     },
   ],
@@ -247,57 +265,74 @@ export const afternoonSchedule: WeekSchedule = {
   Nedelja: [],
 };
 
-// Morning schedule
+// Morning schedule (3rd grade, confirmed against the school's printed
+// timetable — see commit message for the source)
 export const morningSchedule: WeekSchedule = {
   Ponedeljak: [
-    { order: "1. čas", ...morningTimes["1. čas"], subject: "Matematika" },
-    { order: "2. čas", ...morningTimes["2. čas"], subject: "Digitalni svet" },
-    { order: "3. čas", ...morningTimes["3. čas"], subject: "Engleski jezik" },
-    { order: "4. čas", ...morningTimes["4. čas"], subject: "Srpski jezik" },
     {
-      order: "5. čas",
-      ...morningTimes["5. čas"],
-      subject: "Fizičko i zdravstveno vaspitanje",
+      order: "1. čas",
+      ...morningTimes["1. čas"],
+      subject: "Fizičko i zdravstveno vaspitanje (sala)",
     },
+    { order: "2. čas", ...morningTimes["2. čas"], subject: "Matematika" },
+    { order: "3. čas", ...morningTimes["3. čas"], subject: "Digitalni svet" },
+    { order: "4. čas", ...morningTimes["4. čas"], subject: "Srpski jezik" },
+    { order: "5. čas", ...morningTimes["5. čas"], subject: "ČOS" },
   ],
   Utorak: [
     { order: "1. čas", ...morningTimes["1. čas"], subject: "Srpski jezik" },
     { order: "2. čas", ...morningTimes["2. čas"], subject: "Matematika" },
-    { order: "3. čas", ...morningTimes["3. čas"], subject: "Svet oko nas" },
-    { order: "4. čas", ...morningTimes["4. čas"], subject: "Likovna kultura" },
-    { order: "5. čas", ...morningTimes["5. čas"], subject: "Likovna kultura" },
+    {
+      order: "3. čas",
+      ...morningTimes["3. čas"],
+      subject: "Priroda i društvo",
+    },
+    { order: "4. čas", ...morningTimes["4. čas"], subject: "Engleski jezik" },
+    {
+      order: "5. čas",
+      ...morningTimes["5. čas"],
+      subject: "Dopunska nastava",
+    },
   ],
   Sreda: [
     { order: "1. čas", ...morningTimes["1. čas"], subject: "Matematika" },
     { order: "2. čas", ...morningTimes["2. čas"], subject: "Srpski jezik" },
-    { order: "3. čas", ...morningTimes["3. čas"], subject: "Muzička kultura" },
-    { order: "4. čas", ...morningTimes["4. čas"], subject: "Engleski jezik" },
+    { order: "3. čas", ...morningTimes["3. čas"], subject: "Likovna kultura" },
+    { order: "4. čas", ...morningTimes["4. čas"], subject: "Likovna kultura" },
   ],
   Četvrtak: [
     { order: "1. čas", ...morningTimes["1. čas"], subject: "Srpski jezik" },
     { order: "2. čas", ...morningTimes["2. čas"], subject: "Matematika" },
-    { order: "3. čas", ...morningTimes["3. čas"], subject: "Svet oko nas" },
-    { order: "4. čas", ...morningTimes["4. čas"], subject: "ČOS" },
     {
-      order: "5. čas",
-      ...morningTimes["5. čas"],
-      subject: "Fizičko i zdravstveno vaspitanje",
+      order: "3. čas",
+      ...morningTimes["3. čas"],
+      subject: "Priroda i društvo",
     },
-  ],
-  Petak: [
-    { order: "1. čas", ...morningTimes["1. čas"], subject: "Matematika" },
-    {
-      order: "2. čas",
-      ...morningTimes["2. čas"],
-      subject: "Fizičko i zdravstveno vaspitanje (sala)",
-    },
-    { order: "3. čas", ...morningTimes["3. čas"], subject: "Srpski jezik" },
     {
       order: "4. čas",
       ...morningTimes["4. čas"],
+      subject: "Fizičko i zdravstveno vaspitanje (sala)",
+    },
+    { order: "5. čas", ...morningTimes["5. čas"], subject: "Engleski jezik" },
+  ],
+  Petak: [
+    { order: "1. čas", ...morningTimes["1. čas"], subject: "Matematika" },
+    { order: "2. čas", ...morningTimes["2. čas"], subject: "Srpski jezik" },
+    {
+      order: "3. čas",
+      ...morningTimes["3. čas"],
+      subject: "Muzička kultura",
+    },
+    {
+      order: "4. čas",
+      ...morningTimes["4. čas"],
+      subject: "Fizičko i zdravstveno vaspitanje",
+    },
+    {
+      order: "5. čas",
+      ...morningTimes["5. čas"],
       subject: "Građansko vaspitanje / Verska nastava",
     },
-    { order: "5. čas", ...morningTimes["5. čas"], subject: "Dopunska nastava" },
   ],
   Subota: [],
   Nedelja: [],
