@@ -182,11 +182,13 @@ const EventModal: React.FC<EventModalProps> = ({
                         >
                           {book.autori.join(", ")}
                         </p>
-                        <p
-                          className={`paragraph-small text-secondary ${styles.textbookIsbn}`}
-                        >
-                          ISBN: {book.isbn}
-                        </p>
+                        {book.isbn && (
+                          <p
+                            className={`paragraph-small text-secondary ${styles.textbookIsbn}`}
+                          >
+                            ISBN: {book.isbn}
+                          </p>
+                        )}
                       </div>
                     </div>
                   </li>
