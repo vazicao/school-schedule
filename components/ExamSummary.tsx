@@ -7,10 +7,13 @@ interface ExamSummaryProps {
   exams: Exam[];
 }
 
+// No "ove Nedelje" (this week) qualifier anymore — the banner now only shows
+// on the exact day an exam falls on (which the selected day tab above already
+// makes clear), and that day isn't always literally "today" when browsing.
 const getExamText = (count: number): string => {
-  if (count === 1) return "1 Pismeni Zadatak ove Nedelje";
-  if (count < 5) return `${count} Pismena Zadatka ove Nedelje`;
-  return `${count} Pismenih Zadataka ove Nedelje`;
+  if (count === 1) return "1 Pismeni Zadatak";
+  if (count < 5) return `${count} Pismena Zadatka`;
+  return `${count} Pismenih Zadataka`;
 };
 
 const ExamSummary: React.FC<ExamSummaryProps> = ({ exams }) => {
@@ -37,7 +40,7 @@ const ExamSummary: React.FC<ExamSummaryProps> = ({ exams }) => {
         <div className={styles.examDetails}>
           {exams.map((exam, index) => (
             <p key={index} className="caption-large">
-              {exam.subject} - {exam.topic || "Kontrolni zadatak"}
+              {exam.subject} ({exam.type}) - {exam.topic}
             </p>
           ))}
         </div>

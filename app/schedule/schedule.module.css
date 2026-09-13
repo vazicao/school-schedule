@@ -91,6 +91,11 @@
   border-color: var(--color-text-primary);
 }
 
+.weekNavButton:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
 .currentWeekButton {
   display: flex;
   align-items: center;

@@ -10,7 +10,7 @@ import {
   type ClassPeriod,
   type SubjectId,
 } from "../../lib/scheduleData";
-import { getShiftInfo } from "../../lib/shiftDetection";
+import { getShiftInfo, type ShiftType } from "../../lib/shiftDetection";
 import {
   getCurrentWeekInfo,
   getNextWeek,
@@ -19,15 +19,20 @@ import {
   getWeekDates,
   type WeekInfo,
 } from "../../lib/weekNavigation";
-import { format, isSameDay, startOfDay } from "date-fns";
+import { format, isSameDay, startOfDay, startOfISOWeek } from "date-fns";
 import { srLatn as sr } from "date-fns/locale";
 import ScheduleHeader from "../../components/ScheduleHeader";
 import EventCard from "../../components/EventCard";
 import EventModal, { EventDetails } from "../../components/EventModal";
 import { getEventDetails } from "../../lib/eventDetailsService";
-import { getExamsForWeek, type Exam } from "../../lib/examData";
+import { getExamsForDate, getExamsInDateRange } from "../../lib/examData";
+import { SCHOOL_YEAR_START } from "../../lib/schoolConfig";
 import SvgIcon from "../../components/SvgIcon";
 import ExamSummary from "../../components/ExamSummary";
+
+// The Monday of the week the school year starts in — navigating to an
+// earlier week isn't meaningful (summer break / previous grade).
+const EARLIEST_WEEK_START = startOfISOWeek(SCHOOL_YEAR_START);
 
 // BORAVAK (produženi boravak) — disabled starting 3rd grade (no boravak at this
 // school for this grade). Kept in code in case this expands to another
@@ -142,7 +147,6 @@ export default function Schedule() {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedEventDetails, setSelectedEventDetails] =
     useState<EventDetails | null>(null);
-  const [weekExams, setWeekExams] = useState<Exam[]>([]);
   const [isClient, setIsClient] = useState(false);
 
   const days: Day[] = [
@@ -162,14 +166,6 @@ export default function Schedule() {
     setSelectedDay(getCurrentDay());
   }, []);
 
-  // Fetch exams for the selected week
-  useEffect(() => {
-    if (selectedWeek) {
-      const examsForWeek = getExamsForWeek(selectedWeek.week);
-      setWeekExams(examsForWeek);
-    }
-  }, [selectedWeek]);
-
   // Don't render until client-side hydration is complete
   if (!isClient || !selectedWeek || !selectedDay) {
     return <div className={styles.container}>Loading...</div>;
@@ -182,14 +178,27 @@ export default function Schedule() {
   const weekDates = getWeekDates(selectedWeek.year, selectedWeek.week, true);
   const today = startOfDay(new Date());
 
+  // Don't allow navigating back before the school year started
+  const canGoToPreviousWeek = selectedWeek.startDate > EARLIEST_WEEK_START;
+
+  // Exams for the specific day being viewed (not the whole week) — every
+  // exam now has an exact confirmed date, so the banner only shows on the
+  // day it actually falls on.
+  const selectedDayDate = weekDates[days.indexOf(selectedDay)];
+  const dayExams = getExamsForDate(format(selectedDayDate, "yyyy-MM-dd"));
+
   // Get next week info for weekend preview
   const nextWeek = getNextWeek(selectedWeek.year, selectedWeek.week);
   const nextWeekInfo = getWeekInfo(nextWeek.year, nextWeek.week);
   const nextWeekShift = getShiftInfo(nextWeekInfo.startDate);
-  const nextWeekExams = getExamsForWeek(nextWeekInfo.week);
+  const nextWeekExams = getExamsInDateRange(
+    format(nextWeekInfo.startDate, "yyyy-MM-dd"),
+    format(nextWeekInfo.endDate, "yyyy-MM-dd"),
+  );
 
   // Week navigation handlers
   const handlePreviousWeek = () => {
+    if (!canGoToPreviousWeek) return;
     const { year, week } = getPreviousWeek(
       selectedWeek.year,
       selectedWeek.week,
@@ -214,9 +223,10 @@ export default function Schedule() {
   const handleEventClick = (
     title: SubjectId,
     time: string,
+    shift: ShiftType,
     classType?: string,
   ) => {
-    const details = getEventDetails(title, time, classType);
+    const details = getEventDetails(title, time, shift, classType);
     if (details) {
       setSelectedEventDetails(details);
       setModalOpen(true);
@@ -239,6 +249,7 @@ export default function Schedule() {
         onPreviousWeek={handlePreviousWeek}
         onNextWeek={handleNextWeek}
         onGoToCurrentWeek={handleGoToCurrentWeek}
+        canGoToPreviousWeek={canGoToPreviousWeek}
       />
 
       <nav className={styles.dayButtons}>
@@ -267,10 +278,10 @@ export default function Schedule() {
         })}
       </nav>
 
-      {/* Exams section - hide on weekends */}
-      {weekExams.length > 0 &&
+      {/* Exams section - only on the day the exam actually falls on, hidden on weekends */}
+      {dayExams.length > 0 &&
         selectedDay !== "Subota" &&
-        selectedDay !== "Nedelja" && <ExamSummary exams={weekExams} />}
+        selectedDay !== "Nedelja" && <ExamSummary exams={dayExams} />}
 
       <div className={styles.eventsContainer}>
         {selectedDay === "Subota" || selectedDay === "Nedelja" ? (
@@ -299,8 +310,7 @@ export default function Schedule() {
                 <div className={styles.weekendPreviewItem}>
                   <SvgIcon iconId="brain" size={24} />
                   <h3 className="text-primary">
-                    {nextWeekExams[0].subject} -{" "}
-                    {nextWeekExams[0].topic || "Kontrolni zadatak"}
+                    {nextWeekExams[0].subject} - {nextWeekExams[0].topic}
                   </h3>
                 </div>
               )}
@@ -413,7 +423,12 @@ export default function Schedule() {
                   color={getSubjectInfo(lesson.subject).color}
                   shift={shiftInfo.shift}
                   onClick={() =>
-                    handleEventClick(lesson.subject, lesson.order, lesson.order)
+                    handleEventClick(
+                      lesson.subject,
+                      lesson.order,
+                      shiftInfo.shift,
+                      lesson.order,
+                    )
                   }
                 />
               ))}
@@ -444,7 +459,12 @@ export default function Schedule() {
                   color={getSubjectInfo(lesson.subject).color}
                   shift={shiftInfo.shift}
                   onClick={() =>
-                    handleEventClick(lesson.subject, lesson.order, lesson.order)
+                    handleEventClick(
+                      lesson.subject,
+                      lesson.order,
+                      shiftInfo.shift,
+                      lesson.order,
+                    )
                   }
                 />
               ))}

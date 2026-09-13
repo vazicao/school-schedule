@@ -1,3 +1,8 @@
+// First day of the current school year. Used to stop week navigation from
+// going back before it — there's no meaningful schedule/exam data (or a
+// sensible shift to compute) for summer break or a previous grade.
+export const SCHOOL_YEAR_START = new Date(2026, 8, 1); // September 1, 2026
+
 export interface SchoolConfig {
   id: string;
   name: string;

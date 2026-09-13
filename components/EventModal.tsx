@@ -23,7 +23,7 @@ export interface EventDetails {
     date: string;
     type: string;
     description: string;
-    weekInfo: string;
+    dayName: string;
     isPast?: boolean;
     isUpcoming?: boolean;
   }[];
@@ -138,7 +138,7 @@ const EventModal: React.FC<EventModalProps> = ({
                     <div className={styles.examContent}>
                       <p className="paragraph-small">{exam.description}</p>
                       <p className="paragraph-small text-secondary">
-                        {exam.weekInfo}
+                        {exam.dayName}, {exam.date} · {exam.type}
                       </p>
                     </div>
                     <div

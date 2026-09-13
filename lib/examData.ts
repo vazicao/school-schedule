@@ -1,13 +1,13 @@
 import type { SubjectId } from "./scheduleData";
 
+export type ExamType = "Kontrolni zadatak" | "Pismena vežba";
+
 export type Exam = {
-  weekStart: string; // ISO date, first day of the exam week
-  weekEnd: string; // ISO date, last day of the exam week
-  isoWeek: number; // ISO week number
+  date: string; // ISO date (YYYY-MM-DD) — exact, school-confirmed exam date
   subject: SubjectId; // must match a key in scheduleData.ts's `subjects`
-  topic?: string; // e.g. "Prirodni brojevi" or "Inicijalni test"
-  semester: 1 | 2; // 1 = first polugodiste, 2 = second
-  confirmedDate?: string | null; // optional exact date when known
+  topic: string; // e.g. "Prirodni brojevi"
+  type: ExamType;
+  semester: 1 | 2; // 1 = first polugodište, 2 = second
 };
 
 // Exam data configuration. `exams` is annotated as Exam[] (not cast) so that
@@ -18,127 +18,87 @@ const examConfig: {
   exams: Exam[];
 } = {
   metadata: {
-    lastUpdated: "2025-09-20",
-    schoolYear: "2025/2026",
-    academicYear: 1,
+    lastUpdated: "2026-09-13",
+    schoolYear: "2026/2027",
+    academicYear: 3,
   },
   exams: [
     {
-      weekStart: "2025-09-01",
-      weekEnd: "2025-09-05",
-      isoWeek: 36,
-      subject: "Svet oko nas",
-      topic: "Inicijalni test",
-      semester: 1,
-      confirmedDate: null,
-    },
-    {
-      weekStart: "2025-09-01",
-      weekEnd: "2025-09-05",
-      isoWeek: 36,
-      subject: "Srpski jezik",
-      topic: "Inicijalni test",
-      semester: 1,
-      confirmedDate: null,
-    },
-    {
-      weekStart: "2025-09-08",
-      weekEnd: "2025-09-12",
-      isoWeek: 37,
+      date: "2026-09-24",
       subject: "Matematika",
-      topic: "Inicijalni test",
+      topic: "Brojevi prve hiljade i rimske cifre",
+      type: "Kontrolni zadatak",
       semester: 1,
-      confirmedDate: null,
     },
     {
-      weekStart: "2025-09-08",
-      weekEnd: "2025-09-12",
-      isoWeek: 37,
+      date: "2026-09-29",
+      subject: "Priroda i društvo",
+      topic: "Orijentacija u prostoru i vremenu",
+      type: "Kontrolni zadatak",
+      semester: 1,
+    },
+    {
+      date: "2026-09-30",
+      subject: "Srpski jezik",
+      topic: "Imenice i pravopis",
+      type: "Kontrolni zadatak",
+      semester: 1,
+    },
+    {
+      date: "2026-10-22",
       subject: "Engleski jezik",
-      topic: "Inicijalni test",
+      topic: "Diktat (10 reči)",
+      type: "Pismena vežba",
       semester: 1,
-      confirmedDate: null,
     },
     {
-      weekStart: "2025-09-29",
-      weekEnd: "2025-10-03",
-      isoWeek: 40,
+      date: "2026-10-27",
       subject: "Matematika",
-      topic: "Prirodni brojevi",
+      topic: "Sabiranje i oduzimanje brojeva do 1000",
+      type: "Kontrolni zadatak",
       semester: 1,
-      confirmedDate: null,
     },
     {
-      weekStart: "2025-10-06",
-      weekEnd: "2025-10-10",
-      isoWeek: 41,
+      date: "2026-10-29",
+      subject: "Priroda i društvo",
+      topic: "Naš kraj i saobraćaj",
+      type: "Kontrolni zadatak",
+      semester: 1,
+    },
+    {
+      date: "2026-11-06",
       subject: "Srpski jezik",
-      topic: "Imenice",
+      topic: "Pridevi i pravopis",
+      type: "Kontrolni zadatak",
       semester: 1,
-      confirmedDate: null,
     },
     {
-      weekStart: "2025-10-13",
-      weekEnd: "2025-10-17",
-      isoWeek: 42,
-      subject: "Svet oko nas",
-      topic: "Kultura življenja",
+      date: "2026-11-10",
+      subject: "Matematika",
+      topic: "Merenje i mere",
+      type: "Kontrolni zadatak",
       semester: 1,
-      confirmedDate: null,
     },
     {
-      weekStart: "2025-10-27",
-      weekEnd: "2025-10-31",
-      isoWeek: 44,
+      date: "2026-12-09",
+      subject: "Matematika",
+      topic: "Sabiranje i oduzimanje do 1000; Jednačine i nejednačine",
+      type: "Kontrolni zadatak",
+      semester: 1,
+    },
+    {
+      date: "2026-12-10",
+      subject: "Engleski jezik",
+      topic: "Vokabular i gramatika",
+      type: "Kontrolni zadatak",
+      semester: 1,
+    },
+    {
+      date: "2026-12-14",
       subject: "Srpski jezik",
-      topic: "Pravopis (diktat)",
+      topic: "Glagoli; Upravni i neupravni govor",
+      type: "Kontrolni zadatak",
       semester: 1,
-      confirmedDate: null,
-    },
-    {
-      weekStart: "2025-11-03",
-      weekEnd: "2025-11-07",
-      isoWeek: 45,
-      subject: "Matematika",
-      topic: "Jedinice mere i obim figure",
-      semester: 1,
-      confirmedDate: null,
-    },
-    {
-      weekStart: "2025-11-12",
-      weekEnd: "2025-11-14",
-      isoWeek: 46,
-      subject: "Svet oko nas",
-      topic: "Orijentacija u vremenu",
-      semester: 1,
-      confirmedDate: null,
-    },
-    {
-      weekStart: "2025-11-17",
-      weekEnd: "2025-11-21",
-      isoWeek: 47,
-      subject: "Srpski jezik",
-      topic: "Pridevi",
-      semester: 1,
-      confirmedDate: null,
-    },
-    {
-      weekStart: "2025-11-24",
-      weekEnd: "2025-11-28",
-      isoWeek: 48,
-      subject: "Matematika",
-      topic: "Jednačine",
-      semester: 1,
-      confirmedDate: null,
-    },
-    {
-      weekStart: "2025-12-01",
-      weekEnd: "2025-12-05",
-      isoWeek: 49,
-      subject: "Matematika",
-      topic: "Zadaci sa dve operacije",
-      semester: 1,
-      confirmedDate: null,
     },
   ],
 };
@@ -148,8 +108,11 @@ export const examMetadata = examConfig.metadata;
 
 // Helper functions for working with exam data
 
-export const getExamsForWeek = (isoWeek: number): Exam[] => {
-  return exams.filter((exam) => exam.isoWeek === isoWeek);
+// Exams falling on one exact calendar date (YYYY-MM-DD) — the primary lookup
+// now that every exam has a confirmed date, used to show the exam banner on
+// the specific day rather than anywhere in its week.
+export const getExamsForDate = (date: string): Exam[] => {
+  return exams.filter((exam) => exam.date === date);
 };
 
 export const getExamsForSemester = (semester: 1 | 2): Exam[] => {
@@ -162,19 +125,17 @@ export const getExamsForSubject = (subject: SubjectId): Exam[] => {
 
 export const getUpcomingExams = (fromDate: Date = new Date()): Exam[] => {
   const today = fromDate.toISOString().split("T")[0];
-  return exams.filter((exam) => exam.weekStart >= today);
+  return exams.filter((exam) => exam.date >= today);
 };
 
 export const getExamsInDateRange = (
   startDate: string,
   endDate: string,
 ): Exam[] => {
-  return exams.filter(
-    (exam) => exam.weekStart >= startDate && exam.weekEnd <= endDate,
-  );
+  return exams.filter((exam) => exam.date >= startDate && exam.date <= endDate);
 };
 
 // Get unique subjects from exams
-export const getExamSubjects = (): string[] => {
+export const getExamSubjects = (): SubjectId[] => {
   return [...new Set(exams.map((exam) => exam.subject))];
 };

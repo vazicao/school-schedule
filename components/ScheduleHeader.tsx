@@ -22,6 +22,7 @@ interface ScheduleHeaderProps {
   onPreviousWeek: () => void;
   onNextWeek: () => void;
   onGoToCurrentWeek: () => void;
+  canGoToPreviousWeek: boolean;
 }
 
 export default function ScheduleHeader({
@@ -32,6 +33,7 @@ export default function ScheduleHeader({
   onPreviousWeek,
   onNextWeek,
   onGoToCurrentWeek,
+  canGoToPreviousWeek,
 }: ScheduleHeaderProps) {
   const classInfo = getCurrentClass();
   const monthName = format(selectedWeek.startDate, "MMMM", { locale: sr });
@@ -74,6 +76,7 @@ export default function ScheduleHeader({
             onClick={onPreviousWeek}
             className={styles.weekNavButton}
             aria-label="Prethodna nedelja"
+            disabled={!canGoToPreviousWeek}
           >
             <SvgIcon iconId="caret-left" size={20} />
           </button>

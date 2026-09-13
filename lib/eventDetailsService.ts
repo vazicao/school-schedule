@@ -4,17 +4,16 @@ import { getSubjectInfo, type SubjectId } from "./scheduleData";
 import { getTextbooksForSubject } from "./textbookData";
 import { getTeacherForSubject } from "./teacherData";
 import { getClassTimes } from "./timeMapping";
-import { getCurrentShift } from "./shiftDetection";
+import type { ShiftType } from "./shiftDetection";
 import { format, parseISO, isBefore } from "date-fns";
 import { srLatn as sr } from "date-fns/locale";
 
 // Helper functions to convert exam data
-const formatExamDate = (exam: Exam): string => {
-  if (exam.confirmedDate) {
-    return format(parseISO(exam.confirmedDate), "d. MMMM yyyy", { locale: sr });
-  }
-  return `Nedelja ${exam.isoWeek} (${format(parseISO(exam.weekStart), "d.", { locale: sr })}-${format(parseISO(exam.weekEnd), "d. MMMM", { locale: sr })})`;
-};
+const formatExamDate = (exam: Exam): string =>
+  format(parseISO(exam.date), "d. MMMM yyyy", { locale: sr });
+
+const capitalize = (s: string): string =>
+  s.charAt(0).toUpperCase() + s.slice(1);
 
 const getAllExamsForSubject = (
   subject: SubjectId,
@@ -22,68 +21,32 @@ const getAllExamsForSubject = (
   date: string;
   type: string;
   description: string;
-  weekInfo: string;
+  dayName: string;
   isPast?: boolean;
   isUpcoming?: boolean;
 }> => {
-  const subjectExams = getExamsForSubject(subject);
+  const today = new Date();
 
-  // Find the next upcoming exam
-  const upcomingExams = subjectExams
-    .filter((exam) => {
-      const examDate = exam.confirmedDate
-        ? parseISO(exam.confirmedDate)
-        : parseISO(exam.weekEnd);
-      return !isBefore(examDate, new Date());
-    })
-    .sort((a, b) => {
-      const dateA = a.confirmedDate
-        ? parseISO(a.confirmedDate)
-        : parseISO(a.weekStart);
-      const dateB = b.confirmedDate
-        ? parseISO(b.confirmedDate)
-        : parseISO(b.weekStart);
-      return dateA.getTime() - dateB.getTime();
-    });
+  const subjectExams = [...getExamsForSubject(subject)].sort(
+    (a, b) => parseISO(a.date).getTime() - parseISO(b.date).getTime(),
+  );
 
-  const nextUpcomingExam = upcomingExams[0];
+  const nextUpcomingExam = subjectExams.find(
+    (exam) => !isBefore(parseISO(exam.date), today),
+  );
 
-  return subjectExams
-    .map((exam) => {
-      const examDate = exam.confirmedDate
-        ? parseISO(exam.confirmedDate)
-        : parseISO(exam.weekEnd);
-      const isPast = isBefore(examDate, new Date());
-      const isUpcoming = nextUpcomingExam && exam === nextUpcomingExam;
+  return subjectExams.map((exam) => {
+    const examDate = parseISO(exam.date);
 
-      return {
-        date: formatExamDate(exam),
-        type: "Kontrolni zadatak",
-        description: exam.topic || "Tema će biti najavljena",
-        weekInfo: `Nedelja ${exam.isoWeek} (${format(parseISO(exam.weekStart), "d.", { locale: sr })} – ${format(parseISO(exam.weekEnd), "d. MMMM", { locale: sr })})`,
-        isPast,
-        isUpcoming,
-      };
-    })
-    .sort((a, b) => {
-      // Sort by date
-      const dateA = subjectExams.find(
-        (exam) => formatExamDate(exam) === a.date,
-      );
-      const dateB = subjectExams.find(
-        (exam) => formatExamDate(exam) === b.date,
-      );
-      if (!dateA || !dateB) return 0;
-
-      const parsedDateA = dateA.confirmedDate
-        ? parseISO(dateA.confirmedDate)
-        : parseISO(dateA.weekStart);
-      const parsedDateB = dateB.confirmedDate
-        ? parseISO(dateB.confirmedDate)
-        : parseISO(dateB.weekStart);
-
-      return parsedDateA.getTime() - parsedDateB.getTime();
-    });
+    return {
+      date: formatExamDate(exam),
+      type: exam.type,
+      description: exam.topic,
+      dayName: capitalize(format(examDate, "EEEE", { locale: sr })),
+      isPast: isBefore(examDate, today),
+      isUpcoming: exam === nextUpcomingExam,
+    };
+  });
 };
 
 // Helper function to get icon for a subject - returns the icon string/identifier
@@ -112,10 +75,13 @@ const getEventType = (subject: SubjectId): "class" | "daycare" | "weekend" => {
   return "class";
 };
 
-// Helper function to format class time information
-const getFormattedClassTime = (classOrder: string): string => {
-  const currentShift = getCurrentShift();
-  const times = getClassTimes(classOrder, currentShift);
+// Helper function to format class time information. Takes the shift of the
+// day being VIEWED (not necessarily today's real shift) — see getEventDetails.
+const getFormattedClassTime = (
+  classOrder: string,
+  shift: ShiftType,
+): string => {
+  const times = getClassTimes(classOrder, shift);
 
   if (times) {
     return `${times.startTime}–${times.endTime}`;
@@ -127,6 +93,7 @@ const getFormattedClassTime = (classOrder: string): string => {
 export const getEventDetails = (
   title: SubjectId,
   time: string,
+  shift: ShiftType,
   classType?: string,
 ): EventDetails | null => {
   // Get subject info which now contains pribor data
@@ -140,7 +107,7 @@ export const getEventDetails = (
   let formattedTime: string | undefined;
 
   if (eventType === "class") {
-    formattedTime = getFormattedClassTime(time);
+    formattedTime = getFormattedClassTime(time, shift);
   } else if (eventType === "daycare") {
     // Extract time range from daycare activity time (e.g., "12:30-13:00")
     const timeMatch = time.match(/(\d{2}:\d{2})-(\d{2}:\d{2})/);
