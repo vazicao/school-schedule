@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import ServiceWorkerRegistration from "@/components/ServiceWorkerRegistration";
 
@@ -47,15 +48,11 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Alegreya:wght@400;500;600;700&family=Open+Sans:wght@400;600;700&display=swap"
           rel="stylesheet"
         />
-        <script
-          defer
-          src="https://cloud.umami.is/script.js"
-          data-website-id="600c2d84-6a55-4703-9218-10320d54bad2"
-        ></script>
       </head>
       <body>
         {children}
         <ServiceWorkerRegistration />
+        <Analytics />
       </body>
     </html>
   );

@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Serbian-language school schedule application built with Next.js. It supports many schools and classes: each class has its own page at `/<school>/<class>` (e.g. `/os-jelena-cetkovic/gen-2024-2`), backed by static data files under `/data` — there is no backend or database. Its core feature is automatic morning/afternoon shift detection based on calendar weeks. It also tracks exams, teachers, textbooks, and required school supplies ("pribor") for each subject. Umami Cloud analytics is wired into the deployed app.
+This is a Serbian-language school schedule application built with Next.js. It supports many schools and classes: each class has its own page at `/<school>/<class>` (e.g. `/os-jelena-cetkovic/gen-2024-2`), backed by static data files under `/data` — there is no backend or database. Its core feature is automatic morning/afternoon shift detection based on calendar weeks. It also tracks exams, teachers, textbooks, and required school supplies ("pribor") for each subject. Vercel Analytics (`@vercel/analytics`) is wired into the deployed app.
 
 The first (currently only) class is III·2 at OŠ "Jelena Ćetković", Belgrade. See `data/README.md` for how the data is organized and how to add a class or a new school year.
 
@@ -131,7 +131,7 @@ The app can be added to a phone's home screen as "Moj Raspored".
 
 ## Key Entry Points
 
-- `/app/layout.tsx` - Root layout with Serbian locale configuration, font loading, and Umami analytics script
+- `/app/layout.tsx` - Root layout with Serbian locale configuration, font loading, and the Vercel `<Analytics />` component
 - `/app/[school]/[class]/page.tsx` - The class schedule route (server component that loads data and renders `SchedulePage`)
 - `/components/SchedulePage.tsx` - The main schedule interface
 - `/app/page.tsx` - Landing page (intro, class links, install instructions)
