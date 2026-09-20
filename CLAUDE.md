@@ -32,7 +32,7 @@ The project uses Husky and lint-staged for pre-commit hooks:
 ### Routing and data flow
 
 - `app/[school]/[class]/page.tsx` is a server component. It loads the class's data (`lib/classLoader.ts`), then renders the client component `components/SchedulePage.tsx` with it as a `data` prop. All valid `school/class` pairs are pre-rendered at build time (`generateStaticParams`, `dynamicParams = false`); anything else is a 404 (`app/not-found.tsx`).
-- `/` and the old `/schedule` URL redirect to the default class (`DEFAULT_CLASS_PATH` in `next.config.ts`) until there's a real landing page.
+- `/` is a landing page (`app/page.tsx`, styles in `app/home.module.css`): what the app does, a list of every class (generated from `/data` via `listClasses()` in `lib/classLoader.ts`, so adding a class adds a link), and iPhone/Android "add to home screen" steps. The old `/schedule` URL redirects to the default class (`DEFAULT_CLASS_PATH` in `next.config.ts`) so pre-restructure bookmarks/installs keep working.
 - The class slug identifies a **group of kids**, not a grade (`gen-<year they started 1st grade>-<section>`), so a class's URL never changes as they move up. Each school year is a subfolder; the newest one is what the app shows.
 
 ### Data (`/data/`)
@@ -134,4 +134,5 @@ The app can be added to a phone's home screen as "Moj Raspored".
 - `/app/layout.tsx` - Root layout with Serbian locale configuration, font loading, and Umami analytics script
 - `/app/[school]/[class]/page.tsx` - The class schedule route (server component that loads data and renders `SchedulePage`)
 - `/components/SchedulePage.tsx` - The main schedule interface
-- `/next.config.ts` - Redirects (`/` and `/schedule` to the default class)
+- `/app/page.tsx` - Landing page (intro, class links, install instructions)
+- `/next.config.ts` - The `/schedule` redirect, and no-cache headers for the service worker

@@ -67,3 +67,33 @@ export const loadClassData = async (
     yearModule.default as ClassYearData,
   );
 };
+
+// One entry per class, for the landing page's list. Built from the same data
+// as the class pages, so a class added under /data appears there automatically.
+export interface ClassListing {
+  school: string; // school slug
+  classSlug: string;
+  schoolName: string; // "OŠ Jelena Ćetković"
+  displayName: string; // "III·2"
+  schoolYear: string; // "2026/2027"
+}
+
+export const listClasses = async (): Promise<ClassListing[]> => {
+  const listings: ClassListing[] = [];
+  for (const { school, class: classSlug } of listClassParams()) {
+    const data = await loadClassData(school, classSlug);
+    if (!data) continue;
+    listings.push({
+      school,
+      classSlug,
+      schoolName: data.school.name,
+      displayName: data.displayName,
+      schoolYear: data.schoolYear,
+    });
+  }
+  return listings.sort(
+    (a, b) =>
+      a.schoolName.localeCompare(b.schoolName, "sr-Latn") ||
+      a.displayName.localeCompare(b.displayName, "sr-Latn"),
+  );
+};

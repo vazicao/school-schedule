@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function NotFound() {
   return (
     <main
@@ -12,6 +14,11 @@ export default function NotFound() {
       <p className="paragraph-small text-secondary">
         Ovaj raspored ne postoji. Proverite link koji ste dobili od razredne
         starešine.
+      </p>
+      <p style={{ marginTop: 24, fontSize: 14, lineHeight: "20px" }}>
+        <Link href="/" style={{ color: "#d17f00", fontWeight: 600 }}>
+          Na početnu stranu
+        </Link>
       </p>
     </main>
   );

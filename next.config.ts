@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
-// Where `/` and the old `/schedule` URL send people, until there's a real
-// landing page (a school/class picker).
+// Where the old `/schedule` URL (bookmarks / installs from before the
+// multi-class restructure) sends people. `/` itself is the landing page.
 const DEFAULT_CLASS_PATH = "/os-jelena-cetkovic/gen-2024-2";
 
 const nextConfig: NextConfig = {
@@ -25,7 +25,6 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
-      { source: "/", destination: DEFAULT_CLASS_PATH, permanent: false },
       {
         source: "/schedule",
         destination: DEFAULT_CLASS_PATH,
