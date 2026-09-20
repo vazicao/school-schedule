@@ -1,75 +1,44 @@
 import type { ShiftType } from "./shiftDetection";
-
-export interface ClassPeriod {
-  period: number;
-  startTime: string;
-  endTime: string;
-}
-
-// Morning shift timetable (Prepodnevna smena)
-const morningTimetable: ClassPeriod[] = [
-  { period: 1, startTime: "08:00", endTime: "08:45" },
-  { period: 2, startTime: "08:50", endTime: "09:35" },
-  { period: 3, startTime: "09:55", endTime: "10:40" },
-  { period: 4, startTime: "10:45", endTime: "11:30" },
-  { period: 5, startTime: "11:35", endTime: "12:20" },
-  { period: 6, startTime: "12:25", endTime: "13:10" },
-];
-
-// Afternoon shift timetable (Popodnevna smena)
-const afternoonTimetable: ClassPeriod[] = [
-  { period: 0, startTime: "13:10", endTime: "13:55" }, // Predčas
-  { period: 1, startTime: "14:00", endTime: "14:45" },
-  { period: 2, startTime: "14:50", endTime: "15:35" },
-  { period: 3, startTime: "15:55", endTime: "16:40" },
-  { period: 4, startTime: "16:45", endTime: "17:30" },
-  { period: 5, startTime: "17:35", endTime: "18:20" },
-  { period: 6, startTime: "18:25", endTime: "19:10" },
-];
+import type { BellSchedule, PeriodOrder } from "./schedule";
 
 /**
- * Get the timetable for a specific shift
- */
-export function getTimetableForShift(shift: ShiftType): ClassPeriod[] {
-  return shift === "morning" ? morningTimetable : afternoonTimetable;
-}
-
-/**
- * Parse class period from time string and get start/end times
+ * Parse a period label ("1. čas", "Predčas", or legacy "2. čas (14:00)") and
+ * look up its start/end times in the school's bell schedule.
+ * Returns null when it isn't a regular class period.
  */
 export function getClassTimes(
+  bellSchedule: BellSchedule,
   timeString: string,
   shift: ShiftType,
 ): { startTime: string; endTime: string } | null {
-  // Handle "Predčas" specifically for afternoon shift
-  if (timeString === "Predčas" && shift === "afternoon") {
-    return { startTime: "13:10", endTime: "13:55" };
+  let order: PeriodOrder | null = null;
+
+  if (/^predčas/i.test(timeString)) {
+    order = "Predčas";
+  } else {
+    // Extract period number from formats like "1. čas", "2. čas (14:00)", etc.
+    const periodMatch = timeString.match(/(\d+)\.\s*čas/i);
+    if (periodMatch) {
+      order = `${parseInt(periodMatch[1], 10)}. čas` as PeriodOrder;
+    }
   }
 
-  // Extract period number from formats like "1. čas", "2. čas (14:00)", etc.
-  const periodMatch = timeString.match(/(\d+)\.\s*čas/i);
-
-  if (!periodMatch) {
+  if (!order) {
     // Not a regular class period, return null to use original time
     return null;
   }
 
-  const periodNumber = parseInt(periodMatch[1], 10);
-  const timetable = getTimetableForShift(shift);
-  const classPeriod = timetable.find((p) => p.period === periodNumber);
-
-  if (!classPeriod) {
+  const period = bellSchedule[shift].find((p) => p.order === order);
+  if (!period) {
     return null;
   }
 
-  return {
-    startTime: classPeriod.startTime,
-    endTime: classPeriod.endTime,
-  };
+  return { startTime: period.startTime, endTime: period.endTime };
 }
 
 /**
- * Get time range for daycare activities based on shift
+ * Get time range for daycare (boravak) activities based on shift.
+ * Boravak is currently disabled; kept for when it's re-enabled.
  */
 export function getDaycareTimeRange(shift: ShiftType): {
   startTime: string;

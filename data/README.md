@@ -1,89 +1,57 @@
-# Exam Configuration
+# Class data
 
-This directory contains configuration files for the school schedule app.
+Everything a class page shows lives here, as plain TypeScript files. There is no database and no registry: **adding a folder adds a page.**
 
-## Exams Configuration (`exams.json`)
-
-The `exams.json` file contains all exam information for the academic year. This file can be easily updated as new exam dates are confirmed or changes are made to the schedule.
-
-### Structure
-
-```json
-{
-  "metadata": {
-    "lastUpdated": "2025-09-20",
-    "schoolYear": "2025/2026",
-    "academicYear": 1
-  },
-  "exams": [
-    {
-      "weekStart": "2025-09-01",
-      "weekEnd": "2025-09-05",
-      "isoWeek": 36,
-      "subject": "Matematika",
-      "topic": "Prirodni brojevi",
-      "semester": 1,
-      "confirmedDate": "2025-09-03"
-    }
-  ]
-}
+```
+data/
+  <school>/
+    school.ts                       school name + bell schedule (period times)
+    <class>/
+      <year>/
+        config.ts  schedule.ts  exams.ts  teachers.ts  textbooks.ts  pribor.ts
+        index.ts                    assembles the six files above
 ```
 
-### Fields
+Example: `data/os-jelena-cetkovic/gen-2024-2/2026-27/` is served at `/os-jelena-cetkovic/gen-2024-2`.
 
-- **weekStart**: ISO date string for the first day of the exam week
-- **weekEnd**: ISO date string for the last day of the exam week
-- **isoWeek**: ISO week number (1-53)
-- **subject**: Name of the subject (e.g., "Matematika", "Srpski jezik")
-- **topic**: Optional exam topic or description
-- **semester**: Semester number (1 or 2)
-- **confirmedDate**: Optional exact date when confirmed (ISO date string or null)
+## Slugs
 
-### Updating Exams
+| Level  | Convention                                                 | Example              |
+| ------ | ---------------------------------------------------------- | -------------------- |
+| School | lowercase ASCII kebab-case (`č/ć→c`, `š→s`, `ž→z`, `đ→dj`) | `os-jelena-cetkovic` |
+| Class  | `gen-<year the group started 1st grade>-<section>`         | `gen-2024-2`         |
+| Year   | `<start year>-<2-digit end year>`                          | `2026-27`            |
 
-1. **Adding new exams**: Add new objects to the `exams` array
-2. **Confirming dates**: Update `confirmedDate` field when exact dates are known
-3. **Changing topics**: Update the `topic` field as needed
-4. **Metadata**: Update `lastUpdated` when making changes
+The class slug identifies the **group of kids**, not the grade, so the link parents get **never changes** as the class moves up. The grade lives in each year's `config.ts` instead.
 
-### Subject Names
+The **newest year folder wins** (they sort alphabetically). Publishing next year's data means adding its folder — the same URL then shows it. Old year folders can stay; they're just not shown.
 
-Use these standard subject names for consistency:
-- Matematika
-- Srpski jezik
-- Engleski jezik
-- Svet oko nas
-- Likovna kultura
-- Muzička kultura
-- Fizičko i zdravstveno vaspitanje
-- Digitalni svet
-- ČOS
-- Građansko vaspitanje / Verska nastava
+## Adding a new school year for an existing class (each September)
 
-### Example Updates
+1. Copy last year's folder to the new year, e.g. `2026-27` → `2027-28`.
+2. `config.ts`: update `schoolYear`, `grade` (+1), `schoolYearStart`, `homeroomTeacherId`, and `shiftAnchor` (a Monday of the new year whose shift you know — shifts alternate weekly from it).
+3. Replace `schedule.ts`, `exams.ts`, `teachers.ts`, `textbooks.ts`, `pribor.ts` with the new year's content.
+4. Run `npm run build`. Deploying is the switch — it's what makes the new year go live.
 
-**Confirming an exact date:**
-```json
-{
-  "weekStart": "2025-09-29",
-  "weekEnd": "2025-10-03",
-  "isoWeek": 40,
-  "subject": "Matematika",
-  "topic": "Prirodni brojevi",
-  "semester": 1,
-  "confirmedDate": "2025-10-01"
-}
-```
+## Adding a new class or school
 
-**Adding a second semester exam:**
-```json
-{
-  "weekStart": "2026-02-03",
-  "weekEnd": "2026-02-07",
-  "isoWeek": 6,
-  "subject": "Srpski jezik",
-  "topic": "Glagoli",
-  "semester": 2,
-  "confirmedDate": null
-}
-```
+- New class in an existing school: add `data/<school>/<class>/<year>/` as above.
+- New school: also add `data/<school>/school.ts` (copy an existing one and change the name + `bellSchedule`).
+
+Nothing else needs editing. The build fails with a clear error if anything doesn't line up.
+
+## What each file holds
+
+- **`school.ts`** — names and the `bellSchedule`: when each period starts and ends, per shift. Defined once per school, shared by all its classes.
+- **`config.ts`** — `grade`, `section`, `schoolYear`, `schoolYearStart` ("previous week" navigation stops at the week containing this date), `shiftAnchor`, `homeroomTeacherId`. The display name ("III·2") is derived from grade + section.
+- **`schedule.ts`** — for each shift and weekday: which subject is in which period. Only `order` and `subject` — times come from the bell schedule.
+- **`exams.ts`** — exact dates. `type` is `"Kontrolni zadatak"` or `"Pismena vežba"`.
+- **`teachers.ts`** — the teachers, plus `subjectTeachers` for subjects _not_ taught by the homeroom teacher. **Contact details (email, phone, room) are only shown if `showContact: true`** — these pages are public, so each teacher has to opt in, and the details are stripped on the server otherwise.
+- **`textbooks.ts`** — per subject. `isbn` and `imageUrl` are optional (some items genuinely have none).
+- **`pribor.ts`** — supplies to bring, per subject.
+
+## Type checking
+
+Every subject name is a `SubjectId` (defined in `lib/subjects.ts`), and every period label is a `PeriodOrder`. A typo or a stale name is a **build error**, not a silent missing icon. If a class needs a subject that doesn't exist yet, add it to `lib/subjects.ts` first.
+
+Note: some old textbook data (e.g. 2nd grade's "Svet oko nas") isn't carried over — it's in git history.

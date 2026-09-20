@@ -1,10 +1,12 @@
 import { EventDetails } from "../components/EventModal";
 import { getExamsForSubject, type Exam } from "./examData";
-import { getSubjectInfo, type SubjectId } from "./scheduleData";
+import { getSubjectInfo, type SubjectId } from "./subjects";
 import { getTextbooksForSubject } from "./textbookData";
 import { getTeacherForSubject } from "./teacherData";
 import { getClassTimes } from "./timeMapping";
 import type { ShiftType } from "./shiftDetection";
+import type { BellSchedule } from "./schedule";
+import type { ClassData } from "./classData";
 import { format, parseISO, isBefore } from "date-fns";
 import { srLatn as sr } from "date-fns/locale";
 
@@ -16,6 +18,7 @@ const capitalize = (s: string): string =>
   s.charAt(0).toUpperCase() + s.slice(1);
 
 const getAllExamsForSubject = (
+  exams: Exam[],
   subject: SubjectId,
 ): Array<{
   date: string;
@@ -27,7 +30,7 @@ const getAllExamsForSubject = (
 }> => {
   const today = new Date();
 
-  const subjectExams = [...getExamsForSubject(subject)].sort(
+  const subjectExams = [...getExamsForSubject(exams, subject)].sort(
     (a, b) => parseISO(a.date).getTime() - parseISO(b.date).getTime(),
   );
 
@@ -58,7 +61,7 @@ const getSubjectIconData = (subject: SubjectId): string => {
 // Helper function to determine event type
 const getEventType = (subject: SubjectId): "class" | "daycare" | "weekend" => {
   // BORAVAK — these activities are only ever produced by the daycare JSX in
-  // app/schedule/page.tsx, currently disabled for 3rd grade. Left here so
+  // components/SchedulePage.tsx, currently disabled for 3rd grade. Left here so
   // re-enabling boravak doesn't also require restoring this list.
   const daycareActivities: SubjectId[] = [
     "Prijem dece",
@@ -78,10 +81,11 @@ const getEventType = (subject: SubjectId): "class" | "daycare" | "weekend" => {
 // Helper function to format class time information. Takes the shift of the
 // day being VIEWED (not necessarily today's real shift) — see getEventDetails.
 const getFormattedClassTime = (
+  bellSchedule: BellSchedule,
   classOrder: string,
   shift: ShiftType,
 ): string => {
-  const times = getClassTimes(classOrder, shift);
+  const times = getClassTimes(bellSchedule, classOrder, shift);
 
   if (times) {
     return `${times.startTime}–${times.endTime}`;
@@ -91,14 +95,12 @@ const getFormattedClassTime = (
 };
 
 export const getEventDetails = (
+  data: ClassData,
   title: SubjectId,
   time: string,
   shift: ShiftType,
   classType?: string,
 ): EventDetails | null => {
-  // Get subject info which now contains pribor data
-  const subjectInfo = getSubjectInfo(title);
-
   // Get subject info for icon
   const eventType = getEventType(title);
   const iconData = getSubjectIconData(title);
@@ -107,7 +109,7 @@ export const getEventDetails = (
   let formattedTime: string | undefined;
 
   if (eventType === "class") {
-    formattedTime = getFormattedClassTime(time, shift);
+    formattedTime = getFormattedClassTime(data.bellSchedule, time, shift);
   } else if (eventType === "daycare") {
     // Extract time range from daycare activity time (e.g., "12:30-13:00")
     const timeMatch = time.match(/(\d{2}:\d{2})-(\d{2}:\d{2})/);
@@ -127,19 +129,20 @@ export const getEventDetails = (
   };
 
   // Add books from textbook data
-  const textbooks = getTextbooksForSubject(title);
+  const textbooks = getTextbooksForSubject(data.textbooks, title);
   if (textbooks.length > 0) {
     eventDetails.books = textbooks;
   }
 
   // Add pribor as equipment if available
-  if (subjectInfo.pribor && subjectInfo.pribor.length > 0) {
-    eventDetails.equipment = subjectInfo.pribor;
+  const pribor = data.pribor[title];
+  if (pribor && pribor.length > 0) {
+    eventDetails.equipment = pribor;
   }
 
   // Add teacher information for class subjects
   if (eventType === "class") {
-    const teacher = getTeacherForSubject(title);
+    const teacher = getTeacherForSubject(data, title);
     if (teacher) {
       eventDetails.teacher = teacher;
     }
@@ -147,7 +150,7 @@ export const getEventDetails = (
 
   // Add exams for class subjects
   if (eventType === "class") {
-    eventDetails.allExams = getAllExamsForSubject(title);
+    eventDetails.allExams = getAllExamsForSubject(data.exams, title);
   }
 
   return eventDetails;

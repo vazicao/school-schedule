@@ -2,19 +2,20 @@
 
 import { format } from "date-fns";
 import { srLatn as sr } from "date-fns/locale";
-import styles from "../app/schedule/schedule.module.css";
+import styles from "./SchedulePage.module.css";
 // BORAVAK — SettingsDropdown currently only holds the daycare toggle, disabled
 // for 3rd grade. Keep the import commented alongside the JSX below so it's a
 // one-step re-enable (also uncomment showDaycare/onToggleDaycare props here
-// and in app/schedule/page.tsx) if a future school/class needs boravak, or
+// and in components/SchedulePage.tsx) if a future school/class needs boravak, or
 // this dropdown grows other settings.
 // import SettingsDropdown from "./SettingsDropdown";
 import SvgIcon from "./SvgIcon";
-import { getCurrentClass } from "../lib/schoolConfig";
 import { type WeekInfo } from "../lib/weekNavigation";
-import { getCurrentDay } from "../lib/scheduleData";
+import { getCurrentDay } from "../lib/schedule";
 
 interface ScheduleHeaderProps {
+  classLabel: string; // e.g. "III·2"
+  schoolName: string; // e.g. "Jelena Ćetković"
   selectedWeek: WeekInfo;
   selectedDay: string;
   // showDaycare: boolean; // BORAVAK — disabled for 3rd grade
@@ -26,6 +27,8 @@ interface ScheduleHeaderProps {
 }
 
 export default function ScheduleHeader({
+  classLabel,
+  schoolName,
   selectedWeek,
   selectedDay,
   // showDaycare,
@@ -35,7 +38,6 @@ export default function ScheduleHeader({
   onGoToCurrentWeek,
   canGoToPreviousWeek,
 }: ScheduleHeaderProps) {
-  const classInfo = getCurrentClass();
   const monthName = format(selectedWeek.startDate, "MMMM", { locale: sr });
   const capitalizedMonth =
     monthName.charAt(0).toUpperCase() + monthName.slice(1);
@@ -44,9 +46,9 @@ export default function ScheduleHeader({
     <>
       <div className={styles.header}>
         <div className={styles.schoolInfo}>
-          <h2>{classInfo.name}</h2>
+          <h2>{classLabel}</h2>
           <div className={styles.separator}></div>
-          <h2>Jelena Ćetković</h2>
+          <h2>{schoolName}</h2>
         </div>
         {/* BORAVAK — settings gear only toggled boravak visibility; disabled
             for 3rd grade. Uncomment along with the import above to restore.

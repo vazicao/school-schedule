@@ -4,7 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Serbian-language school schedule application built with Next.js for a specific class (currently II·2, OŠ "Jelena Četković", Belgrade — see `schoolConfig.ts`). Its core feature is automatic morning/afternoon shift detection based on calendar weeks. It also tracks exams, teachers, textbooks, and required school supplies ("pribor") for each subject. There is no backend — all data lives in local TypeScript/JSON files. Umami Cloud analytics is wired into the deployed app.
+This is a Serbian-language school schedule application built with Next.js. It supports many schools and classes: each class has its own page at `/<school>/<class>` (e.g. `/os-jelena-cetkovic/gen-2024-2`), backed by static data files under `/data` — there is no backend or database. Its core feature is automatic morning/afternoon shift detection based on calendar weeks. It also tracks exams, teachers, textbooks, and required school supplies ("pribor") for each subject. Umami Cloud analytics is wired into the deployed app.
+
+The first (currently only) class is III·2 at OŠ "Jelena Ćetković", Belgrade. See `data/README.md` for how the data is organized and how to add a class or a new school year.
 
 Note: a PDF export feature (`@react-pdf/renderer`) existed early in the project's history but was later removed in favor of the in-app schedule view. There is no `pdfService.tsx` or `WeeklySchedulePDF.tsx` anymore.
 
@@ -27,31 +29,58 @@ The project uses Husky and lint-staged for pre-commit hooks:
 
 ## Architecture
 
+### Routing and data flow
+
+- `app/[school]/[class]/page.tsx` is a server component. It loads the class's data (`lib/classLoader.ts`), then renders the client component `components/SchedulePage.tsx` with it as a `data` prop. All valid `school/class` pairs are pre-rendered at build time (`generateStaticParams`, `dynamicParams = false`); anything else is a 404 (`app/not-found.tsx`).
+- `/` and the old `/schedule` URL redirect to the default class (`DEFAULT_CLASS_PATH` in `next.config.ts`) until there's a real landing page.
+- The class slug identifies a **group of kids**, not a grade (`gen-<year they started 1st grade>-<section>`), so a class's URL never changes as they move up. Each school year is a subfolder; the newest one is what the app shows.
+
+### Data (`/data/`)
+
+```
+data/<school>/school.ts                       school info + bell schedule (period times)
+data/<school>/<class>/<year>/                 e.g. os-jelena-cetkovic/gen-2024-2/2026-27/
+  config.ts  schedule.ts  exams.ts  teachers.ts  textbooks.ts  pribor.ts  index.ts
+```
+
+Every year folder's `index.ts` ends with `satisfies ClassYearData`, so subject names, period labels etc. are type-checked at build time. See `data/README.md`.
+
 ### Core Services (`/lib/`)
 
-- `scheduleData.ts` - Main schedule definitions, subjects, and time periods
-- `shiftDetection.ts` - Automatic morning/afternoon shift calculation logic (alternates weekly, anchored to a reference ISO week)
-- `timeMapping.ts` - Period-to-clock-time mapping for the morning and afternoon timetables
+- `subjects.ts` - Shared subject catalog (name/icon/color) and the `SubjectId` type derived from it. Every subject reference in any class's data uses `SubjectId`, so a typo or stale name is a compile error
+- `schedule.ts` - Day/period types, `resolveSchedules` (fills in period times from the school's bell schedule), `getCurrentDay`
+- `classData.ts` - `ClassYearData` (what a year folder exports), `ClassData` (assembled, serializable data the UI receives), `buildClassData`. Teacher contact details are stripped server-side unless the teacher opted in (`showContact`) — pages are public
+- `classLoader.ts` - **Server-only** (uses `fs`): scans `/data`, picks each class's latest year folder, dynamically imports it
+- `schoolConfig.ts` - School/class config types, slug conventions (regexes), `formatClassName` (roman numeral + section, e.g. "III·2")
+- `shiftDetection.ts` - Morning/afternoon shift for a date, given the class's `ShiftAnchor` (a known Monday + its shift; alternates weekly, exact calendar-week math so it's correct across year boundaries)
+- `timeMapping.ts` - Looks up a period's times in the bell schedule (`getClassTimes`); `getDaycareTimeRange` is kept for the disabled boravak feature
 - `weekNavigation.ts` - Week-based navigation and date calculations
-- `examData.ts` - Exam scheduling system, backed by `/data/exams.json` (see `data/README.md` for its structure)
-- `teacherData.ts` - Teacher directory and subject/class assignments
-- `textbookData.ts` - Textbook metadata (titles, authors, ISBN, cover images) per subject
-- `priborData.ts` - Required/optional school supplies per subject
-- `eventDetailsService.ts` - Composes schedule, exam, teacher, and textbook data into the details shown for a single schedule event
-- `schoolConfig.ts` - School- and class-specific configuration and constants
+- `examData.ts`, `teacherData.ts`, `textbookData.ts` - Types plus pure lookup helpers that take the class's data as an argument (the data itself lives in `/data`)
+- `eventDetailsService.ts` - Composes a class's schedule/exam/teacher/textbook/pribor data into the details shown for one schedule event
 
 ### Key Components (`/components/`)
 
+- `SchedulePage.tsx` - The schedule UI (client component); takes a `ClassData` prop. Its styles are in `SchedulePage.module.css`
 - `EventCard.tsx` - Individual schedule event display with Apple Calendar styling
 - `EventModal.tsx` - Detailed event information popup (teacher, textbooks, pribor, exams)
-- `ExamSummary.tsx` - Expandable summary of exams for the current week
+- `ExamSummary.tsx` - Expandable banner listing the exams on the selected day
 - `ScheduleHeader.tsx` - Week navigation controls and current week display
-- `SettingsDropdown.tsx` - Per-user display toggles (e.g. show/hide daycare)
+- `SettingsDropdown.tsx` - Per-user display toggles (currently unused; only held the disabled boravak toggle)
 - `SvgIcon.tsx` - Icon system using the SVG sprite at `/public/icons-sprite.svg`
 
 ### Shift Detection System
 
-The application automatically alternates between morning and afternoon shifts based on calendar weeks. This is a core feature that affects the entire schedule display and is handled in `shiftDetection.ts`.
+The application automatically alternates between morning and afternoon shifts based on calendar weeks. This is a core feature that affects the entire schedule display. The alternation is anchored per class (`shiftAnchor` in the year's `config.ts`) because different classes in one school are often on opposite shifts in the same week.
+
+### PWA (installable app)
+
+The app can be added to a phone's home screen as "Moj Raspored".
+
+- **Manifest** — one per class, generated at `/<school>/<class>/manifest.webmanifest` (`app/[school]/[class]/manifest.webmanifest/route.ts`) and linked from that class page's `generateMetadata`. Each class gets its own `start_url` and app `id`, so different classes install as different apps. The name/label is fixed ("Moj Raspored") so it doesn't go stale when the grade changes
+- **Icons** — all generated from ONE source image, `scripts/icon-source.png`, by `npm run icons` (auto-centers the artwork; writes `public/icons/*`, `app/icon.png`, `app/apple-icon.png`, `app/favicon.ico`). To change the icon, replace that file and re-run. To compare candidates without touching anything: `npm run icons -- --sheet out.png <image> [<image> ...]`. If the icon's background color changes, update `background_color` in the manifest route
+- **Service worker** — `public/sw.js`, registered in production only by `components/ServiceWorkerRegistration.tsx`. HTML pages are network-first (always the current schedule when online; the last-seen page offline or after 3s); `/_next/static` and `/icons` are cache-first; Google Fonts are stale-while-revalidate. Analytics and other sites' images are left alone. Bump `CACHE_VERSION` in it if the caching strategy itself changes
+- **Status bar (iOS)** — the app uses `apple-mobile-web-app-status-bar-style: black-translucent` (`app/layout.tsx`), so the page draws under the status bar. `app/globals.css` pushes the page down by `env(safe-area-inset-top)` and paints that strip in the header color (`#d17f00`, same as the header and `themeColor`). Keep those three colors in sync
+- iOS snapshots the icon and label when the app is added; after changing them, remove and re-add the home-screen icon to see the change
 
 ### CSS Architecture
 
@@ -82,18 +111,16 @@ The application automatically alternates between morning and afternoon shifts ba
 
 ### Serbian Localization
 
-- All UI text, days of the week, and subject names are in Serbian, written in **Cyrillic script** (the app was fully converted from Latin to Cyrillic; keep new UI text in Cyrillic)
-- Root layout sets `lang="sr"` for proper internationalization
+- All UI text, days of the week, and subject names are in Serbian, written in **Latin script** (the app was converted from Cyrillic; keep new UI text and data in Latin)
+- Root layout sets `lang="sr-Latn"`, and date formatting uses date-fns's `srLatn` locale
 - Subject names and schedules are tailored to the Serbian primary-school curriculum
-- Exam/data source files (`data/exams.json`, `data/README.md`) use Latin script for field values — this is a data-authoring convenience, not a UI concern
 
 ## Data Management
 
-### Schedule Structure
-
-- Subjects are defined with icons, colors, and Serbian names in `scheduleData.ts`
-- Time slots are mapped between morning/afternoon period systems in `timeMapping.ts`
-- Exam data is stored in JSON files within `/data/` directory
+- Class data lives in `/data/<school>/<class>/<year>/` (see above and `data/README.md`); shared subject display info lives in `lib/subjects.ts`
+- To add a class or a new school year, add a folder — there is no registry to update
+- Class schedules only say which subject is in which period; period **times** come from the school's `bellSchedule` in `data/<school>/school.ts`
+- Subjects are referenced by `SubjectId` everywhere — add a new subject to `lib/subjects.ts` first
 
 ## Testing and TypeScript
 
@@ -105,5 +132,6 @@ The application automatically alternates between morning and afternoon shifts ba
 ## Key Entry Points
 
 - `/app/layout.tsx` - Root layout with Serbian locale configuration, font loading, and Umami analytics script
-- `/app/schedule/page.tsx` - Main schedule interface and primary application page
-- `/app/page.tsx` - Landing page (still the default Next.js/`create-next-app` template — not yet built out)
+- `/app/[school]/[class]/page.tsx` - The class schedule route (server component that loads data and renders `SchedulePage`)
+- `/components/SchedulePage.tsx` - The main schedule interface
+- `/next.config.ts` - Redirects (`/` and `/schedule` to the default class)

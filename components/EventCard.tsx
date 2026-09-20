@@ -1,7 +1,7 @@
 "use client";
 
 import styles from "./EventCard.module.css";
-import { getClassTimes, getDaycareTimeRange } from "../lib/timeMapping";
+import { getDaycareTimeRange } from "../lib/timeMapping";
 import type { ShiftType } from "../lib/shiftDetection";
 
 export type EventType = "class" | "daycare" | "weekend" | "exam";
@@ -120,14 +120,9 @@ const EventCard: React.FC<EventCardProps> = ({
           let displayEndTime = endTime || "";
 
           if (!startTime && !endTime) {
-            // Fallback to old calculation logic
-            if (type === "class" && shift) {
-              const classTimes = getClassTimes(time, shift);
-              if (classTimes) {
-                displayStartTime = classTimes.startTime;
-                displayEndTime = classTimes.endTime;
-              }
-            } else if (type === "daycare" && shift) {
+            // Fallback when explicit times aren't provided. (Class periods
+            // always get explicit start/end times from the resolved schedule.)
+            if (type === "daycare" && shift) {
               const daycareRange = getDaycareTimeRange(shift);
               const timeMatch = time.match(/(\d{2}:\d{2})/);
               if (timeMatch) {

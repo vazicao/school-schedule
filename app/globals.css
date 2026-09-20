@@ -1,13 +1,12 @@
 /* Import design tokens */
-@import './styles/tokens.css';
-@import './styles/typography.css';
-@import './styles/buttons.css';
+@import "./styles/tokens.css";
+@import "./styles/typography.css";
+@import "./styles/buttons.css";
 
 :root {
   --background: var(--color-surface-primary);
   --foreground: var(--color-text-primary);
 }
-
 
 /* Reset & Base Styles */
 * {
@@ -27,8 +26,31 @@ body {
   background: var(--background);
 }
 
-
-
 html {
   color-scheme: light;
+}
+
+/* Installed (home-screen) iOS app: the status bar is translucent and the page
+   draws underneath it (apple-mobile-web-app-status-bar-style:
+   black-translucent, set in app/layout.tsx). Push everything down by the
+   status-bar height, and paint that strip in the header colour so the header
+   appears to extend up into it. It's a global strip (not part of the header) so
+   the loading state and the 404 page — which have no header — don't end up with
+   the white status-bar text on a white background.
+   env(safe-area-inset-top) is 0 in a normal browser tab, so none of this
+   applies there. #d17f00 = the header colour = themeColor in layout.tsx. */
+body {
+  padding-top: env(safe-area-inset-top);
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: env(safe-area-inset-top);
+  background: #d17f00;
+  z-index: 100;
+  pointer-events: none;
 }

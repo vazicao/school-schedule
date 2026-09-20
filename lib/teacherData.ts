@@ -1,68 +1,37 @@
-import type { SubjectId } from "./scheduleData";
+import type { SubjectId } from "./subjects";
 
 export interface Teacher {
   id: string;
   name: string;
   subjects: string[];
-  classes: string[];
   email?: string;
   phone?: string;
   room?: string;
+  // Contact details are only shown in the app when this is explicitly true —
+  // these pages are public, so each teacher has to opt in.
+  showContact?: boolean;
 }
 
-export const teachers: Record<string, Teacher> = {
-  "maksimovic-bojana": {
-    id: "maksimovic-bojana",
-    name: "Maksimović Bojana",
-    subjects: ["Razredna nastava"], // Default for all subjects except overrides
-    classes: ["III2"],
-    email: "bojanaucha@gmail.com",
-    phone: "+381 11 123 4567",
-    room: "101",
-  },
-  "domnic-popovic-natasa": {
-    id: "domnic-popovic-natasa",
-    name: "Domnić Popović Nataša",
-    subjects: ["Engleski jezik"],
-    classes: [],
-    phone: "+381 11 234 5678",
-    room: "205",
-  },
-};
-
-// Subject to teacher mapping for specific overrides
-export const subjectTeacherMap: Partial<Record<SubjectId, string>> = {
-  "Engleski jezik": "domnic-popovic-natasa",
-};
-
-// Default class teacher for subjects not in override map
-export const classTeachers: Record<string, string> = {
-  III2: "maksimovic-bojana",
-};
+// A class's teachers for one school year (data/<school>/<class>/<year>/teachers.ts
+// and config.ts): who exists, which subjects have a dedicated (non-homeroom)
+// teacher, and who the homeroom teacher is.
+export interface TeacherDirectory {
+  teachers: Record<string, Teacher>;
+  // Subject -> teacher id, for subjects NOT taught by the homeroom teacher
+  subjectTeachers: Partial<Record<SubjectId, string>>;
+  homeroomTeacherId: string;
+}
 
 export const getTeacherForSubject = (
+  directory: TeacherDirectory,
   subject: SubjectId,
-  className: string = "III2",
 ): Teacher | null => {
-  // First check for specific subject override
-  const specificTeacherId = subjectTeacherMap[subject];
-  if (specificTeacherId && teachers[specificTeacherId]) {
-    return teachers[specificTeacherId];
+  // First check for a subject-specific teacher
+  const specificTeacherId = directory.subjectTeachers[subject];
+  if (specificTeacherId && directory.teachers[specificTeacherId]) {
+    return directory.teachers[specificTeacherId];
   }
 
-  // Fall back to class teacher for general subjects
-  const classTeacherId = classTeachers[className];
-  if (classTeacherId && teachers[classTeacherId]) {
-    return teachers[classTeacherId];
-  }
-
-  return null;
-};
-
-export const getTeacherById = (teacherId: string): Teacher | null => {
-  return teachers[teacherId] || null;
-};
-
-export const getAllTeachers = (): Teacher[] => {
-  return Object.values(teachers);
+  // Fall back to the homeroom teacher for general subjects
+  return directory.teachers[directory.homeroomTeacherId] ?? null;
 };

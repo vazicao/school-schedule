@@ -1,16 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import styles from "./schedule.module.css";
-import {
-  schedules,
-  getCurrentDay,
-  getSubjectInfo,
-  type Day,
-  type ClassPeriod,
-  type SubjectId,
-} from "../../lib/scheduleData";
-import { getShiftInfo, type ShiftType } from "../../lib/shiftDetection";
+import styles from "./SchedulePage.module.css";
+import { getCurrentDay, type Day, type ClassPeriod } from "../lib/schedule";
+import { getSubjectInfo, type SubjectId } from "../lib/subjects";
+import { getShiftInfo, type ShiftType } from "../lib/shiftDetection";
+import type { ClassData } from "../lib/classData";
 import {
   getCurrentWeekInfo,
   getNextWeek,
@@ -18,21 +13,22 @@ import {
   getWeekInfo,
   getWeekDates,
   type WeekInfo,
-} from "../../lib/weekNavigation";
-import { format, isSameDay, startOfDay, startOfISOWeek } from "date-fns";
+} from "../lib/weekNavigation";
+import {
+  format,
+  isSameDay,
+  parseISO,
+  startOfDay,
+  startOfISOWeek,
+} from "date-fns";
 import { srLatn as sr } from "date-fns/locale";
-import ScheduleHeader from "../../components/ScheduleHeader";
-import EventCard from "../../components/EventCard";
-import EventModal, { EventDetails } from "../../components/EventModal";
-import { getEventDetails } from "../../lib/eventDetailsService";
-import { getExamsForDate, getExamsInDateRange } from "../../lib/examData";
-import { SCHOOL_YEAR_START } from "../../lib/schoolConfig";
-import SvgIcon from "../../components/SvgIcon";
-import ExamSummary from "../../components/ExamSummary";
-
-// The Monday of the week the school year starts in — navigating to an
-// earlier week isn't meaningful (summer break / previous grade).
-const EARLIEST_WEEK_START = startOfISOWeek(SCHOOL_YEAR_START);
+import ScheduleHeader from "./ScheduleHeader";
+import EventCard from "./EventCard";
+import EventModal, { EventDetails } from "./EventModal";
+import { getEventDetails } from "../lib/eventDetailsService";
+import { getExamsForDate, getExamsInDateRange } from "../lib/examData";
+import SvgIcon from "./SvgIcon";
+import ExamSummary from "./ExamSummary";
 
 // BORAVAK (produženi boravak) — disabled starting 3rd grade (no boravak at this
 // school for this grade). Kept in code in case this expands to another
@@ -138,7 +134,7 @@ const calculateSectionTimeRange = (
   return `${startTime} - ${endTime}`;
 };
 
-export default function Schedule() {
+export default function SchedulePage({ data }: { data: ClassData }) {
   const [selectedWeek, setSelectedWeek] = useState<WeekInfo | null>(null);
   const [selectedDay, setSelectedDay] = useState<Day | null>(null);
   // BORAVAK — disabled for 3rd grade, see block near top of file. Re-enable
@@ -172,26 +168,32 @@ export default function Schedule() {
   }
 
   // Get shift info for the selected week
-  const shiftInfo = getShiftInfo(selectedWeek.startDate);
+  const shiftInfo = getShiftInfo(data.shiftAnchor, selectedWeek.startDate);
 
   // Get dates for the selected week (including weekends)
   const weekDates = getWeekDates(selectedWeek.year, selectedWeek.week, true);
   const today = startOfDay(new Date());
 
-  // Don't allow navigating back before the school year started
-  const canGoToPreviousWeek = selectedWeek.startDate > EARLIEST_WEEK_START;
+  // Don't allow navigating back before the school year started: stop at the
+  // Monday of the week containing the class's schoolYearStart.
+  const earliestWeekStart = startOfISOWeek(parseISO(data.schoolYearStart));
+  const canGoToPreviousWeek = selectedWeek.startDate > earliestWeekStart;
 
   // Exams for the specific day being viewed (not the whole week) — every
   // exam now has an exact confirmed date, so the banner only shows on the
   // day it actually falls on.
   const selectedDayDate = weekDates[days.indexOf(selectedDay)];
-  const dayExams = getExamsForDate(format(selectedDayDate, "yyyy-MM-dd"));
+  const dayExams = getExamsForDate(
+    data.exams,
+    format(selectedDayDate, "yyyy-MM-dd"),
+  );
 
   // Get next week info for weekend preview
   const nextWeek = getNextWeek(selectedWeek.year, selectedWeek.week);
   const nextWeekInfo = getWeekInfo(nextWeek.year, nextWeek.week);
-  const nextWeekShift = getShiftInfo(nextWeekInfo.startDate);
+  const nextWeekShift = getShiftInfo(data.shiftAnchor, nextWeekInfo.startDate);
   const nextWeekExams = getExamsInDateRange(
+    data.exams,
     format(nextWeekInfo.startDate, "yyyy-MM-dd"),
     format(nextWeekInfo.endDate, "yyyy-MM-dd"),
   );
@@ -226,7 +228,7 @@ export default function Schedule() {
     shift: ShiftType,
     classType?: string,
   ) => {
-    const details = getEventDetails(title, time, shift, classType);
+    const details = getEventDetails(data, title, time, shift, classType);
     if (details) {
       setSelectedEventDetails(details);
       setModalOpen(true);
@@ -241,6 +243,8 @@ export default function Schedule() {
   return (
     <div className={styles.container}>
       <ScheduleHeader
+        classLabel={data.displayName}
+        schoolName={data.school.shortName}
         selectedWeek={selectedWeek}
         selectedDay={selectedDay}
         // BORAVAK — disabled for 3rd grade; see showDaycare state above.
@@ -329,7 +333,7 @@ export default function Schedule() {
                   <h3 className={styles.sectionTimeRange}>
                     {(() => {
                       const firstClass =
-                        schedules[shiftInfo.shift][selectedDay][0];
+                        data.schedules[shiftInfo.shift][selectedDay][0];
                       const freeTimeEnd = firstClass
                         ? firstClass.startTime
                         : "13:10";
@@ -365,7 +369,7 @@ export default function Schedule() {
                   ))}
                   {(() => {
                     const firstClass =
-                      schedules[shiftInfo.shift][selectedDay][0];
+                      data.schedules[shiftInfo.shift][selectedDay][0];
                     const freeTimeEnd = firstClass
                       ? firstClass.startTime
                       : "13:10";
@@ -405,33 +409,35 @@ export default function Schedule() {
               <h3 className={styles.sectionTitle}>{shiftInfo.shiftName}</h3>
               <h3 className={styles.sectionTimeRange}>
                 {calculateSectionTimeRange(
-                  schedules[shiftInfo.shift][selectedDay],
+                  data.schedules[shiftInfo.shift][selectedDay],
                 )}
               </h3>
             </div>
             <div className={styles.eventsList}>
-              {schedules[shiftInfo.shift][selectedDay].map((lesson, index) => (
-                <EventCard
-                  key={`class-${index}`}
-                  type="class"
-                  icon={getSubjectIcon(lesson.subject)}
-                  title={lesson.subject}
-                  time={lesson.order}
-                  classType={lesson.order}
-                  startTime={lesson.startTime}
-                  endTime={lesson.endTime}
-                  color={getSubjectInfo(lesson.subject).color}
-                  shift={shiftInfo.shift}
-                  onClick={() =>
-                    handleEventClick(
-                      lesson.subject,
-                      lesson.order,
-                      shiftInfo.shift,
-                      lesson.order,
-                    )
-                  }
-                />
-              ))}
+              {data.schedules[shiftInfo.shift][selectedDay].map(
+                (lesson, index) => (
+                  <EventCard
+                    key={`class-${index}`}
+                    type="class"
+                    icon={getSubjectIcon(lesson.subject)}
+                    title={lesson.subject}
+                    time={lesson.order}
+                    classType={lesson.order}
+                    startTime={lesson.startTime}
+                    endTime={lesson.endTime}
+                    color={getSubjectInfo(lesson.subject).color}
+                    shift={shiftInfo.shift}
+                    onClick={() =>
+                      handleEventClick(
+                        lesson.subject,
+                        lesson.order,
+                        shiftInfo.shift,
+                        lesson.order,
+                      )
+                    }
+                  />
+                ),
+              )}
             </div>
           </>
         ) : (
@@ -441,33 +447,35 @@ export default function Schedule() {
               <h3 className={styles.sectionTitle}>{shiftInfo.shiftName}</h3>
               <h3 className={styles.sectionTimeRange}>
                 {calculateSectionTimeRange(
-                  schedules[shiftInfo.shift][selectedDay],
+                  data.schedules[shiftInfo.shift][selectedDay],
                 )}
               </h3>
             </div>
             <div className={styles.eventsList}>
-              {schedules[shiftInfo.shift][selectedDay].map((lesson, index) => (
-                <EventCard
-                  key={`class-${index}`}
-                  type="class"
-                  icon={getSubjectIcon(lesson.subject)}
-                  title={lesson.subject}
-                  time={lesson.order}
-                  classType={lesson.order}
-                  startTime={lesson.startTime}
-                  endTime={lesson.endTime}
-                  color={getSubjectInfo(lesson.subject).color}
-                  shift={shiftInfo.shift}
-                  onClick={() =>
-                    handleEventClick(
-                      lesson.subject,
-                      lesson.order,
-                      shiftInfo.shift,
-                      lesson.order,
-                    )
-                  }
-                />
-              ))}
+              {data.schedules[shiftInfo.shift][selectedDay].map(
+                (lesson, index) => (
+                  <EventCard
+                    key={`class-${index}`}
+                    type="class"
+                    icon={getSubjectIcon(lesson.subject)}
+                    title={lesson.subject}
+                    time={lesson.order}
+                    classType={lesson.order}
+                    startTime={lesson.startTime}
+                    endTime={lesson.endTime}
+                    color={getSubjectInfo(lesson.subject).color}
+                    shift={shiftInfo.shift}
+                    onClick={() =>
+                      handleEventClick(
+                        lesson.subject,
+                        lesson.order,
+                        shiftInfo.shift,
+                        lesson.order,
+                      )
+                    }
+                  />
+                ),
+              )}
             </div>
             {/* BORAVAK — disabled for 3rd grade (no boravak this year).
                 Kept for a future school/class that has it. To re-enable,

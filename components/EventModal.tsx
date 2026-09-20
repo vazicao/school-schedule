@@ -3,7 +3,7 @@
 import { useRef, useEffect } from "react";
 import styles from "./EventModal.module.css";
 import { EventType } from "./EventCard";
-import { getSubjectInfo } from "../lib/scheduleData";
+import { getSubjectInfo } from "../lib/subjects";
 import { type Textbook } from "../lib/textbookData";
 import { type Teacher } from "../lib/teacherData";
 import SvgIcon from "./SvgIcon";
@@ -206,7 +206,7 @@ const EventModal: React.FC<EventModalProps> = ({
               </div>
               <div className={styles.teacherInfo}>
                 <p className="paragraph-small">{teacher.name}</p>
-                {teacher.email && (
+                {teacher.showContact && teacher.email && (
                   <p className="paragraph-small text-secondary">
                     {teacher.email}
                   </p>

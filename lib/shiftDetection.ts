@@ -5,19 +5,19 @@ import {
   addWeeks,
   getDay,
   differenceInCalendarWeeks,
+  parseISO,
 } from "date-fns";
 
 export type ShiftType = "morning" | "afternoon";
 
-// Reference point for 3rd grade: the Monday of ISO week 38, 2026
-// (2026-09-14) is a morning-shift week; week 39 (2026-09-21) is afternoon.
-// Shifts alternate weekly from there. Anchored to an actual date (not a
-// week/year pair) so the parity math below is exact calendar arithmetic —
-// no approximation of "weeks per year" that would drift across a year
-// boundary (2026 itself has 53 ISO weeks, so a naive "* 52" would have
-// silently flipped the parity wrong partway through this school year).
-const REFERENCE_MONDAY = new Date(2026, 8, 14); // September 14, 2026
-const REFERENCE_SHIFT: ShiftType = "morning";
+// A Monday whose shift is known. Each class has its own anchor (two classes in
+// the same school are often on opposite shifts in the same week); shifts
+// alternate weekly from it. Kept as plain strings so it can be passed from the
+// server to client components.
+export interface ShiftAnchor {
+  mondayOfWeek: string; // ISO date of a Monday, e.g. "2026-09-14"
+  shift: ShiftType; // the shift during that week
+}
 
 /**
  * Get ISO week number for a given date
@@ -30,39 +30,47 @@ function getWeekNumber(date: Date): { week: number; year: number } {
 }
 
 /**
- * Determine the current shift based on the week
- * Shifts alternate weekly relative to REFERENCE_MONDAY.
+ * Determine the shift for a date, given the class's anchor.
+ * Shifts alternate weekly relative to the anchor Monday. Uses exact
+ * calendar-week arithmetic (not "weeks per year"), so it's correct across
+ * year boundaries — e.g. 2026 has 53 ISO weeks.
  */
-export function getCurrentShift(date: Date = new Date()): ShiftType {
+export function getCurrentShift(
+  anchor: ShiftAnchor,
+  date: Date = new Date(),
+): ShiftType {
   const targetMonday = startOfISOWeek(date);
   const weeksFromReference = differenceInCalendarWeeks(
     targetMonday,
-    REFERENCE_MONDAY,
+    parseISO(anchor.mondayOfWeek),
     { weekStartsOn: 1 },
   );
 
-  // If the difference is even, same shift as reference
+  // If the difference is even, same shift as the anchor
   // If odd, opposite shift
   const isEvenWeekDifference = ((weeksFromReference % 2) + 2) % 2 === 0;
 
   if (isEvenWeekDifference) {
-    return REFERENCE_SHIFT;
+    return anchor.shift;
   } else {
-    return REFERENCE_SHIFT === "afternoon" ? "morning" : "afternoon";
+    return anchor.shift === "afternoon" ? "morning" : "afternoon";
   }
 }
 
 /**
  * Get shift info with week details for display
  */
-export function getShiftInfo(date: Date = new Date()): {
+export function getShiftInfo(
+  anchor: ShiftAnchor,
+  date: Date = new Date(),
+): {
   shift: ShiftType;
   week: number;
   year: number;
   shiftName: string;
 } {
   const { week, year } = getWeekNumber(date);
-  const shift = getCurrentShift(date);
+  const shift = getCurrentShift(anchor, date);
 
   const shiftName = shift === "morning" ? "Jutarnja smena" : "Popodnevna smena";
 
