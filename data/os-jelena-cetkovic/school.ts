@@ -17,7 +17,7 @@ const school: SchoolConfig = {
       { order: "6. čas", startTime: "12:25", endTime: "13:10" },
     ],
     afternoon: [
-      { order: "Predčas", startTime: "13:10", endTime: "13:55" },
+      { order: "Pretčas", startTime: "13:10", endTime: "13:55" },
       { order: "1. čas", startTime: "14:00", endTime: "14:45" },
       { order: "2. čas", startTime: "14:50", endTime: "15:35" },
       { order: "3. čas", startTime: "15:55", endTime: "16:40" },

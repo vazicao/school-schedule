@@ -16,7 +16,7 @@ export type SchoolDay = Exclude<Day, "Subota" | "Nedelja">;
 
 // Period labels used by every school's bell schedule and every class schedule.
 export type PeriodOrder =
-  | "Predčas"
+  | "Pretčas"
   | "1. čas"
   | "2. čas"
   | "3. čas"

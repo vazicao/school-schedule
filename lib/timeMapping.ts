@@ -2,7 +2,7 @@ import type { ShiftType } from "./shiftDetection";
 import type { BellSchedule, PeriodOrder } from "./schedule";
 
 /**
- * Parse a period label ("1. čas", "Predčas", or legacy "2. čas (14:00)") and
+ * Parse a period label ("1. čas", "Pretčas", or legacy "2. čas (14:00)") and
  * look up its start/end times in the school's bell schedule.
  * Returns null when it isn't a regular class period.
  */
@@ -13,8 +13,8 @@ export function getClassTimes(
 ): { startTime: string; endTime: string } | null {
   let order: PeriodOrder | null = null;
 
-  if (/^predčas/i.test(timeString)) {
-    order = "Predčas";
+  if (/^pretčas/i.test(timeString)) {
+    order = "Pretčas";
   } else {
     // Extract period number from formats like "1. čas", "2. čas (14:00)", etc.
     const periodMatch = timeString.match(/(\d+)\.\s*čas/i);

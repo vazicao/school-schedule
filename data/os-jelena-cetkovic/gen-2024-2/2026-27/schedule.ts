@@ -43,14 +43,14 @@ export const schedule: RawShiftSchedules = {
   },
   afternoon: {
     Ponedeljak: [
-      { order: "Predčas", subject: "ČOS" },
+      { order: "Pretčas", subject: "ČOS" },
       { order: "1. čas", subject: "Fizičko i zdravstveno vaspitanje (sala)" },
       { order: "2. čas", subject: "Matematika" },
       { order: "3. čas", subject: "Digitalni svet" },
       { order: "4. čas", subject: "Srpski jezik" },
     ],
     Utorak: [
-      { order: "Predčas", subject: "Dopunska nastava" },
+      { order: "Pretčas", subject: "Dopunska nastava" },
       { order: "1. čas", subject: "Srpski jezik" },
       { order: "2. čas", subject: "Matematika" },
       { order: "3. čas", subject: "Priroda i društvo" },
