@@ -243,6 +243,47 @@
   color: var(--color-text-primary);
 }
 
+/* Non-school weekday styling (raspust, praznik) — same fade as weekend */
+.dayButton.nonSchool {
+  opacity: 0.6;
+}
+
+.dayButton.nonSchool .dayName {
+  color: var(--color-text-secondary);
+}
+
+.dayButton.nonSchool .dayDate {
+  color: var(--color-text-primary);
+}
+
+.dayButton.nonSchool.active .dayDateWrapper {
+  background: #8eecc4;
+}
+
+.dayButton.nonSchool.active .dayDate {
+  color: var(--color-text-primary);
+}
+
+.dayButton.nonSchool.active .dayName {
+  color: var(--color-text-primary);
+}
+
+.dayButton.nonSchool.today .dayDate {
+  color: #f25730;
+}
+
+.dayButton.nonSchool.today .dayName {
+  color: #f25730;
+}
+
+.dayButton.nonSchool.today.active .dayDate {
+  color: var(--color-text-primary);
+}
+
+.dayButton.nonSchool.today.active .dayName {
+  color: var(--color-text-primary);
+}
+
 .eventsContainer {
   display: flex;
   flex-direction: column;

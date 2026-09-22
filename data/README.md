@@ -10,6 +10,8 @@ data/
       <year>/
         config.ts  schedule.ts  exams.ts  teachers.ts  textbooks.ts  pribor.ts
         index.ts                    assembles the six files above
+  calendars/
+    <year>.ts                       official raspusti + no-class holidays, same for every school
 ```
 
 Example: `data/os-jelena-cetkovic/gen-2024-2/2026-27/` is served at `/os-jelena-cetkovic/gen-2024-2`.
@@ -31,7 +33,8 @@ The **newest year folder wins** (they sort alphabetically). Publishing next year
 1. Copy last year's folder to the new year, e.g. `2026-27` → `2027-28`.
 2. `config.ts`: update `schoolYear`, `grade` (+1), `schoolYearStart`, `homeroomTeacherId`, and `shiftAnchor` (a Monday of the new year whose shift you know — shifts alternate weekly from it).
 3. Replace `schedule.ts`, `exams.ts`, `teachers.ts`, `textbooks.ts`, `pribor.ts` with the new year's content.
-4. Run `npm run build`. Deploying is the switch — it's what makes the new year go live.
+4. If `data/calendars/<new-year>.ts` doesn't exist yet, add it — see below.
+5. Run `npm run build`. Deploying is the switch — it's what makes the new year go live.
 
 ## Adding a new class or school
 
@@ -49,6 +52,25 @@ Nothing else needs editing. The build fails with a clear error if anything doesn
 - **`teachers.ts`** — the teachers, plus `subjectTeachers` for subjects _not_ taught by the homeroom teacher. **Contact details (email, phone, room) are only shown if `showContact: true`** — these pages are public, so each teacher has to opt in, and the details are stripped on the server otherwise.
 - **`textbooks.ts`** — per subject. `isbn` and `imageUrl` are optional (some items genuinely have none).
 - **`pribor.ts`** — supplies to bring, per subject.
+
+## Non-school days (`data/calendars/`)
+
+`data/calendars/<year>.ts` (e.g. `2026-27.ts`) holds the official raspusti and
+the two no-class holidays (Sveti Sava, Vidovdan), typed as `NonSchoolDay[]`
+from `lib/schoolCalendar.ts`. It's keyed by the same year string as the class
+year folders (`"2026-27"`), and matched up automatically in `classLoader.ts`
+— a class with no matching calendar file just shows no non-school days,
+rather than failing to load.
+
+This calendar is published once a year by Serbia's Ministarstvo prosvete and
+is identical for every school, so it isn't duplicated per class. To add a new
+year: find that year's "Kalendar obrazovno-vaspitnog rada osnovne škole" PDF
+(published each June on prosveta.gov.rs) and copy in the raspusti (Član 6)
+plus Sveti Sava and Vidovdan (Član 7 — the two holidays "celebrated without
+holding classes"). Left out on purpose: schedule-swap days (a specific date
+following another weekday's timetable), dates that are only "observed" but
+still taught normally, individual religious-holiday opt-outs (Član 8), and
+one-off field-trip days without a fixed date yet.
 
 ## Type checking
 

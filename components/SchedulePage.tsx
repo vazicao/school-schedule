@@ -27,6 +27,7 @@ import EventCard from "./EventCard";
 import EventModal, { EventDetails } from "./EventModal";
 import { getEventDetails } from "../lib/eventDetailsService";
 import { getExamsForDate, getExamsInDateRange } from "../lib/examData";
+import { getNonSchoolDay } from "../lib/schoolCalendar";
 import SvgIcon from "./SvgIcon";
 import ExamSummary from "./ExamSummary";
 
@@ -183,10 +184,9 @@ export default function SchedulePage({ data }: { data: ClassData }) {
   // exam now has an exact confirmed date, so the banner only shows on the
   // day it actually falls on.
   const selectedDayDate = weekDates[days.indexOf(selectedDay)];
-  const dayExams = getExamsForDate(
-    data.exams,
-    format(selectedDayDate, "yyyy-MM-dd"),
-  );
+  const selectedDayIso = format(selectedDayDate, "yyyy-MM-dd");
+  const dayExams = getExamsForDate(data.exams, selectedDayIso);
+  const dayNonSchool = getNonSchoolDay(data.nonSchoolDays, selectedDayIso);
 
   // Get next week info for weekend preview
   const nextWeek = getNextWeek(selectedWeek.year, selectedWeek.week);
@@ -262,11 +262,14 @@ export default function SchedulePage({ data }: { data: ClassData }) {
           const isToday = isSameDay(startOfDay(date), today);
           const isSelected = selectedDay === day;
           const isWeekend = day === "Subota" || day === "Nedelja";
+          const isNonSchool =
+            !isWeekend &&
+            !!getNonSchoolDay(data.nonSchoolDays, format(date, "yyyy-MM-dd"));
 
           return (
             <button
               key={day}
-              className={`${styles.dayButton} ${isSelected ? styles.active : ""} ${isToday ? styles.today : ""} ${isWeekend ? styles.weekend : ""}`}
+              className={`${styles.dayButton} ${isSelected ? styles.active : ""} ${isToday ? styles.today : ""} ${isWeekend ? styles.weekend : ""} ${isNonSchool ? styles.nonSchool : ""}`}
               onClick={() => setSelectedDay(day)}
             >
               <span className={`${styles.dayName} caption-small`}>
@@ -282,10 +285,11 @@ export default function SchedulePage({ data }: { data: ClassData }) {
         })}
       </nav>
 
-      {/* Exams section - only on the day the exam actually falls on, hidden on weekends */}
+      {/* Exams section - only on the day the exam actually falls on, hidden on weekends and non-school days */}
       {dayExams.length > 0 &&
         selectedDay !== "Subota" &&
-        selectedDay !== "Nedelja" && <ExamSummary exams={dayExams} />}
+        selectedDay !== "Nedelja" &&
+        !dayNonSchool && <ExamSummary exams={dayExams} />}
 
       <div className={styles.eventsContainer}>
         {selectedDay === "Subota" || selectedDay === "Nedelja" ? (
@@ -320,6 +324,14 @@ export default function SchedulePage({ data }: { data: ClassData }) {
               )}
             </div>
           </>
+        ) : dayNonSchool ? (
+          /* Raspust / no-class holiday — same block as the weekend one, but
+             with a reason and an emoji specific to the occasion. */
+          <div className={styles.weekendBlock}>
+            <h2>Danas Nema Nastave</h2>
+            <div className={styles.weekendIcon}>{dayNonSchool.emoji}</div>
+            <p className="text-secondary">{dayNonSchool.label}</p>
+          </div>
         ) : shiftInfo.shift === "afternoon" ? (
           <>
             {/* BORAVAK — disabled for 3rd grade (no boravak this year).

@@ -11,6 +11,7 @@ import type { ClassTextbooks } from "./textbookData";
 import type { SchoolConfig, ClassYearConfig } from "./schoolConfig";
 import { formatClassName } from "./schoolConfig";
 import type { ShiftAnchor } from "./shiftDetection";
+import type { NonSchoolDay } from "./schoolCalendar";
 
 // What every year folder (data/<school>/<class>/<year>/index.ts) must export.
 // Each file in the folder feeds one field; `satisfies ClassYearData` in the
@@ -37,6 +38,7 @@ export interface ClassData {
   shiftAnchor: ShiftAnchor;
   bellSchedule: BellSchedule;
   schedules: ShiftSchedules; // periods with times filled in
+  nonSchoolDays: NonSchoolDay[]; // raspusti + no-class holidays, from data/calendars
   exams: Exam[];
   teachers: Record<string, Teacher>;
   subjectTeachers: Partial<Record<SubjectId, string>>;
@@ -65,6 +67,7 @@ export const buildClassData = (
   school: SchoolConfig,
   classSlug: string,
   year: ClassYearData,
+  nonSchoolDays: NonSchoolDay[],
 ): ClassData => ({
   slug: classSlug,
   school: {
@@ -78,6 +81,7 @@ export const buildClassData = (
   shiftAnchor: year.config.shiftAnchor,
   bellSchedule: school.bellSchedule,
   schedules: resolveSchedules(year.schedule, school.bellSchedule),
+  nonSchoolDays,
   exams: year.exams,
   teachers: publicTeachers(year.teachers),
   subjectTeachers: year.subjectTeachers,

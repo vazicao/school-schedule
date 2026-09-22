@@ -41,6 +41,7 @@ The project uses Husky and lint-staged for pre-commit hooks:
 data/<school>/school.ts                       school info + bell schedule (period times)
 data/<school>/<class>/<year>/                 e.g. os-jelena-cetkovic/gen-2024-2/2026-27/
   config.ts  schedule.ts  exams.ts  teachers.ts  textbooks.ts  pribor.ts  index.ts
+data/calendars/<year>.ts                      official raspusti + no-class holidays (same for every school)
 ```
 
 Every year folder's `index.ts` ends with `satisfies ClassYearData`, so subject names, period labels etc. are type-checked at build time. See `data/README.md`.
@@ -55,6 +56,7 @@ Every year folder's `index.ts` ends with `satisfies ClassYearData`, so subject n
 - `shiftDetection.ts` - Morning/afternoon shift for a date, given the class's `ShiftAnchor` (a known Monday + its shift; alternates weekly, exact calendar-week math so it's correct across year boundaries)
 - `timeMapping.ts` - Looks up a period's times in the bell schedule (`getClassTimes`); `getDaycareTimeRange` is kept for the disabled boravak feature
 - `weekNavigation.ts` - Week-based navigation and date calculations
+- `schoolCalendar.ts` - `NonSchoolDay` type and `getNonSchoolDay` lookup for the official raspusti/holidays in `data/calendars/<year>.ts` (national, not school-specific — see `data/README.md`)
 - `examData.ts`, `teacherData.ts`, `textbookData.ts` - Types plus pure lookup helpers that take the class's data as an argument (the data itself lives in `/data`)
 - `eventDetailsService.ts` - Composes a class's schedule/exam/teacher/textbook/pribor data into the details shown for one schedule event
 
@@ -121,6 +123,7 @@ The app can be added to a phone's home screen as "Moj Raspored".
 - To add a class or a new school year, add a folder — there is no registry to update
 - Class schedules only say which subject is in which period; period **times** come from the school's `bellSchedule` in `data/<school>/school.ts`
 - Subjects are referenced by `SubjectId` everywhere — add a new subject to `lib/subjects.ts` first
+- Non-school days (raspusti, Sveti Sava, Vidovdan) come from the national calendar in `data/calendars/<year>.ts`, matched to a class by year folder — not part of that class's own data
 
 ## Testing and TypeScript
 

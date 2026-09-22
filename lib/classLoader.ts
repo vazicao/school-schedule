@@ -14,6 +14,7 @@ import {
   YEAR_FOLDER_RE,
   type SchoolConfig,
 } from "./schoolConfig";
+import type { NonSchoolDay } from "./schoolCalendar";
 
 const DATA_DIR = path.join(process.cwd(), "data");
 
@@ -43,6 +44,19 @@ export const listClassParams = (): { school: string; class: string }[] =>
       .map((classSlug) => ({ school, class: classSlug })),
   );
 
+// The official calendar (raspusti + no-class holidays) for a year folder,
+// e.g. "2026-27" — the same file backs every school/class on that year (see
+// data/calendars/). Older years may not have one yet; that's not an error,
+// non-school days just won't show for them.
+const loadCalendar = async (year: string): Promise<NonSchoolDay[]> => {
+  try {
+    const calendarModule = await import(`../data/calendars/${year}`);
+    return calendarModule.nonSchoolDays as NonSchoolDay[];
+  } catch {
+    return [];
+  }
+};
+
 // Load a class's latest year. Returns null if the school/class doesn't exist
 // (callers turn that into a 404).
 export const loadClassData = async (
@@ -56,15 +70,17 @@ export const loadClassData = async (
   const year = latestYearFolder(school, classSlug);
   if (!year) return null;
 
-  const [schoolModule, yearModule] = await Promise.all([
+  const [schoolModule, yearModule, nonSchoolDays] = await Promise.all([
     import(`../data/${school}/school`),
     import(`../data/${school}/${classSlug}/${year}/index`),
+    loadCalendar(year),
   ]);
 
   return buildClassData(
     schoolModule.default as SchoolConfig,
     classSlug,
     yearModule.default as ClassYearData,
+    nonSchoolDays,
   );
 };
 
