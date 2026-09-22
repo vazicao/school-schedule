@@ -41,6 +41,8 @@ export const schedule: RawShiftSchedules = {
       { order: "5. čas", subject: "Građansko vaspitanje / Verska nastava" },
     ],
   },
+  // Afternoon-shift Thursday: Engleski jezik moved from the last period
+  // (5. čas) to Pretčas, per the school's updated timetable.
   afternoon: {
     Ponedeljak: [
       { order: "Pretčas", subject: "ČOS" },
@@ -63,11 +65,11 @@ export const schedule: RawShiftSchedules = {
       { order: "4. čas", subject: "Likovna kultura" },
     ],
     Četvrtak: [
+      { order: "Pretčas", subject: "Engleski jezik" },
       { order: "1. čas", subject: "Srpski jezik" },
       { order: "2. čas", subject: "Matematika" },
       { order: "3. čas", subject: "Priroda i društvo" },
       { order: "4. čas", subject: "Fizičko i zdravstveno vaspitanje (sala)" },
-      { order: "5. čas", subject: "Engleski jezik" },
     ],
     Petak: [
       { order: "1. čas", subject: "Matematika" },
