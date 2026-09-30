@@ -1,5 +1,11 @@
 import { EventDetails } from "../components/EventModal";
-import { getExamsForSubject, type Exam } from "./examData";
+import {
+  getExamsForSubject,
+  isWeekExam,
+  examSortDate,
+  examEndDate,
+  type Exam,
+} from "./examData";
 import { getSubjectInfo, type SubjectId } from "./subjects";
 import { getTextbooksForSubject } from "./textbookData";
 import { getTeacherForSubject } from "./teacherData";
@@ -12,7 +18,9 @@ import { srLatn as sr } from "date-fns/locale";
 
 // Helper functions to convert exam data
 const formatExamDate = (exam: Exam): string =>
-  format(parseISO(exam.date), "d. MMMM yyyy", { locale: sr });
+  isWeekExam(exam)
+    ? `nedelja ${format(parseISO(exam.weekStart), "d. MMM", { locale: sr })} – ${format(parseISO(exam.weekEnd), "d. MMM yyyy", { locale: sr })}`
+    : format(parseISO(exam.date), "d. MMMM yyyy", { locale: sr });
 
 const capitalize = (s: string): string =>
   s.charAt(0).toUpperCase() + s.slice(1);
@@ -24,32 +32,32 @@ const getAllExamsForSubject = (
   date: string;
   type: string;
   description: string;
-  dayName: string;
+  dayName?: string;
   isPast?: boolean;
   isUpcoming?: boolean;
 }> => {
   const today = new Date();
 
   const subjectExams = [...getExamsForSubject(exams, subject)].sort(
-    (a, b) => parseISO(a.date).getTime() - parseISO(b.date).getTime(),
+    (a, b) =>
+      parseISO(examSortDate(a)).getTime() - parseISO(examSortDate(b)).getTime(),
   );
 
   const nextUpcomingExam = subjectExams.find(
-    (exam) => !isBefore(parseISO(exam.date), today),
+    (exam) => !isBefore(parseISO(examEndDate(exam)), today),
   );
 
-  return subjectExams.map((exam) => {
-    const examDate = parseISO(exam.date);
-
-    return {
-      date: formatExamDate(exam),
-      type: exam.type,
-      description: exam.topic,
-      dayName: capitalize(format(examDate, "EEEE", { locale: sr })),
-      isPast: isBefore(examDate, today),
-      isUpcoming: exam === nextUpcomingExam,
-    };
-  });
+  return subjectExams.map((exam) => ({
+    date: formatExamDate(exam),
+    type: exam.type,
+    description: exam.topic,
+    // A week-only exam has no single day to name.
+    dayName: isWeekExam(exam)
+      ? undefined
+      : capitalize(format(parseISO(exam.date), "EEEE", { locale: sr })),
+    isPast: isBefore(parseISO(examEndDate(exam)), today),
+    isUpcoming: exam === nextUpcomingExam,
+  }));
 };
 
 // Helper function to get icon for a subject - returns the icon string/identifier

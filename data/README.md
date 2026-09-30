@@ -31,7 +31,7 @@ The **newest year folder wins** (they sort alphabetically). Publishing next year
 ## Adding a new school year for an existing class (each September)
 
 1. Copy last year's folder to the new year, e.g. `2026-27` → `2027-28`.
-2. `config.ts`: update `schoolYear`, `grade` (+1), `schoolYearStart`, `homeroomTeacherId`, and `shiftAnchor` (a Monday of the new year whose shift you know — shifts alternate weekly from it).
+2. `config.ts`: update `schoolYear`, `grade` (+1), `schoolYearStart`, `homeroomTeacherId`, and `shiftAnchor` (for a class that alternates: a Monday of the new year whose shift you know; for a class that doesn't, just `{ fixed: "morning" | "afternoon" }`).
 3. Replace `schedule.ts`, `exams.ts`, `teachers.ts`, `textbooks.ts`, `pribor.ts` with the new year's content.
 4. If `data/calendars/<new-year>.ts` doesn't exist yet, add it — see below.
 5. Run `npm run build`. Deploying is the switch — it's what makes the new year go live.
@@ -46,9 +46,9 @@ Nothing else needs editing. The build fails with a clear error if anything doesn
 ## What each file holds
 
 - **`school.ts`** — names and the `bellSchedule`: when each period starts and ends, per shift. Defined once per school, shared by all its classes.
-- **`config.ts`** — `grade`, `section`, `schoolYear`, `schoolYearStart` ("previous week" navigation stops at the week containing this date), `shiftAnchor`, `homeroomTeacherId`. The display name ("III·2") is derived from grade + section.
+- **`config.ts`** — `grade`, `section`, `schoolYear`, `schoolYearStart` ("previous week" navigation stops at the week containing this date), `shiftAnchor`, `homeroomTeacherId`. The display name ("III·2") is derived from grade + section. `shiftAnchor` is either `{ mondayOfWeek, shift }` (alternates weekly from that Monday) or `{ fixed: "morning" | "afternoon" }` for a class that's always the same shift — see `lib/shiftDetection.ts`.
 - **`schedule.ts`** — for each shift and weekday: which subject is in which period. Only `order` and `subject` — times come from the bell schedule.
-- **`exams.ts`** — exact dates. `type` is `"Kontrolni zadatak"` or `"Pismena vežba"`.
+- **`exams.ts`** — each entry is either an exact date (`date`) or, when the school only announces a week (common for grades 1–2), a range (`weekStart`/`weekEnd`) — see `Exam`/`WeekExam` in `lib/examData.ts`. `type` is `"Kontrolni zadatak"` or `"Pismena vežba"`.
 - **`teachers.ts`** — the teachers, plus `subjectTeachers` for subjects _not_ taught by the homeroom teacher. **Contact details (email, phone, room) are only shown if `showContact: true`** — these pages are public, so each teacher has to opt in, and the details are stripped on the server otherwise.
 - **`textbooks.ts`** — per subject. `isbn` and `imageUrl` are optional (some items genuinely have none).
 - **`pribor.ts`** — supplies to bring, per subject.

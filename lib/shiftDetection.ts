@@ -14,10 +14,20 @@ export type ShiftType = "morning" | "afternoon";
 // the same school are often on opposite shifts in the same week); shifts
 // alternate weekly from it. Kept as plain strings so it can be passed from the
 // server to client components.
-export interface ShiftAnchor {
+export interface AlternatingShiftAnchor {
   mondayOfWeek: string; // ISO date of a Monday, e.g. "2026-09-14"
   shift: ShiftType; // the shift during that week
 }
+
+// For a class that never alternates — always the same shift, every week.
+export interface FixedShiftAnchor {
+  fixed: ShiftType;
+}
+
+export type ShiftAnchor = AlternatingShiftAnchor | FixedShiftAnchor;
+
+const isFixedShift = (anchor: ShiftAnchor): anchor is FixedShiftAnchor =>
+  "fixed" in anchor;
 
 /**
  * Get ISO week number for a given date
@@ -34,11 +44,18 @@ function getWeekNumber(date: Date): { week: number; year: number } {
  * Shifts alternate weekly relative to the anchor Monday. Uses exact
  * calendar-week arithmetic (not "weeks per year"), so it's correct across
  * year boundaries — e.g. 2026 has 53 ISO weeks.
+ *
+ * Some classes never alternate (a fixed anchor) — they're always the same
+ * shift, so no date math is needed at all.
  */
 export function getCurrentShift(
   anchor: ShiftAnchor,
   date: Date = new Date(),
 ): ShiftType {
+  if (isFixedShift(anchor)) {
+    return anchor.fixed;
+  }
+
   const targetMonday = startOfISOWeek(date);
   const weeksFromReference = differenceInCalendarWeeks(
     targetMonday,

@@ -26,7 +26,11 @@ import ScheduleHeader from "./ScheduleHeader";
 import EventCard from "./EventCard";
 import EventModal, { EventDetails } from "./EventModal";
 import { getEventDetails } from "../lib/eventDetailsService";
-import { getExamsForDate, getExamsInDateRange } from "../lib/examData";
+import {
+  getExamsForDate,
+  getExamsForWeek,
+  getExamsInDateRange,
+} from "../lib/examData";
 import { getNonSchoolDay } from "../lib/schoolCalendar";
 import SvgIcon from "./SvgIcon";
 import ExamSummary from "./ExamSummary";
@@ -180,13 +184,20 @@ export default function SchedulePage({ data }: { data: ClassData }) {
   const earliestWeekStart = startOfISOWeek(parseISO(data.schoolYearStart));
   const canGoToPreviousWeek = selectedWeek.startDate > earliestWeekStart;
 
-  // Exams for the specific day being viewed (not the whole week) — every
-  // exam now has an exact confirmed date, so the banner only shows on the
-  // day it actually falls on.
+  // Exams for the specific day being viewed — only exams with an exact,
+  // school-confirmed date show here, on the day they actually fall on.
   const selectedDayDate = weekDates[days.indexOf(selectedDay)];
   const selectedDayIso = format(selectedDayDate, "yyyy-MM-dd");
   const dayExams = getExamsForDate(data.exams, selectedDayIso);
   const dayNonSchool = getNonSchoolDay(data.nonSchoolDays, selectedDayIso);
+
+  // Week-only exams (some classes only get "sometime this week" from the
+  // school, not an exact date) — shown for the whole week rather than one day.
+  const weekExams = getExamsForWeek(
+    data.exams,
+    format(weekDates[0], "yyyy-MM-dd"),
+    format(weekDates[6], "yyyy-MM-dd"),
+  );
 
   // Get next week info for weekend preview
   const nextWeek = getNextWeek(selectedWeek.year, selectedWeek.week);
@@ -290,6 +301,12 @@ export default function SchedulePage({ data }: { data: ClassData }) {
         selectedDay !== "Subota" &&
         selectedDay !== "Nedelja" &&
         !dayNonSchool && <ExamSummary exams={dayExams} />}
+
+      {/* Week-only exams (no exact date from the school) - shown all week, hidden on weekends and non-school days */}
+      {weekExams.length > 0 &&
+        selectedDay !== "Subota" &&
+        selectedDay !== "Nedelja" &&
+        !dayNonSchool && <ExamSummary exams={weekExams} />}
 
       <div className={styles.eventsContainer}>
         {selectedDay === "Subota" || selectedDay === "Nedelja" ? (

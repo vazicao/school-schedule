@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a Serbian-language school schedule application built with Next.js. It supports many schools and classes: each class has its own page at `/<school>/<class>` (e.g. `/os-jelena-cetkovic/gen-2024-2`), backed by static data files under `/data` — there is no backend or database. Its core feature is automatic morning/afternoon shift detection based on calendar weeks. It also tracks exams, teachers, textbooks, and required school supplies ("pribor") for each subject. Vercel Analytics (`@vercel/analytics`) is wired into the deployed app.
 
-The first (currently only) class is III·2 at OŠ "Jelena Ćetković", Belgrade. See `data/README.md` for how the data is organized and how to add a class or a new school year.
+Currently two classes: III·2 at OŠ "Jelena Ćetković" and II·2 at OŠ "Sveti Sava", both Belgrade. See `data/README.md` for how the data is organized and how to add a class or a new school year.
 
 Note: a PDF export feature (`@react-pdf/renderer`) existed early in the project's history but was later removed in favor of the in-app schedule view. There is no `pdfService.tsx` or `WeeklySchedulePDF.tsx` anymore.
 
@@ -53,11 +53,11 @@ Every year folder's `index.ts` ends with `satisfies ClassYearData`, so subject n
 - `classData.ts` - `ClassYearData` (what a year folder exports), `ClassData` (assembled, serializable data the UI receives), `buildClassData`. Teacher contact details are stripped server-side unless the teacher opted in (`showContact`) — pages are public
 - `classLoader.ts` - **Server-only** (uses `fs`): scans `/data`, picks each class's latest year folder, dynamically imports it
 - `schoolConfig.ts` - School/class config types, slug conventions (regexes), `formatClassName` (roman numeral + section, e.g. "III·2")
-- `shiftDetection.ts` - Morning/afternoon shift for a date, given the class's `ShiftAnchor` (a known Monday + its shift; alternates weekly, exact calendar-week math so it's correct across year boundaries)
+- `shiftDetection.ts` - Morning/afternoon shift for a date, given the class's `ShiftAnchor` — either alternating (a known Monday + its shift; exact calendar-week math so it's correct across year boundaries) or `{ fixed: shift }` for a class that's always the same shift
 - `timeMapping.ts` - Looks up a period's times in the bell schedule (`getClassTimes`); `getDaycareTimeRange` is kept for the disabled boravak feature
 - `weekNavigation.ts` - Week-based navigation and date calculations
 - `schoolCalendar.ts` - `NonSchoolDay` type and `getNonSchoolDay` lookup for the official raspusti/holidays in `data/calendars/<year>.ts` (national, not school-specific — see `data/README.md`)
-- `examData.ts`, `teacherData.ts`, `textbookData.ts` - Types plus pure lookup helpers that take the class's data as an argument (the data itself lives in `/data`)
+- `examData.ts`, `teacherData.ts`, `textbookData.ts` - Types plus pure lookup helpers that take the class's data as an argument (the data itself lives in `/data`). An `Exam` is either an exact-date `DatedExam` or, for classes the school only gives a week to (common in grades 1-2), a `WeekExam` — `SchedulePage.tsx` shows the former on its exact day and the latter as a banner for the whole week
 - `eventDetailsService.ts` - Composes a class's schedule/exam/teacher/textbook/pribor data into the details shown for one schedule event
 
 ### Key Components (`/components/`)
@@ -72,7 +72,7 @@ Every year folder's `index.ts` ends with `satisfies ClassYearData`, so subject n
 
 ### Shift Detection System
 
-The application automatically alternates between morning and afternoon shifts based on calendar weeks. This is a core feature that affects the entire schedule display. The alternation is anchored per class (`shiftAnchor` in the year's `config.ts`) because different classes in one school are often on opposite shifts in the same week.
+The application automatically alternates between morning and afternoon shifts based on calendar weeks. This is a core feature that affects the entire schedule display. The alternation is anchored per class (`shiftAnchor` in the year's `config.ts`) because different classes in one school are often on opposite shifts in the same week. Some classes never alternate — their `shiftAnchor` is `{ fixed: "morning" | "afternoon" }` instead, and the school/schedule data authors that one shift's content only (the unused shift key just points at the same data, so there's nothing to keep in sync).
 
 ### PWA (installable app)
 

@@ -20,7 +20,7 @@ const features = [
   {
     icon: "brain",
     title: "Kontrolni i pismeni zadaci",
-    text: "Prikazani na tačnom datumu, sa temom i vrstom zadatka.",
+    text: "Prikazani na tačan dan ili u tačnoj nedelji, sa temom i vrstom zadatka.",
   },
   {
     icon: "notebook",

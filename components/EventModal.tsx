@@ -23,7 +23,9 @@ export interface EventDetails {
     date: string;
     type: string;
     description: string;
-    dayName: string;
+    // Omitted for a week-only exam (no single day to name) — `date` is
+    // already a full description ("nedelja 25. jan – 31. jan 2027") then.
+    dayName?: string;
     isPast?: boolean;
     isUpcoming?: boolean;
   }[];
@@ -138,7 +140,8 @@ const EventModal: React.FC<EventModalProps> = ({
                     <div className={styles.examContent}>
                       <p className="paragraph-small">{exam.description}</p>
                       <p className="paragraph-small text-secondary">
-                        {exam.dayName}, {exam.date} · {exam.type}
+                        {exam.dayName ? `${exam.dayName}, ` : ""}
+                        {exam.date} · {exam.type}
                       </p>
                     </div>
                     <div
