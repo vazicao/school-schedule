@@ -2,7 +2,12 @@
 
 import { useState, useEffect } from "react";
 import styles from "./SchedulePage.module.css";
-import { getCurrentDay, type Day, type ClassPeriod } from "../lib/schedule";
+import {
+  getCurrentDay,
+  type Day,
+  type SchoolDay,
+  type ClassPeriod,
+} from "../lib/schedule";
 import { getSubjectInfo, type SubjectId } from "../lib/subjects";
 import { getShiftInfo, type ShiftType } from "../lib/shiftDetection";
 import type { ClassData } from "../lib/classData";
@@ -32,57 +37,9 @@ import {
   getExamsInDateRange,
 } from "../lib/examData";
 import { getNonSchoolDay } from "../lib/schoolCalendar";
+import type { BoravakActivity } from "../lib/boravak";
 import SvgIcon from "./SvgIcon";
 import ExamSummary from "./ExamSummary";
-
-// BORAVAK (produženi boravak) — disabled starting 3rd grade (no boravak at this
-// school for this grade). Kept in code in case this expands to another
-// school/class that has it, or a private boravak arrangement is added.
-// To re-enable: uncomment this block plus the two "BORAVAK" JSX sections
-// below, and the showDaycare state + ScheduleHeader props further down.
-//
-// const daycareActivities = {
-//   morning: [
-//     {
-//       time: "12:30-13:00",
-//       activity: "Ručak",
-//       startTime: "12:30",
-//       endTime: "13:00",
-//     },
-//     {
-//       time: "13:00-14:30",
-//       activity: "Domaći",
-//       startTime: "13:00",
-//       endTime: "14:30",
-//     },
-//     {
-//       time: "14:30-17:30",
-//       activity: "Slobodno vreme",
-//       startTime: "14:30",
-//       endTime: "17:30",
-//     },
-//   ],
-//   afternoon: [
-//     {
-//       time: "07:00-08:30",
-//       activity: "Prijem dece",
-//       startTime: "07:00",
-//       endTime: "08:30",
-//     },
-//     {
-//       time: "08:30-10:30",
-//       activity: "Domaći zadatak",
-//       startTime: "08:30",
-//       endTime: "10:30",
-//     },
-//     {
-//       time: "12:00-12:30",
-//       activity: "Ručak",
-//       startTime: "12:00",
-//       endTime: "12:30",
-//     },
-//   ],
-// };
 
 // Icon mapping for subjects and activities
 const getSubjectIcon = (subject: string): React.ReactNode => {
@@ -109,7 +66,7 @@ const extractTime = (timeString?: string): string => {
 
 // Helper function to calculate time range for a section
 const calculateSectionTimeRange = (
-  events: Array<ClassPeriod | { time: string }>,
+  events: Array<ClassPeriod | BoravakActivity | { time: string }>,
 ): string => {
   if (events.length === 0) return "";
 
@@ -142,9 +99,9 @@ const calculateSectionTimeRange = (
 export default function SchedulePage({ data }: { data: ClassData }) {
   const [selectedWeek, setSelectedWeek] = useState<WeekInfo | null>(null);
   const [selectedDay, setSelectedDay] = useState<Day | null>(null);
-  // BORAVAK — disabled for 3rd grade, see block near top of file. Re-enable
-  // by restoring this state and the ScheduleHeader props below.
-  // const [showDaycare, setShowDaycare] = useState(true);
+  // Whether to show boravak, for classes that have it — a per-visit
+  // preference (no persistence), defaulting to shown.
+  const [showDaycare, setShowDaycare] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedEventDetails, setSelectedEventDetails] =
     useState<EventDetails | null>(null);
@@ -251,6 +208,63 @@ export default function SchedulePage({ data }: { data: ClassData }) {
     setSelectedEventDetails(null);
   };
 
+  // Boravak (produženi boravak) — only for classes that have it (see
+  // lib/boravak.ts). Shown before classes on an afternoon-shift day, after on
+  // a morning-shift day — same as this class's actual classes.
+  const boravakTime = (activity: BoravakActivity) =>
+    `${activity.startTime}-${activity.endTime}`;
+
+  const renderBoravakActivities = (
+    activities: BoravakActivity[],
+    keyPrefix: string,
+  ) =>
+    activities.map((activity, index) => (
+      <EventCard
+        key={`${keyPrefix}-${index}`}
+        type="daycare"
+        icon={getSubjectIcon(activity.activity)}
+        title={activity.activity}
+        time={boravakTime(activity)}
+        startTime={activity.startTime}
+        endTime={activity.endTime}
+        color={getSubjectInfo(activity.activity).color}
+        shift={shiftInfo.shift}
+        onClick={() =>
+          handleEventClick(
+            activity.activity,
+            boravakTime(activity),
+            shiftInfo.shift,
+          )
+        }
+      />
+    ));
+
+  // That day's optional activities (chess, drama, ...) — a menu, not
+  // something every child attends, but shown as part of the same boravak
+  // section rather than split out, interleaved by time with the routine.
+  const todaysElectives =
+    data.boravak?.electives[selectedDay as SchoolDay] ?? [];
+
+  const boravakActivities = data.boravak
+    ? [...data.boravak.routine, ...todaysElectives].sort((a, b) =>
+        a.startTime.localeCompare(b.startTime),
+      )
+    : [];
+
+  const boravakSection = data.boravak && (
+    <>
+      <div className={styles.sectionHeader}>
+        <h3 className={styles.sectionTitle}>Produženi boravak</h3>
+        <h3 className={styles.sectionTimeRange}>
+          {calculateSectionTimeRange(boravakActivities)}
+        </h3>
+      </div>
+      <div className={styles.eventsList}>
+        {renderBoravakActivities(boravakActivities, "boravak")}
+      </div>
+    </>
+  );
+
   return (
     <div className={styles.container}>
       <ScheduleHeader
@@ -258,9 +272,9 @@ export default function SchedulePage({ data }: { data: ClassData }) {
         schoolName={data.school.shortName}
         selectedWeek={selectedWeek}
         selectedDay={selectedDay}
-        // BORAVAK — disabled for 3rd grade; see showDaycare state above.
-        // showDaycare={showDaycare}
-        // onToggleDaycare={setShowDaycare}
+        hasBoravak={!!data.boravak}
+        showDaycare={showDaycare}
+        onToggleDaycare={setShowDaycare}
         onPreviousWeek={handlePreviousWeek}
         onNextWeek={handleNextWeek}
         onGoToCurrentWeek={handleGoToCurrentWeek}
@@ -351,88 +365,8 @@ export default function SchedulePage({ data }: { data: ClassData }) {
           </div>
         ) : shiftInfo.shift === "afternoon" ? (
           <>
-            {/* BORAVAK — disabled for 3rd grade (no boravak this year).
-                Kept for a future school/class that has it. To re-enable,
-                restore daycareActivities + showDaycare above and uncomment:
-
-            {showDaycare && (
-              <>
-                <div className={styles.sectionHeader}>
-                  <h3 className={styles.sectionTitle}>Produženi boravak</h3>
-                  <h3 className={styles.sectionTimeRange}>
-                    {(() => {
-                      const firstClass =
-                        data.schedules[shiftInfo.shift][selectedDay][0];
-                      const freeTimeEnd = firstClass
-                        ? firstClass.startTime
-                        : "13:10";
-                      const activitiesWithFreeTime = [
-                        ...daycareActivities[shiftInfo.shift],
-                        {
-                          time: `12:30-${freeTimeEnd}`,
-                          activity: "Slobodno vreme",
-                          startTime: "12:30",
-                          endTime: freeTimeEnd,
-                        },
-                      ];
-                      return calculateSectionTimeRange(activitiesWithFreeTime);
-                    })()}
-                  </h3>
-                </div>
-                <div className={styles.eventsList}>
-                  {daycareActivities[shiftInfo.shift].map((activity, index) => (
-                    <EventCard
-                      key={`daycare-${index}`}
-                      type="daycare"
-                      icon={getSubjectIcon(activity.activity)}
-                      title={activity.activity}
-                      time={activity.time}
-                      startTime={activity.startTime}
-                      endTime={activity.endTime}
-                      color={getSubjectInfo(activity.activity).color}
-                      shift={shiftInfo.shift}
-                      onClick={() =>
-                        handleEventClick(activity.activity, activity.time)
-                      }
-                    />
-                  ))}
-                  {(() => {
-                    const firstClass =
-                      data.schedules[shiftInfo.shift][selectedDay][0];
-                    const freeTimeEnd = firstClass
-                      ? firstClass.startTime
-                      : "13:10";
-                    const freeTimeActivity = {
-                      time: `12:30-${freeTimeEnd}`,
-                      activity: "Slobodno vreme",
-                      startTime: "12:30",
-                      endTime: freeTimeEnd,
-                    };
-                    return (
-                      <EventCard
-                        key="daycare-freetime"
-                        type="daycare"
-                        icon={getSubjectIcon(freeTimeActivity.activity)}
-                        title={freeTimeActivity.activity}
-                        time={freeTimeActivity.time}
-                        startTime={freeTimeActivity.startTime}
-                        endTime={freeTimeActivity.endTime}
-                        color={getSubjectInfo(freeTimeActivity.activity).color}
-                        shift={shiftInfo.shift}
-                        onClick={() =>
-                          handleEventClick(
-                            freeTimeActivity.activity,
-                            freeTimeActivity.time,
-                          )
-                        }
-                      />
-                    );
-                  })()}
-                </div>
-              </>
-            )}
-
-            */}
+            {/* Boravak first for afternoon shift (it runs beforehand, in the morning) */}
+            {showDaycare && boravakSection}
             {/* Classes second for afternoon shift */}
             <div className={styles.sectionHeader}>
               <h3 className={styles.sectionTitle}>{shiftInfo.shiftName}</h3>
@@ -506,42 +440,8 @@ export default function SchedulePage({ data }: { data: ClassData }) {
                 ),
               )}
             </div>
-            {/* BORAVAK — disabled for 3rd grade (no boravak this year).
-                Kept for a future school/class that has it. To re-enable,
-                restore daycareActivities + showDaycare above and uncomment:
-
-            {showDaycare && (
-              <>
-                <div className={styles.sectionHeader}>
-                  <h3 className={styles.sectionTitle}>Produženi boravak</h3>
-                  <h3 className={styles.sectionTimeRange}>
-                    {calculateSectionTimeRange(
-                      daycareActivities[shiftInfo.shift],
-                    )}
-                  </h3>
-                </div>
-                <div className={styles.eventsList}>
-                  {daycareActivities[shiftInfo.shift].map((activity, index) => (
-                    <EventCard
-                      key={`daycare-${index}`}
-                      type="daycare"
-                      icon={getSubjectIcon(activity.activity)}
-                      title={activity.activity}
-                      time={activity.time}
-                      startTime={activity.startTime}
-                      endTime={activity.endTime}
-                      color={getSubjectInfo(activity.activity).color}
-                      shift={shiftInfo.shift}
-                      onClick={() =>
-                        handleEventClick(activity.activity, activity.time)
-                      }
-                    />
-                  ))}
-                </div>
-              </>
-            )}
-
-            */}
+            {/* Boravak second for morning shift (it runs afterward, in the afternoon) */}
+            {showDaycare && boravakSection}
           </>
         )}
       </div>

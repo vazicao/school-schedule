@@ -12,6 +12,7 @@ import type { SchoolConfig, ClassYearConfig } from "./schoolConfig";
 import { formatClassName } from "./schoolConfig";
 import type { ShiftAnchor } from "./shiftDetection";
 import type { NonSchoolDay } from "./schoolCalendar";
+import type { BoravakData } from "./boravak";
 
 // What every year folder (data/<school>/<class>/<year>/index.ts) must export.
 // Each file in the folder feeds one field; `satisfies ClassYearData` in the
@@ -24,6 +25,8 @@ export interface ClassYearData {
   subjectTeachers: Partial<Record<SubjectId, string>>;
   textbooks: ClassTextbooks;
   pribor: Partial<Record<SubjectId, string[]>>;
+  // Only for classes that have produženi boravak — see lib/boravak.ts.
+  boravak?: BoravakData;
 }
 
 // The fully-assembled data for one class, as consumed by the schedule UI.
@@ -45,6 +48,7 @@ export interface ClassData {
   homeroomTeacherId: string;
   textbooks: ClassTextbooks;
   pribor: Partial<Record<SubjectId, string[]>>;
+  boravak?: BoravakData;
 }
 
 // These pages are public, so contact details are only sent to the browser for
@@ -88,4 +92,5 @@ export const buildClassData = (
   homeroomTeacherId: year.config.homeroomTeacherId,
   textbooks: year.textbooks,
   pribor: year.pribor,
+  boravak: year.boravak,
 });

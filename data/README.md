@@ -9,7 +9,8 @@ data/
     <class>/
       <year>/
         config.ts  schedule.ts  exams.ts  teachers.ts  textbooks.ts  pribor.ts
-        index.ts                    assembles the six files above
+        boravak.ts                  optional — only for a class with produženi boravak
+        index.ts                    assembles the files above
   calendars/
     <year>.ts                       official raspusti + no-class holidays, same for every school
 ```
@@ -52,6 +53,7 @@ Nothing else needs editing. The build fails with a clear error if anything doesn
 - **`teachers.ts`** — the teachers, plus `subjectTeachers` for subjects _not_ taught by the homeroom teacher. **Contact details (email, phone, room) are only shown if `showContact: true`** — these pages are public, so each teacher has to opt in, and the details are stripped on the server otherwise.
 - **`textbooks.ts`** — per subject. `isbn` and `imageUrl` are optional (some items genuinely have none).
 - **`pribor.ts`** — supplies to bring, per subject.
+- **`boravak.ts`** (optional) — only for a class with produženi boravak. A `routine` (the same every day: arrival, homework, lunch, ...) plus `electives`, per weekday — an optional-activities menu (chess, drama, ...), not something every child attends, so it can overlap the routine's homework block. Shown merged into one time-sorted list. See `lib/boravak.ts`.
 
 ## Non-school days (`data/calendars/`)
 

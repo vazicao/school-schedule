@@ -3,12 +3,7 @@
 import { format } from "date-fns";
 import { srLatn as sr } from "date-fns/locale";
 import styles from "./SchedulePage.module.css";
-// BORAVAK — SettingsDropdown currently only holds the daycare toggle, disabled
-// for 3rd grade. Keep the import commented alongside the JSX below so it's a
-// one-step re-enable (also uncomment showDaycare/onToggleDaycare props here
-// and in components/SchedulePage.tsx) if a future school/class needs boravak, or
-// this dropdown grows other settings.
-// import SettingsDropdown from "./SettingsDropdown";
+import SettingsDropdown from "./SettingsDropdown";
 import SvgIcon from "./SvgIcon";
 import { type WeekInfo } from "../lib/weekNavigation";
 import { getCurrentDay } from "../lib/schedule";
@@ -18,8 +13,11 @@ interface ScheduleHeaderProps {
   schoolName: string; // e.g. "Jelena Ćetković"
   selectedWeek: WeekInfo;
   selectedDay: string;
-  // showDaycare: boolean; // BORAVAK — disabled for 3rd grade
-  // onToggleDaycare: (show: boolean) => void;
+  // Only classes with boravak data get the settings gear at all — there's
+  // nothing to show/hide otherwise.
+  hasBoravak: boolean;
+  showDaycare: boolean;
+  onToggleDaycare: (show: boolean) => void;
   onPreviousWeek: () => void;
   onNextWeek: () => void;
   onGoToCurrentWeek: () => void;
@@ -31,8 +29,9 @@ export default function ScheduleHeader({
   schoolName,
   selectedWeek,
   selectedDay,
-  // showDaycare,
-  // onToggleDaycare,
+  hasBoravak,
+  showDaycare,
+  onToggleDaycare,
   onPreviousWeek,
   onNextWeek,
   onGoToCurrentWeek,
@@ -50,13 +49,12 @@ export default function ScheduleHeader({
           <div className={styles.separator}></div>
           <h2>{schoolName}</h2>
         </div>
-        {/* BORAVAK — settings gear only toggled boravak visibility; disabled
-            for 3rd grade. Uncomment along with the import above to restore.
-        <SettingsDropdown
-          showDaycare={showDaycare}
-          onToggleDaycare={onToggleDaycare}
-        />
-        */}
+        {hasBoravak && (
+          <SettingsDropdown
+            showDaycare={showDaycare}
+            onToggleDaycare={onToggleDaycare}
+          />
+        )}
       </div>
 
       <div className={styles.shiftIndicator}>

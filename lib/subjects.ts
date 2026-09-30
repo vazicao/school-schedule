@@ -89,12 +89,32 @@ export const subjects = {
     icon: "🏋",
     color: "#F0E5FF",
   },
-  // Daycare (boravak) activities — feature currently disabled, kept for reuse
+  // Daycare (boravak) — the core routine (same every day)
   "Prijem dece": { name: "Prijem dece", icon: "👋", color: "#E3F2FD" },
   "Domaći zadatak": { name: "Domaći zadatak", icon: "📝", color: "#FBCCFF" },
   Ručak: { name: "Ručak", icon: "🍲", color: "#FFE9D2" },
   Domaći: { name: "Domaći", icon: "📝", color: "#FBCCFF" },
   "Slobodno vreme": { name: "Slobodno vreme", icon: "🛝", color: "#D8E1FD" },
+  // Daycare (boravak) — optional elective activities (vary per weekday, per
+  // class; a "menu" of activities, not something every child attends)
+  Šah: { name: "Šah", icon: "♟️", color: "#D6FFE0" },
+  "Podrška razvoju socijalnih i komunikacionih veština i veština učenja": {
+    name: "Podrška razvoju socijalnih i komunikacionih veština i veština učenja",
+    icon: "🤝",
+    color: "#FFD6E8",
+  },
+  "Mala škola realnog aikidoa": {
+    name: "Mala škola realnog aikidoa",
+    icon: "🥋",
+    color: "#D4F1F4",
+  },
+  Gluma: { name: "Gluma", icon: "🎭", color: "#FFD2CC" },
+  "Ruski kružok": { name: "Ruski kružok", icon: "🇷🇺", color: "#E0D4FF" },
+  "Mala škola gimnastike": {
+    name: "Mala škola gimnastike",
+    icon: "🤸",
+    color: "#FFE8B8",
+  },
 } satisfies Record<string, Subject>;
 
 // Union of every valid subject/activity key in `subjects` above, derived

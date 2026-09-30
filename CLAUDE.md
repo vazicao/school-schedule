@@ -54,9 +54,10 @@ Every year folder's `index.ts` ends with `satisfies ClassYearData`, so subject n
 - `classLoader.ts` - **Server-only** (uses `fs`): scans `/data`, picks each class's latest year folder, dynamically imports it
 - `schoolConfig.ts` - School/class config types, slug conventions (regexes), `formatClassName` (roman numeral + section, e.g. "III·2")
 - `shiftDetection.ts` - Morning/afternoon shift for a date, given the class's `ShiftAnchor` — either alternating (a known Monday + its shift; exact calendar-week math so it's correct across year boundaries) or `{ fixed: shift }` for a class that's always the same shift
-- `timeMapping.ts` - Looks up a period's times in the bell schedule (`getClassTimes`); `getDaycareTimeRange` is kept for the disabled boravak feature
+- `timeMapping.ts` - Looks up a period's times in the bell schedule (`getClassTimes`); `getDaycareTimeRange` is a fallback for a boravak card rendered without explicit start/end times (see `boravak.ts` below — classes with boravak data always provide them)
 - `weekNavigation.ts` - Week-based navigation and date calculations
 - `schoolCalendar.ts` - `NonSchoolDay` type and `getNonSchoolDay` lookup for the official raspusti/holidays in `data/calendars/<year>.ts` (national, not school-specific — see `data/README.md`)
+- `boravak.ts` - `BoravakData` type for a class's produženi boravak (extended daycare), if it has one: a daily `routine` plus per-weekday `electives` (a menu of optional activities, e.g. chess or drama, not something every child attends) — `SchedulePage.tsx` merges them into one time-sorted list for the selected day
 - `examData.ts`, `teacherData.ts`, `textbookData.ts` - Types plus pure lookup helpers that take the class's data as an argument (the data itself lives in `/data`). An `Exam` is either an exact-date `DatedExam` or, for classes the school only gives a week to (common in grades 1-2), a `WeekExam` — `SchedulePage.tsx` shows the former on its exact day and the latter as a banner for the whole week
 - `eventDetailsService.ts` - Composes a class's schedule/exam/teacher/textbook/pribor data into the details shown for one schedule event
 
@@ -67,7 +68,7 @@ Every year folder's `index.ts` ends with `satisfies ClassYearData`, so subject n
 - `EventModal.tsx` - Detailed event information popup (teacher, textbooks, pribor, exams)
 - `ExamSummary.tsx` - Expandable banner listing the exams on the selected day
 - `ScheduleHeader.tsx` - Week navigation controls and current week display
-- `SettingsDropdown.tsx` - Per-user display toggles (currently unused; only held the disabled boravak toggle)
+- `SettingsDropdown.tsx` - Per-user display toggles; currently just "show boravak" (shown only for classes with boravak data — see `ScheduleHeader.tsx`'s `hasBoravak` prop). Not persisted; resets to shown each visit
 - `SvgIcon.tsx` - Icon system using the SVG sprite at `/public/icons-sprite.svg`
 
 ### Shift Detection System

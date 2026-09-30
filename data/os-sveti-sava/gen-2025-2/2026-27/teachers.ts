@@ -7,15 +7,14 @@ export const teachers: Record<string, Teacher> = {
     name: "Tomanić Dragana",
     subjects: ["Razredna nastava"], // Default for all subjects except overrides
   },
-  tijana: {
-    // Last name not known yet — update once we have it (id can stay as is).
-    id: "tijana",
-    name: "Tijana",
+  "zaric-tijana": {
+    id: "zaric-tijana",
+    name: "Zarić Tijana",
     subjects: ["Engleski jezik"],
   },
 };
 
 // Subjects NOT taught by the homeroom teacher (see homeroomTeacherId in config.ts)
 export const subjectTeachers: Partial<Record<SubjectId, string>> = {
-  "Engleski jezik": "tijana",
+  "Engleski jezik": "zaric-tijana",
 };

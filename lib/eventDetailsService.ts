@@ -68,15 +68,20 @@ const getSubjectIconData = (subject: SubjectId): string => {
 
 // Helper function to determine event type
 const getEventType = (subject: SubjectId): "class" | "daycare" | "weekend" => {
-  // BORAVAK — these activities are only ever produced by the daycare JSX in
-  // components/SchedulePage.tsx, currently disabled for 3rd grade. Left here so
-  // re-enabling boravak doesn't also require restoring this list.
+  // Every subject a class's boravak (routine or electives) can reference —
+  // see lib/boravak.ts and data/<school>/<class>/<year>/boravak.ts.
   const daycareActivities: SubjectId[] = [
     "Prijem dece",
     "Domaći zadatak",
     "Ručak",
     "Domaći",
     "Slobodno vreme",
+    "Šah",
+    "Podrška razvoju socijalnih i komunikacionih veština i veština učenja",
+    "Mala škola realnog aikidoa",
+    "Gluma",
+    "Ruski kružok",
+    "Mala škola gimnastike",
   ];
 
   if (daycareActivities.includes(subject)) {
