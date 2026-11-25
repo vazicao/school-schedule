@@ -9,6 +9,13 @@ export interface SchoolConfig {
   shortName: string; // shown in the schedule header, e.g. "Jelena Ćetković"
   fullName: string;
   address?: string;
+  // Basic public info about the school. Not shown in the UI yet — stored so
+  // it's at hand when a school page/contact section is added.
+  municipality?: string; // gradska opština, e.g. "Zvezdara"
+  neighborhood?: string; // naselje, e.g. "Konjarnik"
+  phone?: string;
+  email?: string;
+  website?: string;
   // When each period starts/ends, per shift. Shared by every class in the school.
   bellSchedule: BellSchedule;
 }

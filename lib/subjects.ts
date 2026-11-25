@@ -115,6 +115,12 @@ export const subjects = {
     icon: "🤸",
     color: "#FFE8B8",
   },
+  // A PE period held outside the gym (e.g. in the schoolyard or classroom).
+  "Fizičko i zdravstveno vaspitanje (bez sale)": {
+    name: "Fizičko i zdravstveno vaspitanje (bez sale)",
+    icon: "👟",
+    color: "#8EECC4",
+  },
 } satisfies Record<string, Subject>;
 
 // Union of every valid subject/activity key in `subjects` above, derived
