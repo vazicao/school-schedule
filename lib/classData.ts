@@ -7,7 +7,8 @@ import type {
 import { resolveSchedules } from "./schedule";
 import type { Exam } from "./examData";
 import type { Teacher } from "./teacherData";
-import type { ClassTextbooks } from "./textbookData";
+import type { ClassTextbooks, ResolvedClassTextbooks } from "./textbookData";
+import { textbooks as textbookCatalog } from "../data/textbooks";
 import type { SchoolConfig, ClassYearConfig } from "./schoolConfig";
 import { formatClassName } from "./schoolConfig";
 import type { ShiftAnchor } from "./shiftDetection";
@@ -46,7 +47,7 @@ export interface ClassData {
   teachers: Record<string, Teacher>;
   subjectTeachers: Partial<Record<SubjectId, string>>;
   homeroomTeacherId: string;
-  textbooks: ClassTextbooks;
+  textbooks: ResolvedClassTextbooks; // ids resolved to full book data
   pribor: Partial<Record<SubjectId, string[]>>;
   boravak?: BoravakData;
 }
@@ -62,6 +63,16 @@ const publicTeachers = (
     Object.entries(teachers).map(([id, t]) => [
       id,
       t.showContact ? t : { id: t.id, name: t.name, subjects: t.subjects },
+    ]),
+  );
+
+// Swap each subject's catalog ids for the books themselves, so the browser
+// gets just the books this class uses (not the whole catalog).
+const resolveTextbooks = (refs: ClassTextbooks): ResolvedClassTextbooks =>
+  Object.fromEntries(
+    Object.entries(refs).map(([subject, ids]) => [
+      subject,
+      ids.map((id) => textbookCatalog[id]),
     ]),
   );
 
@@ -90,7 +101,7 @@ export const buildClassData = (
   teachers: publicTeachers(year.teachers),
   subjectTeachers: year.subjectTeachers,
   homeroomTeacherId: year.config.homeroomTeacherId,
-  textbooks: year.textbooks,
+  textbooks: resolveTextbooks(year.textbooks),
   pribor: year.pribor,
   boravak: year.boravak,
 });

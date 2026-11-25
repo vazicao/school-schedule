@@ -42,6 +42,7 @@ data/<school>/school.ts                       school info + bell schedule (perio
 data/<school>/<class>/<year>/                 e.g. os-jelena-cetkovic/gen-2024-2/2026-27/
   config.ts  schedule.ts  exams.ts  teachers.ts  textbooks.ts  pribor.ts  index.ts
 data/calendars/<year>.ts                      official raspusti + no-class holidays (same for every school)
+data/textbooks.ts                             shared textbook catalog (one entry per book edition)
 ```
 
 Every year folder's `index.ts` ends with `satisfies ClassYearData`, so subject names, period labels etc. are type-checked at build time. See `data/README.md`.
@@ -58,6 +59,7 @@ Every year folder's `index.ts` ends with `satisfies ClassYearData`, so subject n
 - `weekNavigation.ts` - Week-based navigation and date calculations
 - `schoolCalendar.ts` - `NonSchoolDay` type and `getNonSchoolDay` lookup for the official raspusti/holidays in `data/calendars/<year>.ts` (national, not school-specific — see `data/README.md`)
 - `boravak.ts` - `BoravakData` type for a class's produženi boravak (extended daycare), if it has one: a daily `routine` plus per-weekday `electives` (a menu of optional activities, e.g. chess or drama, not something every child attends) — `SchedulePage.tsx` merges them into one time-sorted list for the selected day
+- `textbookData.ts` - `Textbook` (one book edition), `ClassTextbooks` (what a class authors: catalog ids per subject) and `ResolvedClassTextbooks` (what the UI gets). The books themselves live once in the shared catalog `data/textbooks.ts` (`TextbookId` is derived from its keys); `buildClassData` swaps a class's ids for the books server-side. Schools can use different publishers for the same subject/grade — each is its own catalog entry
 - `examData.ts`, `teacherData.ts`, `textbookData.ts` - Types plus pure lookup helpers that take the class's data as an argument (the data itself lives in `/data`). An `Exam` is either an exact-date `DatedExam` or, for classes the school only gives a week to (common in grades 1-2), a `WeekExam` — `SchedulePage.tsx` shows the former on its exact day and the latter as a banner for the whole week
 - `eventDetailsService.ts` - Composes a class's schedule/exam/teacher/textbook/pribor data into the details shown for one schedule event
 
@@ -124,6 +126,7 @@ The app can be added to a phone's home screen as "Moj Raspored".
 - To add a class or a new school year, add a folder — there is no registry to update
 - Class schedules only say which subject is in which period; period **times** come from the school's `bellSchedule` in `data/<school>/school.ts`
 - Subjects are referenced by `SubjectId` everywhere — add a new subject to `lib/subjects.ts` first
+- Textbooks are referenced by `TextbookId` — add a new edition to `data/textbooks.ts`, then list its id in the class's `textbooks.ts`
 - Non-school days (raspusti, Sveti Sava, Vidovdan) come from the national calendar in `data/calendars/<year>.ts`, matched to a class by year folder — not part of that class's own data
 
 ## Testing and TypeScript

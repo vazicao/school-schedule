@@ -13,6 +13,7 @@ data/
         index.ts                    assembles the files above
   calendars/
     <year>.ts                       official raspusti + no-class holidays, same for every school
+  textbooks.ts                      shared catalog of book editions, referenced by classes
 ```
 
 Example: `data/os-jelena-cetkovic/gen-2024-2/2026-27/` is served at `/os-jelena-cetkovic/gen-2024-2`.
@@ -51,9 +52,33 @@ Nothing else needs editing. The build fails with a clear error if anything doesn
 - **`schedule.ts`** — for each shift and weekday: which subject is in which period. Only `order` and `subject` — times come from the bell schedule.
 - **`exams.ts`** — each entry is either an exact date (`date`) or, when the school only announces a week (common for grades 1–2), a range (`weekStart`/`weekEnd`) — see `Exam`/`WeekExam` in `lib/examData.ts`. `type` is `"Kontrolni zadatak"` or `"Pismena vežba"`.
 - **`teachers.ts`** — the teachers, plus `subjectTeachers` for subjects _not_ taught by the homeroom teacher. **Contact details (email, phone, room) are only shown if `showContact: true`** — these pages are public, so each teacher has to opt in, and the details are stripped on the server otherwise.
-- **`textbooks.ts`** — per subject. `isbn` and `imageUrl` are optional (some items genuinely have none).
+- **`textbooks.ts`** — per subject, which books the class uses, as ids from the shared catalog (see below). Order = display order.
 - **`pribor.ts`** — supplies to bring, per subject.
 - **`boravak.ts`** (optional) — only for a class with produženi boravak. A `routine` (the same every day: arrival, homework, lunch, ...) plus `electives`, per weekday — an optional-activities menu (chess, drama, ...), not something every child attends, so it can overlap the routine's homework block. Shown merged into one time-sorted list. See `lib/boravak.ts`.
+
+## Textbook catalog (`data/textbooks.ts`)
+
+Book data (title, authors, publisher, ISBN, link, cover) is defined **once**,
+in `data/textbooks.ts`, one entry per published **edition**. Classes don't
+copy it — their `textbooks.ts` just lists catalog ids per subject:
+
+```ts
+export const textbooks: ClassTextbooks = {
+  Matematika: [
+    "bigz-matematika-3-udzbenik",
+    "bigz-matematika-3-radna-sveska-1",
+  ],
+};
+```
+
+Schools pick their own publishers, so the same subject and grade can have
+several editions in the catalog side by side (e.g. `bigz-matematika-3-udzbenik`
+and `klett-matematika-3-udzbenik`) — each class points at whichever it uses.
+Ids are `<publisher>-<subject>-<grade>-<part>`. When adding a class: reuse an
+entry if it's the exact same edition, otherwise append a new one. An id that
+isn't in the catalog is a build error. `isbn` and `imageUrl` are optional (some
+items genuinely have none); `obavezna: false` marks electives outside the
+Ministry's mandatory catalog.
 
 ## Non-school days (`data/calendars/`)
 
