@@ -1,6 +1,9 @@
 import type { SubjectId } from "./subjects";
 
-export type ExamType = "Kontrolni zadatak" | "Pismena vežba";
+export type ExamType =
+  | "Kontrolni zadatak"
+  | "Pismena vežba"
+  | "Kontrolna vežba";
 
 interface ExamCommon {
   subject: SubjectId; // must match a key in subjects.ts's `subjects`
